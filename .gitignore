@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# macOS
+.DS_Store
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local pack state in host repos that vendor agent-context — do not track
+# if someone clones this repo into another repo. The worked example's pack
+# under examples/hello-service/.agent-context/ is intentionally tracked.
+.agent-context/
+!examples/hello-service/.agent-context/
+!examples/hello-service/.agent-context/**
+
+# dotfiles like .env.example should still be tracked for the example
+!examples/hello-service/.env.example

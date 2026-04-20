@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "description": "Search scoping for hello-service — bound WHERE agents look per task type.",
+  "task_families": {
+    "feature_work": {
+      "description": "Add or modify an endpoint, query param, or config value.",
+      "search_directories": [
+        "src",
+        "tests"
+      ],
+      "exclude_from_search": [
+        "dist/",
+        "__pycache__/"
+      ],
+      "verification_shortcuts": [
+        {
+          "check": "HelloHandler class exists",
+          "file": "src/server.py",
+          "look_for": "class HelloHandler"
+        },
+        {
+          "check": "Config.from_env is the env reader",
+          "file": "src/config.py",
+          "look_for": "def from_env"
+        }
+      ]
+    },
+    "diagnosis": {
+      "description": "Investigate runtime failures — wrong greeting, 404s, bind errors.",
+      "search_directories": [
+        "src",
+        "tests"
+      ],
+      "exclude_from_search": [
+        "dist/",
+        "__pycache__/"
+      ],
+      "verification_shortcuts": [
+        {
+          "check": "Route string registered",
+          "file": "src/server.py",
+          "look_for": "/hello"
+        }
+      ]
+    }
+  },
+  "_rules": {
+    "search_directories": "Every directory must exist on disk. Include test directories when the task involves testing.",
+    "exclude_from_search": "Exclude generated, derived, and unrelated directories. Do not blanket-exclude tests/ from task families that involve testing.",
+    "verification_shortcuts": "The look_for string must actually appear in the referenced file. Verify before finalizing.",
+    "validation": "After filling, remove all template markers and example entries. Verify all directories exist."
+  }
+}

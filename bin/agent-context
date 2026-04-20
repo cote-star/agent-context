@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""agent-context — author, verify, and maintain agent-context packs.
+
+Stdlib-only Python 3.8+. Single-file dispatcher for the four v0.1.0 subcommands:
+
+    agent-context init [path] [--force]
+    agent-context verify [path]
+    agent-context doctor
+    agent-context freshness [path] [--base-ref origin/main]
+    agent-context --version
+    agent-context --help
+
+Layout assumption: this script ships inside a repo that has
+
+    bin/agent-context          (this file)
+    templates/                 (the 8 pack templates)
+    tools/verify_context_pack.py
+    tools/check_freshness.sh
+
+The script locates `templates/` and `tools/` relative to its own install path.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as _dt
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+
+
+__version__ = "0.1.0"
+
+
+# ---------------------------------------------------------------------------
+# Install-layout helpers
+# ---------------------------------------------------------------------------
+
+
+def _install_root() -> pathlib.Path:
+    """Return the agent-context install root (parent of bin/)."""
+    return pathlib.Path(__file__).resolve().parent.parent
+
+
+def _templates_dir() -> pathlib.Path:
+    return _install_root() / "templates"
+
+
+def _tools_dir() -> pathlib.Path:
+    return _install_root() / "tools"
+
+
+# ---------------------------------------------------------------------------
+# Environment helpers
+# ---------------------------------------------------------------------------
+
+
+def _which(cmd: str) -> str:
+    return shutil.which(cmd) or ""
+
+
+def _git_head(cwd: pathlib.Path) -> str:
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if out.returncode == 0:
+            return out.stdout.strip()
+    except FileNotFoundError:
+        pass
+    return ""
+
+
+def _utc_now_iso() -> str:
+    return _dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+# ---------------------------------------------------------------------------
+# Subcommands
+# ---------------------------------------------------------------------------
+
+
+def cmd_init(args: argparse.Namespace) -> int:
+    target_root = pathlib.Path(args.path or ".").resolve()
+    current = target_root / ".agent-context" / "current"
+    if current.exists() and not args.force:
+        print(
+            f"ERROR: {current} already exists. Re-run with --force to overwrite.",
+            file=sys.stderr,
+        )
+        return 1
+
+    templates = _templates_dir()
+    if not templates.is_dir():
+        print(f"ERROR: templates directory not found at {templates}", file=sys.stderr)
+        return 1
+
+    current.mkdir(parents=True, exist_ok=True)
+
+    copied = 0
+    for src in sorted(templates.iterdir()):
+        if not src.is_file():
+            continue
+        if src.name == "manifest.json":
+            # Write a concrete manifest with live values instead of template markers.
+            import json
+
+            manifest_text = src.read_text()
+            manifest = json.loads(manifest_text)
+            manifest["generated_at"] = _utc_now_iso()
+            manifest["repo"] = target_root.name
+            manifest["agent_context_version"] = __version__
+            head = _git_head(target_root)
+            if head:
+                manifest["git_revision"] = head
+            (current / src.name).write_text(
+                json.dumps(manifest, indent=2) + "\n"
+            )
+        else:
+            shutil.copy2(src, current / src.name)
+        copied += 1
+
+    print(f"Initialized .agent-context/current/ with {copied} files at {current}")
+    print("Next: fill the REPLACE markers in each template, then run `agent-context verify`.")
+    return 0
+
+
+def cmd_verify(args: argparse.Namespace) -> int:
+    target_root = pathlib.Path(args.path or ".").resolve()
+    verifier = _tools_dir() / "verify_context_pack.py"
+    if not verifier.is_file():
+        print(f"ERROR: verifier not found at {verifier}", file=sys.stderr)
+        return 1
+    result = subprocess.run(
+        [sys.executable, str(verifier), "--repo-root", str(target_root)],
+        check=False,
+    )
+    return result.returncode
+
+
+def cmd_doctor(args: argparse.Namespace) -> int:
+    root = pathlib.Path(".").resolve()
+    print(f"agent-context doctor — v{__version__}")
+    print(f"  python:          {sys.version.split()[0]} ({sys.executable})")
+    print(f"  git:             {_which('git') or 'NOT FOUND'}")
+    jq_path = _which("jq")
+    if jq_path:
+        print(f"  jq:              {jq_path}")
+    else:
+        print("  jq:              NOT FOUND (optional, used for JSON inspection)")
+    print(f"  cwd:             {root}")
+
+    current = root / ".agent-context" / "current"
+    if current.is_dir():
+        file_count = sum(1 for p in current.iterdir() if p.is_file())
+        print(f"  pack:            present ({file_count} files)")
+        # Best-effort advisory freshness
+        freshness_script = _tools_dir() / "check_freshness.sh"
+        if freshness_script.is_file():
+            try:
+                out = subprocess.run(
+                    ["sh", str(freshness_script), "--base-ref", "HEAD~1"],
+                    cwd=str(root),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                status_line = out.stdout.strip().splitlines()[-1] if out.stdout.strip() else ""
+                print(f"  freshness:       {status_line or 'indeterminate'}")
+            except Exception as exc:  # noqa: BLE001
+                print(f"  freshness:       indeterminate ({exc})")
+    else:
+        print("  pack:            none (run `agent-context init`)")
+    return 0
+
+
+def cmd_freshness(args: argparse.Namespace) -> int:
+    target_root = pathlib.Path(args.path or ".").resolve()
+    script = _tools_dir() / "check_freshness.sh"
+    if not script.is_file():
+        print(f"ERROR: freshness script not found at {script}", file=sys.stderr)
+        return 0  # advisory — never fail
+    cmd = ["sh", str(script), "--base-ref", args.base_ref]
+    result = subprocess.run(cmd, cwd=str(target_root), check=False)
+    # Advisory only — never propagate failure.
+    if result.returncode != 0:
+        print("(freshness check is advisory; exit non-zero is informational)")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Entrypoint
+# ---------------------------------------------------------------------------
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="agent-context",
+        description="Author, verify, and maintain agent-context packs.",
+    )
+    parser.add_argument("--version", action="version", version=f"agent-context {__version__}")
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    p_init = subparsers.add_parser(
+        "init",
+        help="Copy templates into <path>/.agent-context/current/.",
+    )
+    p_init.add_argument("path", nargs="?", default=None)
+    p_init.add_argument("--force", action="store_true",
+                        help="Overwrite an existing .agent-context/current/ directory")
+    p_init.set_defaults(func=cmd_init)
+
+    p_verify = subparsers.add_parser(
+        "verify",
+        help="Run verify_context_pack.py against <path>/.agent-context/current/.",
+    )
+    p_verify.add_argument("path", nargs="?", default=None)
+    p_verify.set_defaults(func=cmd_verify)
+
+    p_doctor = subparsers.add_parser(
+        "doctor",
+        help="Print environment info and pack status.",
+    )
+    p_doctor.set_defaults(func=cmd_doctor)
+
+    p_freshness = subparsers.add_parser(
+        "freshness",
+        help="Advisory freshness check via check_freshness.sh.",
+    )
+    p_freshness.add_argument("path", nargs="?", default=None)
+    p_freshness.add_argument("--base-ref", default="origin/main")
+    p_freshness.set_defaults(func=cmd_freshness)
+
+    return parser
+
+
+def main(argv: list) -> int:
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+    if not getattr(args, "command", None):
+        parser.print_help()
+        return 0
+    return int(args.func(args) or 0)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
