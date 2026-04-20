@@ -78,7 +78,11 @@ def _git_head(cwd: pathlib.Path) -> str:
 
 
 def _utc_now_iso() -> str:
-    return _dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    # Python 3.11+ prefers timezone-aware; fall back for 3.8/3.10.
+    try:
+        return _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    except AttributeError:  # pragma: no cover — ancient Python
+        return _dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 # ---------------------------------------------------------------------------
