@@ -8,8 +8,7 @@
 
 AI coding agents pay a _cold-start tax_ on every new session — re-reading the same repo from zero. `agent-context` gives you a 5-doc, token-efficient briefing that lives in `.agent-context/current/`, plus a `search_scope.json` that tells search-and-verify agents where to look first. One pack, multiple agents, zero orchestrator.
 
-<!-- agent γ will replace this placeholder with docs/demos/init.webp -->
-_Inline demo coming here: `agent-context init` → fill → `verify`._
+![agent-context init demo](docs/demos/init.webp)
 
 ## Quick Start
 
@@ -36,6 +35,8 @@ cd examples/hello-service
 ```
 
 Inside `examples/hello-service/` is a tiny Python service with a fully filled pack under `.agent-context/current/`. Open `00_START_HERE.md` there to see what a completed template looks like.
+
+![agent-context verify pass vs fail](docs/demos/verify.webp)
 
 Prefer a live demo? The companion [context-pack-viz](https://context-pack-viz.vercel.app) renders a real pack in the browser.
 
