@@ -41,6 +41,4 @@
     <text x="870" y="476" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#FDFCF8">expanded proof burden</text>
   </g>
 
-  <rect x="276" y="516" width="648" height="42" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
-  <text class="body" x="600" y="543" text-anchor="middle">Different agent loops need different cues from the same artifacts.</text>
 </svg>

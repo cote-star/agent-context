@@ -12,5 +12,4 @@
   <text x="70" y="224" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Copied helper tools to .agent-context/tools/</text>
   <text x="70" y="264" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Wrote routing blocks for agents</text>
   <text x="70" y="316" fill="#F37021" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Next: fill templates, then verify.</text>
-  <text x="58" y="394" fill="#475569" font-family="Inter, Arial, sans-serif" font-size="18">Single command, repo-local artifacts, no service dependency.</text>
 </svg>
