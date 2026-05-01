@@ -4,15 +4,27 @@
 ![Version](https://img.shields.io/badge/version-0.2.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
-**A navigation contract for AI agents working in large codebases.**
+**Stop your AI agents from re-reading the same repo every session.**
 
-AI coding agents pay a _cold-start tax_ on every new session — re-reading the same repo from zero. `agent-context` gives you a structured, token-efficient briefing that lives in `.agent-context/current/`, plus routing blocks that tell every agent to read the pack first. One pack, multiple agents, zero orchestrator.
+A `.agent-context/` directory that gives any coding agent instant repo understanding — what's risky, what's connected, where to look. One pack, every agent, zero orchestrator.
 
-![agent-context init demo](docs/demos/init.webp)
+> If you use AI agents (Claude, Codex, Cursor, Gemini) on repos with 50+ files, this cuts incorrect answers in half and token usage by 58-74%.
 
-## Evidence
+![Cold-start hero](docs/demos/cold-start-agent-context-hero.webp)
 
-Tested across 3 repo types (ML pipeline/501 files, CLI library/155 files, React frontend/1,982 files), 78+ graded experiment runs:
+```bash
+agent-context init --tier 3 .
+```
+
+**Two taxes, one fix:**
+- **Cold-Start Tax** — every new session re-reads the same files from zero, hits the same dead ends, burns the same tokens on orientation.
+- **Cascade Tax** — one wrong assumption about file relationships ripples into wrong plans, wrong impact analysis, and production-risk answers.
+
+A context pack eliminates both. Agents read 5 ordered docs (~4,500 tokens) instead of scanning the repo.
+
+## The Evidence
+
+Tested across 3 repo types, 78+ graded experiment runs. Not self-assessed — reviewer-graded against ground truth with grep verification.
 
 | Metric | Without pack | With pack | Change |
 |--------|-------------|-----------|--------|
@@ -22,55 +34,76 @@ Tested across 3 repo types (ML pipeline/501 files, CLI library/155 files, React 
 | Dead ends | 2-3 per repo | 0 | **-100%** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
-The same pack made one agent (Claude) narrower — 14 files down to 4 — while making another (Codex) broader — 3 files up to 12. Both got more correct answers. Different agents use the same contract differently.
+### Same Context, Opposite Behavior
 
-Full evidence: [`docs/evidence/`](docs/evidence/) | Interactive dashboard: [context-pack-viz](https://cote-star.github.io/agent-recall/docs/)
+The most interesting finding: the same pack made Claude *narrower* (14 files down to 4) while making Codex *broader* (3 files up to 12). Both got more correct.
 
-## Quick Start
+![Same navigation design, opposite behavior](docs/evidence/figures/asymmetry-contrast-minimal.png)
+
+This is not a Claude tool or a Codex tool. Different agents use the same contract differently — and both benefit.
+
+### The Headline Stories
+
+**"Zero files, 12 seconds"** — Claude answered a complex impact analysis question using pure context. Zero files opened. Correct answer from the completeness contract alone.
+
+**"Both agents miss the same silent failure"** — Claude and Codex both missed `src/__tests__/setup.tsx` (the store reset that prevents flaky tests). Both found it with the pack — because one line in the behavioral invariants says: *"Zustand store schema change → setup.tsx. Silent failure if missed — tests pass individually but fail in suite."*
+
+**"Deprecated pattern prevented"** — Claude bare proposed Apollo Client (being deprecated). Claude with context correctly used React Query — because the negative guidance says: *"Do not assume Apollo GraphQL queries are the current data path."*
+
+Full results: [`docs/evidence/results.md`](docs/evidence/results.md) | Interactive dashboard: [context-pack-viz](https://cote-star.github.io/agent-recall/docs/)
+
+## See It Work
+
+### Init
 
 Three commands, under two minutes:
 
 ```bash
 git clone https://github.com/cote-star/agent-context.git
 cd your-repo
-/path/to/agent-context/bin/agent-context init --tier 3 .
-# ...fill the REPLACE markers in each template...
-/path/to/agent-context/bin/agent-context verify .
+/path/to/agent-context/bin/agent-context init .
 ```
 
-That's it. Every agent session on that repo can now read the pack first and open source files only when needed.
+![agent-context init demo](docs/demos/init.webp)
 
-Or use the skill — open any agent (Claude Code, Cursor, Codex) in your repo and say:
+Templates land in `.agent-context/current/`, routing blocks in `CLAUDE.md` / `AGENTS.md` / `.cursorrules`, helper tools in `.agent-context/tools/`.
 
-> **"Set up agent context for this repo"**
+### Fill + Verify
 
-The agent follows the [`SKILL.md`](SKILL.md) and creates the full pack in ~15 minutes.
-
-## Tiers
-
-Not every repo needs the full pack:
-
-| Tier | Files | Best for | Init command |
-|------|-------|----------|-------------|
-| **1** (minimal) | `20_CODE_MAP.md` + `search_scope.json` | Quick adoption, 50-100 file repos | `agent-context init --tier 1 .` |
-| **2** (standard) | + start, invariants, manifest, acceptance tests | Most repos, 100-500 files | `agent-context init --tier 2 .` |
-| **3** (full) | + all 5 docs + authority layer (routes, contracts, reporting) | Complex repos, 500+ files | `agent-context init .` (default) |
-
-## See It Work
-
-Run the worked example:
+Fill the REPLACE markers in each template (or ask an agent: *"set up agent context for this repo"*), then verify:
 
 ```bash
-cd examples/hello-service
-../../bin/agent-context verify .
-# OK: agent-context pack passed machine-checkable validation (tier 2)
+/path/to/agent-context/bin/agent-context verify .
+# OK: agent-context pack passed machine-checkable validation (tier 3)
 ```
-
-Inside `examples/hello-service/` is a tiny Python service with a fully filled pack. For a real-world example from a 155-file CLI repo, see `examples/agent-chorus-reference/`.
 
 ![agent-context verify pass vs fail](docs/demos/verify.webp)
 
-## The 3-Layer Pack
+### Agent-Driven Creation
+
+Open any agent (Claude Code, Cursor, Codex) in your repo and say:
+
+> **"Set up agent context for this repo"**
+
+The agent follows the [`SKILL.md`](SKILL.md) — inventories subsystems, fills all 11 files, validates, runs acceptance tests with grep verification, and commits. Takes ~15 minutes for a large repo.
+
+![agent-context workflow](docs/demos/demo-agent-context.webp)
+
+After merge, every agent session reads the routing block and follows the pack. No per-developer setup.
+
+## How It Works
+
+### The Three-Track Framework
+
+Packs are one part of a broader design:
+
+![Explorable recall as a three-track system](docs/evidence/figures/three-tracks-importance-minimal.png)
+
+- **Navigation** — the pack. What the agent reads first, before touching code.
+- **Harness** — the agent setup and rails around it (Cursor rules, Claude Code hooks, Codex config).
+- **Engineering** — the codebase shape that makes navigation effective (file structure, naming, test patterns).
+
+### The 3-Layer Pack
 
 ```
 .agent-context/current/
@@ -87,13 +120,36 @@ Inside `examples/hello-service/` is a tiny Python service with a fully filled pa
 └── acceptance_tests.md           ← Author-time quality checks
 ```
 
-- **Content** (5 markdown docs) — architecture, code map, invariants, ops. Deterministic read order `00 → 10 → 20 → 30 → 40`.
-- **Authority** (3 JSON files, tier 3) — task routing, completeness contracts ("what MUST be in the answer"), reporting rules. Claude trusts these as authoritative — result: answers from pure context, zero files opened.
-- **Navigation** (`search_scope.json`) — bounds WHERE search-and-verify agents (Codex, Cursor) look. Does not prescribe when to stop.
+**Content** (5 markdown docs) — architecture, code map, invariants, ops. Deterministic read order `00 → 10 → 20 → 30 → 40`.
+
+**Authority** (3 JSON files, tier 3) — task routing, completeness contracts ("what MUST be in the answer"), reporting rules. Claude trusts these as authoritative — result: answers from pure context, zero files opened.
+
+**Navigation** (`search_scope.json`) — bounds WHERE search-and-verify agents (Codex, Cursor) look. Does not prescribe when to stop.
+
+### Two Agent Architectures
+
+| | Trust-and-follow (Claude, Gemini) | Search-and-verify (Codex, Cursor) |
+|---|---|---|
+| **Reads the pack as** | Authoritative | One signal among many |
+| **Then** | Opens minimal files | Greps the repo to verify |
+| **Benefits from** | Completeness contracts, stop rules | Search scope boundaries |
+| **Does NOT benefit from** | — | Stop rules (ignores them) |
+
+Same pack, different layers serve each architecture.
+
+## Tiers
+
+Not every repo needs the full pack:
+
+| Tier | Files | Best for | Command |
+|------|-------|----------|---------|
+| **1** (minimal) | `20_CODE_MAP.md` + `search_scope.json` | Quick adoption, 50-100 file repos | `init --tier 1 .` |
+| **2** (standard) | + start, invariants, manifest, tests | Most repos, 100-500 files | `init --tier 2 .` |
+| **3** (full) | + all 5 docs + authority layer | Complex repos, 500+ files | `init .` (default) |
 
 ## Cursor Integration
 
-`agent-context init` generates a `.cursorrules` file with the search-and-verify routing block:
+`agent-context init` generates a `.cursorrules` file automatically with the search-and-verify routing:
 
 ```
 1. Read .agent-context/current/routes.json → identify task type
@@ -102,106 +158,62 @@ Inside `examples/hello-service/` is a tiny Python service with a fully filled pa
 4. Do not open repo source files before step 3
 ```
 
-Cursor reads `.cursorrules` automatically. No extra configuration needed.
+Cursor reads `.cursorrules` natively. No extra configuration.
 
-## Three-Track Framework
+## Experiment Results
 
-Packs are one part of a broader frame:
+![Task-level results across 3 repos](docs/evidence/figures/experiment-results.png)
 
-- **Navigation** — the pack. Where the agent looks first.
-- **Harness** — the agent setup and rails around it (Cursor, Claude Code, Codex).
-- **Engineering** — the underlying codebase shape that lets both above work.
+Tested on:
+- **stream-models** — ML pipeline, 501 files, Python
+- **agent-chorus** — CLI library, 155 files, Rust + Node.js
+- **trust-stream-frontend** — React frontend, 1,982 files, TypeScript
 
-Full argument: [explorable-recall research](https://cote-star.github.io/agent-recall/)
+Templates are general-purpose — zero modifications needed across repo types.
 
 ## How It Compares
 
 | | agent-context | MemGPT / Letta | CrewAI / AutoGen |
 |---|:---:|:---:|:---:|
 | Primitive | Static repo-level pack | Long-term LLM memory | Multi-agent orchestration |
-| When to use | Cold-start for coding agents in big repos | Persona + history continuity across chats | Coordinating multiple LLM workers on a task |
-| Runtime dependency | none (stdlib Python, shell) | Python framework + vector store | Python framework + LLM calls |
+| When to use | Cold-start for coding agents in big repos | Persona + history across chats | Coordinating multiple LLM workers |
+| Runtime dependency | none (stdlib Python, shell) | Python + vector store | Python + LLM calls |
 | Local-first | yes | optional | optional |
-| Scope | Navigation contract | Memory | Orchestration |
 
 Different problem, different primitive. They stack.
 
-## What This Repo Ships vs What's in agent-chorus
+## What This Repo Ships vs agent-chorus
 
 | Capability | agent-context (here) | agent-chorus |
 |---|:---:|:---:|
-| 5-doc content templates | yes | yes |
-| Authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) | yes (tier 3) | yes |
-| `search_scope.json` | yes | yes |
-| `verify_context_pack.py` | yes | yes |
-| `check_freshness.sh` | yes | yes |
-| Python CLI (`init / verify / doctor / freshness`) | yes | — |
+| Content + authority + navigation templates | yes | yes |
+| `verify_context_pack.py` + `check_freshness.sh` | yes | yes |
+| Python CLI (init / verify / doctor / freshness) | yes | — |
 | Tier support (1/2/3) | yes | yes |
-| Routing block generation (CLAUDE.md, AGENTS.md, GEMINI.md, .cursorrules) | yes | yes |
-| SKILL.md (agent-driven pack creation) | yes | yes |
+| Routing block generation (CLAUDE.md, AGENTS.md, .cursorrules) | yes | yes |
+| SKILL.md (agent-driven creation) | yes | yes |
 | Cross-agent session reading | **no** | yes |
 | Agent-to-agent messaging | **no** | yes |
 | Chorus binary dependency | **no** | yes |
-| License | MIT | MIT |
 
-If you only want "navigation + verification," stay here. If you want multi-agent visibility, session reads, and the full agent coordination layer, pair with [agent-chorus](https://github.com/cote-star/agent-chorus).
-
-## Recipes
-
-**Create a pack from scratch:**
-
-```bash
-cd ~/code/my-service
-/path/to/agent-context/bin/agent-context init .
-$EDITOR .agent-context/current/00_START_HERE.md   # fill the REPLACE markers
-/path/to/agent-context/bin/agent-context verify .
-```
-
-**Quick tier 1 for small repos:**
-
-```bash
-/path/to/agent-context/bin/agent-context init --tier 1 .
-```
-
-**Wire verification into CI** — see `docs/ci-adaptation.md`. Short version:
-
-```yaml
-- name: Verify agent-context pack
-  run: python3 .agent-context/tools/verify_context_pack.py
-```
-
-**Install the advisory pre-push hook:**
-
-```bash
-cp tools/pre-push-hook.sh .git/hooks/pre-push
-chmod +x .git/hooks/pre-push
-```
-
-## Roadmap
-
-- **v0.3.0** — Hardening (binary/encoding safety, concurrency, schema versioning, trust-boundary checks).
-- Broader agent family testing (Gemini, Cursor) on route-trusting / route-verifying taxonomy.
-- Pip packaging (`pip install agent-context`).
-- Windows support.
-- CI templates for CircleCI, Jenkins, GitLab.
-
-See [GitHub issues](https://github.com/cote-star/agent-context/issues) for current scope.
+If you only want the navigation contract, stay here. If you want multi-agent visibility and session coordination, pair with [agent-chorus](https://github.com/cote-star/agent-chorus).
 
 ## Go Deeper
 
 | If you need... | Go here |
 |---|---|
-| The SKILL.md (agent-driven pack creation) | [`SKILL.md`](SKILL.md) |
-| Getting started guide | [`docs/getting-started.md`](docs/getting-started.md) |
-| The three-layer model in detail | [`docs/architecture.md`](docs/architecture.md) |
-| The 16 design principles behind pack structure | [`docs/design-principles.md`](docs/design-principles.md) |
+| Agent-driven pack creation skill | [`SKILL.md`](SKILL.md) |
+| Step-by-step quickstart | [`docs/getting-started.md`](docs/getting-started.md) |
+| Three-layer architecture details | [`docs/architecture.md`](docs/architecture.md) |
+| 16 design principles | [`docs/design-principles.md`](docs/design-principles.md) |
 | CI adaptation guidance | [`docs/ci-adaptation.md`](docs/ci-adaptation.md) |
-| Evidence and experiment results | [`docs/evidence/`](docs/evidence/) |
-| The three-way sync policy | [`docs/SYNC.md`](docs/SYNC.md) |
+| Full evidence and experiment data | [`docs/evidence/`](docs/evidence/) |
 | Research narrative + interactive dashboard | [explorable-recall](https://cote-star.github.io/agent-recall/) |
-| Companion tooling for multi-agent work | [agent-chorus](https://github.com/cote-star/agent-chorus) |
+| Multi-agent coordination tooling | [agent-chorus](https://github.com/cote-star/agent-chorus) |
 | Research repo (experiments + graded runs) | [agent-recall](https://github.com/cote-star/agent-recall) |
 
 ---
 
-Found a bug or have a feature idea? [Open an issue](https://github.com/cote-star/agent-context/issues). Ready to contribute? See [`CONTRIBUTING.md`](CONTRIBUTING.md) — the default path for template and script changes is a PR against the canonical source first; see [`docs/SYNC.md`](docs/SYNC.md).
+Every agent session starts cold. A context pack makes it warm.
+
+Found a bug or have a feature idea? [Open an issue](https://github.com/cote-star/agent-context/issues).
