@@ -4,9 +4,9 @@
 ![Version](https://img.shields.io/badge/version-0.2.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
-**A repo-native agent-context that helps Claude, Codex, Cursor, and Gemini stop rediscovering the same codebase every session.**
+**Checked-in repo evidence for coding agents.**
 
-Commit one `.agent-context/` directory to your repo. Every agent gets the same map of what exists, what is risky, which files belong together, and where to verify before it edits.
+Commit one `.agent-context/` directory to your repo. Claude, Codex, Cursor, Gemini, and human reviewers get the same content map, authority contracts, search boundaries, and verification hooks before anyone edits code.
 
 ![agent-context cold start flow](docs/demos/cold-start-agent-context-hero.svg)
 
@@ -14,30 +14,31 @@ Commit one `.agent-context/` directory to your repo. Every agent gets the same m
 # Install once
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 
-# Add a full agent-context to any repo
+# Add the full agent-context artifact set to any repo
 cd /path/to/your-repo
 ~/agent-context/bin/agent-context init --tier 3 .
 ```
 
 ## Why This Exists
 
-Coding agents still start cold. On a large repo they spend the first part of every session re-reading directory trees, guessing boundaries, and sometimes missing the one setup file or invariant that matters.
+Coding agents still start cold. On a large repo they spend the first part of every session re-reading directory trees, guessing ownership boundaries, and missing the one setup file or invariant that should have shaped the answer.
 
-`agent-context` turns that repeated exploration into a checked-in contract:
+`agent-context` turns that repeated exploration into a local, reviewable evidence layer:
 
-- **Content** for humans and all agents: system overview, code map, invariants, operations notes.
-- **Authority** for trust-and-follow agents: task routes, completeness contracts, reporting rules.
-- **Navigation** for search-and-verify agents: scoped directories and verification shortcuts.
+- **Content**: system overview, code map, behavioral invariants, and operations notes.
+- **Authority**: task routes, completeness contracts, and reporting rules for agents that follow explicit instructions.
+- **Navigation**: scoped directories and verification shortcuts for agents that search before trusting.
+- **Quality**: manifests, acceptance tests, copied helper tools, and CI-friendly checks.
 
-The result is not a memory database, orchestrator, or hosted service. It is a small local artifact set that travels with the repo.
+It is not a memory database, orchestrator, crawler, or hosted service. It is a small artifact set that lives beside the code it describes.
 
 ![agent-context loop](docs/visuals/agent-context-loop.svg)
 
 ## Proof
 
-Across 78+ reviewer-graded experiment runs on three repo types, structured packs improved answer correctness and reduced wasted exploration.
+Across 78+ reviewer-graded experiment runs on three repo types, agent-context artifacts improved answer correctness and reduced wasted exploration.
 
-| Metric | Without pack | With pack | Change |
+| Metric | Bare session | With agent-context | Change |
 |---|---:|---:|---:|
 | Correct answers | 50% | 88% | **+76%** |
 | Files opened by Claude | 6-10 | 1-3 | **~70% fewer** |
@@ -45,7 +46,7 @@ Across 78+ reviewer-graded experiment runs on three repo types, structured packs
 | Dead ends | 2-3 per repo | 0 | **eliminated** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
-Evidence: [full results](docs/evidence/results.md), [metrics summary](docs/evidence/metrics.md), [interactive dashboard](https://cote-star.github.io/agent-recall/docs/).
+Evidence: [full results](docs/evidence/results.md), [metrics summary](docs/evidence/metrics.md), [evidence dashboard](https://cote-star.github.io/agent-recall/docs/).
 
 ![Agent-context proof summary](docs/visuals/proof-results.svg)
 
@@ -61,13 +62,13 @@ Evidence: [full results](docs/evidence/results.md), [metrics summary](docs/evide
 
 The command creates `.agent-context/current/`, copies helper tools into `.agent-context/tools/`, and writes managed routing blocks to `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `.cursorrules`.
 
-### 2. Fill agent-context
+### 2. Fill the Artifacts
 
 Fill the `REPLACE` markers manually or ask an agent:
 
 > Set up agent context for this repo.
 
-The included [SKILL.md](SKILL.md) gives agents a concrete creation workflow: inventory subsystems, fill all templates, add acceptance tests, verify with grep, and run the machine checks.
+The included [SKILL.md](SKILL.md) gives agents a concrete creation workflow: inventory subsystems, fill all templates, add acceptance tests, verify answers against grep, and run the machine checks.
 
 ![agent-context workflow](docs/demos/demo-agent-context.svg)
 
@@ -78,6 +79,13 @@ The included [SKILL.md](SKILL.md) gives agents a concrete creation workflow: inv
 # OK: agent-context passed machine-checkable validation (tier 3)
 ```
 
+You can also inspect local setup and freshness:
+
+```bash
+~/agent-context/bin/agent-context doctor
+~/agent-context/bin/agent-context freshness . --base-ref origin/main
+```
+
 ![agent-context verify pass](docs/demos/verify.svg)
 
 ## What Gets Created
@@ -86,23 +94,27 @@ Tier 3, the default, creates the full 11-file artifact set:
 
 ```text
 .agent-context/current/
-├── 00_START_HERE.md
-├── 10_SYSTEM_OVERVIEW.md
-├── 20_CODE_MAP.md
-├── 30_BEHAVIORAL_INVARIANTS.md
-├── 40_OPERATIONS_AND_RELEASE.md
-├── routes.json
-├── completeness_contract.json
-├── reporting_rules.json
-├── search_scope.json
-├── manifest.json
-└── acceptance_tests.md
+|-- 00_START_HERE.md
+|-- 10_SYSTEM_OVERVIEW.md
+|-- 20_CODE_MAP.md
+|-- 30_BEHAVIORAL_INVARIANTS.md
+|-- 40_OPERATIONS_AND_RELEASE.md
+|-- routes.json
+|-- completeness_contract.json
+|-- reporting_rules.json
+|-- search_scope.json
+|-- manifest.json
+`-- acceptance_tests.md
+
+.agent-context/tools/
+|-- verify_agent_context.py
+`-- check_freshness.sh
 ```
 
 | Layer | Files | Main job |
 |---|---|---|
 | Content | `00_*` through `40_*` markdown | Human-readable map, risks, invariants, validation |
-| Authority | `routes.json`, `completeness_contract.json`, `reporting_rules.json` | Tell trust-and-follow agents what must be considered |
+| Authority | `routes.json`, `completeness_contract.json`, `reporting_rules.json` | State what must be considered before an answer is complete |
 | Navigation | `search_scope.json` | Bound search-and-verify agents to relevant directories |
 | Quality | `manifest.json`, `acceptance_tests.md`, copied tools | Make the artifacts auditable and CI-friendly |
 
@@ -114,21 +126,23 @@ Tier 3, the default, creates the full 11-file artifact set:
 | **2** standard | 6 | Most teams starting out | `init --tier 2 .` |
 | **3** full | 11 | Complex repos and production workflows | `init --tier 3 .` |
 
-## The Design Bet
+## Architecture
 
-Agents do not all navigate the same way.
+The core design is a three-track architecture. Navigation tells an agent what to load and when to stop. The operating loop accounts for different agent behavior. Engineering makes the work inspectable, durable, and CI-checkable.
 
-![Same navigation design, opposite behavior](docs/evidence/figures/asymmetry-contrast-minimal.png)
+![Explorable recall as a three-track system](docs/evidence/figures/three-tracks-importance-minimal.png)
 
-Claude and Gemini tend to trust explicit instructions. Codex and Cursor tend to search and verify. A useful repo context system has to serve both:
+Claude and Gemini tend to trust explicit instructions. Codex and Cursor tend to search and verify. `agent-context` is designed for both modes:
 
-| Agent family | Reads the pack as | Best layer |
+| Agent family | Uses agent-context as | Best layer |
 |---|---|---|
 | Trust-and-follow | an authority contract | `routes.json` + completeness contracts |
 | Search-and-verify | a scoped investigation map | `search_scope.json` + code map |
 | Humans | operational documentation | markdown content layer |
 
-The pack does not try to make agents stop thinking. It gives them better starting evidence and clearer boundaries.
+![Same navigation design, opposite behavior](docs/evidence/figures/asymmetry-contrast-minimal.png)
+
+The goal is not to make agents stop thinking. The goal is to give them better starting evidence, clearer boundaries, and a machine-checkable way to catch stale repo guidance.
 
 ## What This Is Not
 
@@ -145,19 +159,19 @@ If you want multi-agent session visibility and messaging, pair it with [agent-ch
 
 | | agent-context | MemGPT / Letta | CrewAI / AutoGen | agent-chorus |
 |---|---|---|---|---|
-| Primitive | Static repo agent-context | Long-term memory | Multi-agent orchestration | Cross-agent session visibility |
-| Best for | Cold-start coding work | Persona/history recall | Worker coordination | Reading and messaging agents |
+| Primitive | Checked-in repo evidence | Long-term memory | Multi-agent orchestration | Cross-agent session visibility |
+| Best for | Cold-start coding work and PR-scoped repo guidance | Persona/history recall | Worker coordination | Reading and messaging agents |
 | Runtime dependency | none | service/vector store optional | Python + LLM calls | chorus CLI |
 | Lives in repo | yes | no | no | no |
 
 ## Roadmap
 
-The next work is about making packs easier to author, keep fresh, and compare across repos:
+The next work is about making artifacts easier to author, keep fresh, and measure across repos:
 
 - **v0.3 authoring UX**: better `doctor` output, clearer template diagnostics, and guided fixes for common verifier failures.
 - **v0.4 freshness gates**: stronger CI examples for monorepos, generated files, and multiple source roots.
-- **v0.5 evidence loop**: lightweight before/after measurement scripts so teams can prove whether their pack is helping.
-- **Reference packs**: more real examples for backend services, frontend apps, CLIs, data pipelines, and monorepos.
+- **v0.5 evidence loop**: lightweight before/after measurement scripts so teams can prove whether agent-context is helping.
+- **Reference artifact sets**: more real examples for backend services, frontend apps, CLIs, data pipelines, and monorepos.
 
 Details: [docs/roadmap.md](docs/roadmap.md).
 
@@ -166,7 +180,7 @@ Details: [docs/roadmap.md](docs/roadmap.md).
 | Need | Start here |
 |---|---|
 | First install | [Getting started](docs/getting-started.md) |
-| Architecture | [Three-layer architecture](docs/architecture.md) |
+| Architecture | [Architecture guide](docs/architecture.md) |
 | Design rationale | [Design principles](docs/design-principles.md) |
 | CI setup | [CI adaptation](docs/ci-adaptation.md) |
 | Evidence | [Experiment results](docs/evidence/results.md) |
@@ -177,4 +191,4 @@ Details: [docs/roadmap.md](docs/roadmap.md).
 
 This repo ships the public `agent-context` CLI, templates, verifier, examples, and evidence docs. It does not ship `chorus` session-reading commands; that belongs to [agent-chorus](https://github.com/cote-star/agent-chorus).
 
-Found a bug or a missing pack pattern? [Open an issue](https://github.com/cote-star/agent-context/issues).
+Found a bug or a missing repo pattern? [Open an issue](https://github.com/cote-star/agent-context/issues).
