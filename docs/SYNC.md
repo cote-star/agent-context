@@ -10,8 +10,8 @@ The canonical source is the internal team skill repository:
 
 Two derived tracks consume it:
 
-- **`agent-chorus/skills/agent-context/`** — the chorus-bundled skill. Includes the authority layer because chorus has the trust-and-follow tooling to make it useful.
-- **`agent-context/` (this repo)** — the public distillation. No authority layer, no chorus-specific refs. Friendly Python CLI (`bin/agent-context`) replaces chorus CLI invocations.
+- **`agent-chorus/skills/agent-context/`** — the chorus-bundled skill. Includes chorus-specific invocation paths and session-coordination assumptions.
+- **`agent-context/` (this repo)** — the public distribution. Includes the tier 3 authority layer, but no chorus-specific refs. Friendly Python CLI (`bin/agent-context`) replaces chorus CLI invocations.
 
 ```
                     team_skills (canonical)
@@ -31,7 +31,7 @@ Two derived tracks consume it:
 | Manifest (informational) | yes | yes | yes |
 | Design principles doc | yes | yes | yes |
 | Architecture doc | yes | yes | yes |
-| Authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) | yes | yes | **no** (intentionally not shipped) |
+| Authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) | yes | yes | yes |
 | Python verify/freshness scripts | yes | yes | yes |
 | Chorus CLI invocation in getting-started | yes | yes | **no** (replaced with `bin/agent-context`) |
 | Internal team refs (Edelman-DxI, stream-models, etc.) | yes | no | no |
@@ -67,9 +67,9 @@ The script is **idempotent** — running it twice yields the same state as once.
 
 Three files are public-variant-by-design and are maintained in this repo. The sync script logs them as "HOLD" and leaves them alone:
 
-- `tools/verify_context_pack.py` — drops the authority-layer checks (`validate_contracts`, `validate_routing_files`) and the authority entries in `REQUIRED_PACK_FILES`. The canonical verifier in `team_skills` enforces the authority layer; this variant does not, since the public pack does not ship it.
-- `templates/manifest.json` — drops the `authority` files group and renames `skill_version` to `agent_context_version`.
-- `docs/architecture.md` — keeps the authority-layer discussion but adds a scope note clarifying that it is not shipped in the public repo.
+- `tools/verify_context_pack.py` — keeps public CLI behavior and stdlib-only validation while avoiding internal-only assumptions from the canonical environment.
+- `templates/manifest.json` — uses `agent_context_version` rather than the internal skill-version field.
+- `docs/architecture.md` — describes the public CLI and tier model rather than chorus-specific runtime behavior.
 
 If the canonical versions of those files change in a way that affects the public-variant logic, the maintainer merges the changes by hand.
 

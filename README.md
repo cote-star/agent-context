@@ -4,216 +4,177 @@
 ![Version](https://img.shields.io/badge/version-0.2.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
-**Stop your AI agents from re-reading the same repo every session.**
+**A repo-native context pack that helps Claude, Codex, Cursor, and Gemini stop rediscovering the same codebase every session.**
 
-A `.agent-context/` directory that gives any coding agent instant repo understanding — what's risky, what's connected, where to look. One pack, every agent, zero orchestrator.
-
-> If you use AI agents (Claude, Codex, Cursor, Gemini) on repos with 50+ files, this cuts incorrect answers in half and token usage by 58-74%.
+Commit one `.agent-context/` directory to your repo. Every agent gets the same map of what exists, what is risky, which files belong together, and where to verify before it edits.
 
 ![Cold-start hero](docs/demos/cold-start-agent-context-hero.webp)
 
 ```bash
-agent-context init --tier 3 .
+# Install once
+git clone https://github.com/cote-star/agent-context.git ~/agent-context
+
+# Add a full context pack to any repo
+cd /path/to/your-repo
+~/agent-context/bin/agent-context init --tier 3 .
 ```
 
-**Two taxes, one fix:**
-- **Cold-Start Tax** — every new session re-reads the same files from zero, hits the same dead ends, burns the same tokens on orientation.
-- **Cascade Tax** — one wrong assumption about file relationships ripples into wrong plans, wrong impact analysis, and production-risk answers.
+## Why This Exists
 
-An agent-context pack eliminates both. Agents read 5 ordered docs (~4,500 tokens) instead of scanning the repo.
+Coding agents still start cold. On a large repo they spend the first part of every session re-reading directory trees, guessing boundaries, and sometimes missing the one setup file or invariant that matters.
 
-## The Evidence
+`agent-context` turns that repeated exploration into a checked-in contract:
 
-Tested across 3 repo types, 78+ graded experiment runs. Not self-assessed — reviewer-graded against ground truth with grep verification.
+- **Content** for humans and all agents: system overview, code map, invariants, operations notes.
+- **Authority** for trust-and-follow agents: task routes, completeness contracts, reporting rules.
+- **Navigation** for search-and-verify agents: scoped directories and verification shortcuts.
+
+The result is not a memory database, orchestrator, or hosted service. It is a small local pack that travels with the repo.
+
+![Context pack loop](docs/visuals/context-pack-loop.svg)
+
+## Proof
+
+Across 78+ reviewer-graded experiment runs on three repo types, structured packs improved answer correctness and reduced wasted exploration.
 
 | Metric | Without pack | With pack | Change |
-|--------|-------------|-----------|--------|
+|---|---:|---:|---:|
 | Correct answers | 50% | 88% | **+76%** |
-| Files opened (Claude) | 6-10 | 1-3 | **-70%** |
-| Tokens used (Claude) | 40-53K | 4-22K | **-58 to -74%** |
-| Dead ends | 2-3 per repo | 0 | **-100%** |
+| Files opened by Claude | 6-10 | 1-3 | **~70% fewer** |
+| Tokens used by Claude | 40-53K | 4-22K | **58-74% fewer** |
+| Dead ends | 2-3 per repo | 0 | **eliminated** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
-### Same Context, Opposite Behavior
+Evidence: [full results](docs/evidence/results.md), [metrics summary](docs/evidence/metrics.md), [interactive dashboard](https://cote-star.github.io/agent-recall/docs/).
 
-The most interesting finding: the same pack made Claude *narrower* (14 files down to 4) while making Codex *broader* (3 files up to 12). Both got more correct.
-
-![Same navigation design, opposite behavior](docs/evidence/figures/asymmetry-contrast-minimal.png)
-
-This is not a Claude tool or a Codex tool. Different agents use the same contract differently — and both benefit.
-
-### The Headline Stories
-
-**"Zero files, 12 seconds"** — Claude answered a complex impact analysis question using pure context. Zero files opened. Correct answer from the completeness contract alone.
-
-**"Both agents miss the same silent failure"** — Claude and Codex both missed `src/__tests__/setup.tsx` (the store reset that prevents flaky tests). Both found it with the pack — because one line in the behavioral invariants says: *"Zustand store schema change → setup.tsx. Silent failure if missed — tests pass individually but fail in suite."*
-
-**"Deprecated pattern prevented"** — Claude bare proposed Apollo Client (being deprecated). Claude with context correctly used React Query — because the negative guidance says: *"Do not assume Apollo GraphQL queries are the current data path."*
-
-Full results: [`docs/evidence/results.md`](docs/evidence/results.md) | Interactive dashboard: [agent-context-viz](https://cote-star.github.io/agent-recall/docs/)
+![Task-level results across 3 repos](docs/evidence/figures/experiment-results.png)
 
 ## See It Work
 
-### Init
-
-Three commands, under two minutes:
+### 1. Initialize
 
 ```bash
-git clone https://github.com/cote-star/agent-context.git
-cd your-repo
-/path/to/agent-context/bin/agent-context init .
+~/agent-context/bin/agent-context init --tier 3 .
 ```
 
 ![agent-context init demo](docs/demos/init.webp)
 
-Templates land in `.agent-context/current/`, routing blocks in `CLAUDE.md` / `AGENTS.md` / `.cursorrules`, helper tools in `.agent-context/tools/`.
+The command creates `.agent-context/current/`, copies helper tools into `.agent-context/tools/`, and writes managed routing blocks to `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `.cursorrules`.
 
-### Fill + Verify
+### 2. Fill the Pack
 
-Fill the REPLACE markers in each template (or ask an agent: *"set up agent context for this repo"*), then verify:
+Fill the `REPLACE` markers manually or ask an agent:
+
+> Set up agent context for this repo.
+
+The included [SKILL.md](SKILL.md) gives agents a concrete creation workflow: inventory subsystems, fill all templates, add acceptance tests, verify with grep, and run the machine checks.
+
+![agent-context workflow](docs/demos/demo-agent-context.webp)
+
+### 3. Verify
 
 ```bash
-/path/to/agent-context/bin/agent-context verify .
+~/agent-context/bin/agent-context verify .
 # OK: agent-context pack passed machine-checkable validation (tier 3)
 ```
 
 ![agent-context verify pass vs fail](docs/demos/verify.webp)
 
-### Agent-Driven Creation
+## What Gets Created
 
-Open any agent (Claude Code, Cursor, Codex) in your repo and say:
+Tier 3, the default, creates the full 11-file pack:
 
-> **"Set up agent context for this repo"**
-
-The agent follows the [`SKILL.md`](SKILL.md) — inventories subsystems, fills all 11 files, validates, runs acceptance tests with grep verification, and commits. Takes ~15 minutes for a large repo.
-
-![agent-context workflow](docs/demos/demo-agent-context.webp)
-
-After merge, every agent session reads the routing block and follows the pack. No per-developer setup.
-
-## How It Works
-
-### The Three-Track Framework
-
-Packs are one part of a broader design:
-
-![Explorable recall as a three-track system](docs/evidence/figures/three-tracks-importance-minimal.png)
-
-- **Navigation** — the pack. What the agent reads first, before touching code.
-- **Harness** — the agent setup and rails around it (Cursor rules, Claude Code hooks, Codex config).
-- **Engineering** — the codebase shape that makes navigation effective (file structure, naming, test patterns).
-
-### The 3-Layer Pack
-
-```
+```text
 .agent-context/current/
-├── 00_START_HERE.md             ─┐
-├── 10_SYSTEM_OVERVIEW.md         │  Content layer (markdown)
-├── 20_CODE_MAP.md                │  Read by humans + all agents
-├── 30_BEHAVIORAL_INVARIANTS.md   │
-├── 40_OPERATIONS_AND_RELEASE.md ─┘
-├── routes.json                   ─┐
-├── completeness_contract.json     │  Authority layer (JSON, tier 3)
-├── reporting_rules.json          ─┘  Trust-and-follow agents (Claude)
-├── search_scope.json             ← Navigation layer
-├── manifest.json                 ← Metadata
-└── acceptance_tests.md           ← Author-time quality checks
+├── 00_START_HERE.md
+├── 10_SYSTEM_OVERVIEW.md
+├── 20_CODE_MAP.md
+├── 30_BEHAVIORAL_INVARIANTS.md
+├── 40_OPERATIONS_AND_RELEASE.md
+├── routes.json
+├── completeness_contract.json
+├── reporting_rules.json
+├── search_scope.json
+├── manifest.json
+└── acceptance_tests.md
 ```
 
-**Content** (5 markdown docs) — architecture, code map, invariants, ops. Deterministic read order `00 → 10 → 20 → 30 → 40`.
-
-**Authority** (3 JSON files, tier 3) — task routing, completeness contracts ("what MUST be in the answer"), reporting rules. Claude trusts these as authoritative — result: answers from pure context, zero files opened.
-
-**Navigation** (`search_scope.json`) — bounds WHERE search-and-verify agents (Codex, Cursor) look. Does not prescribe when to stop.
-
-### Two Agent Architectures
-
-| | Trust-and-follow (Claude, Gemini) | Search-and-verify (Codex, Cursor) |
+| Layer | Files | Main job |
 |---|---|---|
-| **Reads the pack as** | Authoritative | One signal among many |
-| **Then** | Opens minimal files | Greps the repo to verify |
-| **Benefits from** | Completeness contracts, stop rules | Search scope boundaries |
-| **Does NOT benefit from** | — | Stop rules (ignores them) |
-
-Same pack, different layers serve each architecture.
+| Content | `00_*` through `40_*` markdown | Human-readable map, risks, invariants, validation |
+| Authority | `routes.json`, `completeness_contract.json`, `reporting_rules.json` | Tell trust-and-follow agents what must be considered |
+| Navigation | `search_scope.json` | Bound search-and-verify agents to relevant directories |
+| Quality | `manifest.json`, `acceptance_tests.md`, copied tools | Make the pack auditable and CI-friendly |
 
 ## Tiers
 
-Not every repo needs the full pack:
-
 | Tier | Files | Best for | Command |
-|------|-------|----------|---------|
-| **1** (minimal) | `20_CODE_MAP.md` + `search_scope.json` | Quick adoption, 50-100 file repos | `init --tier 1 .` |
-| **2** (standard) | + start, invariants, manifest, tests | Most repos, 100-500 files | `init --tier 2 .` |
-| **3** (full) | + all 5 docs + authority layer | Complex repos, 500+ files | `init .` (default) |
+|---|---:|---|---|
+| **1** minimal | 2 | Quick adoption, smaller repos | `init --tier 1 .` |
+| **2** standard | 6 | Most teams starting out | `init --tier 2 .` |
+| **3** full | 11 | Complex repos and production workflows | `init --tier 3 .` |
 
-## Cursor Integration
+## The Design Bet
 
-`agent-context init` generates a `.cursorrules` file automatically with the search-and-verify routing:
+Agents do not all navigate the same way.
 
-```
-1. Read .agent-context/current/routes.json → identify task type
-2. Load contracts from completeness_contract.json + search_scope.json
-3. Search ONLY within scoped directories defined in search_scope.json
-4. Do not open repo source files before step 3
-```
+![Same navigation design, opposite behavior](docs/evidence/figures/asymmetry-contrast-minimal.png)
 
-Cursor reads `.cursorrules` natively. No extra configuration.
+Claude and Gemini tend to trust explicit instructions. Codex and Cursor tend to search and verify. A useful repo context system has to serve both:
 
-## Experiment Results
+| Agent family | Reads the pack as | Best layer |
+|---|---|---|
+| Trust-and-follow | an authority contract | `routes.json` + completeness contracts |
+| Search-and-verify | a scoped investigation map | `search_scope.json` + code map |
+| Humans | operational documentation | markdown content layer |
 
-![Task-level results across 3 repos](docs/evidence/figures/experiment-results.png)
+The pack does not try to make agents stop thinking. It gives them better starting evidence and clearer boundaries.
 
-Tested on:
-- **stream-models** — ML pipeline, 501 files, Python
-- **agent-chorus** — CLI library, 155 files, Rust + Node.js
-- **trust-stream-frontend** — React frontend, 1,982 files, TypeScript
+## What This Is Not
 
-Templates are general-purpose — zero modifications needed across repo types.
+`agent-context` is intentionally narrow:
 
-## How It Compares
+- It does **not** store chat history or personal memory.
+- It does **not** coordinate multiple agents.
+- It does **not** require a server, vector database, or API key.
+- It does **not** replace tests, CI, or human review.
 
-| | agent-context | MemGPT / Letta | CrewAI / AutoGen |
-|---|:---:|:---:|:---:|
-| Primitive | Static repo-level pack | Long-term LLM memory | Multi-agent orchestration |
-| When to use | Cold-start for coding agents in big repos | Persona + history across chats | Coordinating multiple LLM workers |
-| Runtime dependency | none (stdlib Python, shell) | Python + vector store | Python + LLM calls |
-| Local-first | yes | optional | optional |
+If you want multi-agent session visibility and messaging, pair it with [agent-chorus](https://github.com/cote-star/agent-chorus).
 
-Different problem, different primitive. They stack.
+## Compared With Nearby Tools
 
-## What This Repo Ships vs agent-chorus
+| | agent-context | MemGPT / Letta | CrewAI / AutoGen | agent-chorus |
+|---|---|---|---|---|
+| Primitive | Static repo context pack | Long-term memory | Multi-agent orchestration | Cross-agent session visibility |
+| Best for | Cold-start coding work | Persona/history recall | Worker coordination | Reading and messaging agents |
+| Runtime dependency | none | service/vector store optional | Python + LLM calls | chorus CLI |
+| Lives in repo | yes | no | no | no |
 
-| Capability | agent-context (here) | agent-chorus |
-|---|:---:|:---:|
-| Content + authority + navigation templates | yes | yes |
-| `verify_context_pack.py` + `check_freshness.sh` | yes | yes |
-| Python CLI (init / verify / doctor / freshness) | yes | — |
-| Tier support (1/2/3) | yes | yes |
-| Routing block generation (CLAUDE.md, AGENTS.md, .cursorrules) | yes | yes |
-| SKILL.md (agent-driven creation) | yes | yes |
-| Cross-agent session reading | **no** | yes |
-| Agent-to-agent messaging | **no** | yes |
-| Chorus binary dependency | **no** | yes |
+## Roadmap
 
-If you only want the navigation contract, stay here. If you want multi-agent visibility and session coordination, pair with [agent-chorus](https://github.com/cote-star/agent-chorus).
+The next work is about making packs easier to author, keep fresh, and compare across repos:
 
-## Go Deeper
+- **v0.3 authoring UX**: better `doctor` output, clearer template diagnostics, and guided fixes for common verifier failures.
+- **v0.4 freshness gates**: stronger CI examples for monorepos, generated files, and multiple source roots.
+- **v0.5 evidence loop**: lightweight before/after measurement scripts so teams can prove whether their pack is helping.
+- **Reference packs**: more real examples for backend services, frontend apps, CLIs, data pipelines, and monorepos.
 
-| If you need... | Go here |
+Details: [docs/roadmap.md](docs/roadmap.md).
+
+## Docs
+
+| Need | Start here |
 |---|---|
-| Agent-driven pack creation skill | [`SKILL.md`](SKILL.md) |
-| Step-by-step quickstart | [`docs/getting-started.md`](docs/getting-started.md) |
-| Three-layer architecture details | [`docs/architecture.md`](docs/architecture.md) |
-| 16 design principles | [`docs/design-principles.md`](docs/design-principles.md) |
-| CI adaptation guidance | [`docs/ci-adaptation.md`](docs/ci-adaptation.md) |
-| Full evidence and experiment data | [`docs/evidence/`](docs/evidence/) |
-| Research narrative + interactive dashboard | [explorable-recall](https://cote-star.github.io/agent-recall/) |
-| Multi-agent coordination tooling | [agent-chorus](https://github.com/cote-star/agent-chorus) |
-| Research repo (experiments + graded runs) | [agent-recall](https://github.com/cote-star/agent-recall) |
+| First install | [Getting started](docs/getting-started.md) |
+| Architecture | [Three-layer architecture](docs/architecture.md) |
+| Design rationale | [Design principles](docs/design-principles.md) |
+| CI setup | [CI adaptation](docs/ci-adaptation.md) |
+| Evidence | [Experiment results](docs/evidence/results.md) |
+| Agent-driven creation | [SKILL.md](SKILL.md) |
+| Release history | [Release notes](RELEASE_NOTES.md) |
 
----
+## Repository Boundary
 
-Every agent session starts cold. Agent-context makes it warm.
+This repo ships the public `agent-context` CLI, templates, verifier, examples, and evidence docs. It does not ship `chorus` session-reading commands; that belongs to [agent-chorus](https://github.com/cote-star/agent-chorus).
 
-Found a bug or have a feature idea? [Open an issue](https://github.com/cote-star/agent-context/issues).
+Found a bug or a missing pack pattern? [Open an issue](https://github.com/cote-star/agent-context/issues).
