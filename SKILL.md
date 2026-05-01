@@ -96,7 +96,7 @@ In practice, most teams have a mix:
 
 - "set up agent context for this repo"
 - "set up agent context"
-- "create a context pack for this repo"
+- "create agent-context for this repo"
 - "update the agent context"
 - "refresh the agent context"
 
@@ -307,7 +307,7 @@ Run a structured acceptance test against the pack. This is not a self-assessment
 
 ### Step 8 — Adapt to existing repo automation
 
-Before adding any new workflow file, inspect the repo's existing automation and adapt the context-pack checks into it.
+Before adding any new workflow file, inspect the repo's existing automation and adapt the agent-context checks into it.
 
 1. **Inspect existing workflows first**:
    - List `.github/workflows/*.yml`
@@ -316,7 +316,7 @@ Before adding any new workflow file, inspect the repo's existing automation and 
 
 2. **Reuse the repo's runtime setup**:
    - If the repo already installs Python/Node/uv/pnpm/etc. in CI, reuse that setup
-   - Add the context-pack verification step after checkout and dependency/runtime setup
+   - Add the agent-context verification step after checkout and dependency/runtime setup
    - Do NOT introduce a different runtime path just for agent-context if the repo already has one
 
 3. **Infer `CONTEXT_RELEVANT_PATHS` from the repo's real source roots**:

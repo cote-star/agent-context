@@ -1,8 +1,8 @@
-# Agent Context Pack — Key Metrics
+# Agent-Context — Key Metrics
 
 A standalone summary of the experiment results. For the full 78+ graded result
 breakdown, see [results.md](./results.md). For the interactive visualization,
-visit the [context-pack dashboard](https://cote-star.github.io/agent-recall/docs/).
+visit the [agent-context dashboard](https://cote-star.github.io/agent-recall/docs/).
 
 ---
 

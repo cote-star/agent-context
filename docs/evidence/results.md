@@ -1,12 +1,12 @@
-# Agent Context Pack — Experiment Results
+# Agent-Context — Experiment Results
 
 ## TL;DR
 
-Structured context packs make AI agents **dramatically better** at navigating large codebases. Across 3 repo types and 6 experiment runs:
+Agent-context makes AI agents **dramatically better** at navigating large codebases. Across 3 repo types and 6 experiment runs:
 
 - **Answer quality**: 50% to 88% correct (bare to structured)
 - **Efficiency**: 58-74% fewer tokens, zero dead ends
-- **Risk elimination**: context packs prevented every "would break production" answer
+- **Risk elimination**: agent-context prevented every "would break production" answer
 - **Template is general-purpose**: ML pipeline, CLI library, React frontend -- zero modifications
 
 ---
@@ -71,7 +71,7 @@ Claude structured: **zero dead ends across all 3 repos.**
 
 \* Structured risk flags were protocol breaches (grep matched ground truth), not production risks.
 
-**Context packs eliminated every production-risk answer.**
+**Agent-context eliminated every production-risk answer.**
 
 ---
 
