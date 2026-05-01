@@ -107,7 +107,7 @@ The target enforcement model for `agent-context` CI verification combines integr
 
 Teams should set up a verification check in their CI pipeline to run on PRs against main. At minimum, the check should run the machine-checkable structural and semantic validation by invoking the copied helper tools in `.agent-context/tools/`.
 
-Repo adaptation guidance lives in `ci-adaptation.md`, and an advisory pre-push hook is in `../tools/pre-push-hook.sh`. Teams should adapt these to their existing CI pipeline. Manifest checksum sealing is a future enhancement — the current manifest is informational.
+A reference CI job is provided in [`references/ci-example.yml`](references/ci-example.yml), repo adaptation guidance in [`ci-adaptation.md`](ci-adaptation.md), and an advisory pre-push hook in [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh). Teams should adapt these to their existing CI pipeline. Manifest checksum sealing is a future enhancement — the current manifest is informational.
 
 ## Maintenance
 

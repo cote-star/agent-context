@@ -1,0 +1,44 @@
+# Agent Context Verification — example CI job for GitHub Actions
+#
+# Patch this job into the repo's existing PR workflow when possible.
+# See references/ci-adaptation.md for workflow-selection guidance.
+#
+# Prerequisite:
+#   copy scripts/verify_context_pack.py -> .agent-context/tools/verify_context_pack.py
+#   copy scripts/check_freshness.sh -> .agent-context/tools/check_freshness.sh
+#
+# What it checks automatically:
+#   - Machine-checkable integrity via .agent-context/tools/verify_context_pack.py
+#   - Lightweight coverage heuristic for significant source directories
+#   - Freshness via .agent-context/tools/check_freshness.sh
+#
+# What still requires human review:
+#   - Counter-example review for universal invariants
+#   - Sanity-checking file family counts against actual repo counts
+#
+# Customize CONTEXT_RELEVANT_PATHS to match the repo's actual source roots.
+
+  agent-context-verify:
+    name: Agent Context Verification
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Verify pack structure and references
+        run: |
+          python3 .agent-context/tools/verify_context_pack.py
+
+      - name: Check freshness (code changed → pack updated)
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
+          # Customize this list to match the repo's context-relevant source paths.
+          CONTEXT_RELEVANT_PATHS: app/ src/ lib/ migrations/
+        run: |
+          sh .agent-context/tools/check_freshness.sh
