@@ -12,7 +12,7 @@
 
 - Workflow file patched or created: the parent repo's `.github/workflows/ci.yml` runs `bin/agent-context verify examples/hello-service` on push and PR.
 - Chosen `CONTEXT_RELEVANT_PATHS`: `src/ tests/`
-- Verifier command: `python3 ../../tools/verify_context_pack.py --repo-root .`
+- Verifier command: `python3 ../../tools/verify_agent_context.py --repo-root .`
 - Freshness mode: follow-up (this example does not maintain its own git history).
 - Rationale: the worked example lives inside the parent agent-context repo; the parent repo's CI exercises verify end-to-end.
 
@@ -27,7 +27,7 @@
 - No persistent state; restart is safe.
 - Default bind is `127.0.0.1` — the service is not intended for public exposure.
 
-## Context Pack Maintenance
+## agent-context Maintenance
 
 - Update the pack when adding a new endpoint, env var, or source module.
 - Sections most likely to need patching: `20_CODE_MAP.md` (new path rows) and `30_BEHAVIORAL_INVARIANTS.md` (new update-checklist rows).

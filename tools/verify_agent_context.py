@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Verify the machine-checkable subset of an agent-context pack.
+"""Verify the machine-checkable subset of agent-context artifacts.
 
-Tier-aware: validates the files present in the pack. Authority layer
+Tier-aware: validates the files present in .agent-context. Authority layer
 (routes.json, completeness_contract.json, reporting_rules.json) is
 validated when present (tier 3) and skipped when absent (tier 1-2).
 """
@@ -96,7 +96,7 @@ def ensure_exists_and_nonempty(root: pathlib.Path, rel_path: str, errors: list[s
 # --- Tier detection ------------------------------------------------------
 
 def detect_tier(root: pathlib.Path) -> int:
-    """Auto-detect the pack tier from files present on disk."""
+    """Auto-detect the artifact tier from files present on disk."""
     has_authority = all((root / f).exists() for f in AUTHORITY_FILES)
     has_full_content = all(
         (root / f).exists()
@@ -204,13 +204,13 @@ def validate_routing_files(root: pathlib.Path, tier: int, errors: list[str]) -> 
     agents = read_text(root / "AGENTS.md") if (root / "AGENTS.md").exists() else ""
 
     if claude and ("00_START_HERE.md" not in claude and "20_CODE_MAP.md" not in claude):
-        errors.append("CLAUDE.md does not reference any agent-context pack files")
+        errors.append("CLAUDE.md does not reference any agent-context files")
     if claude and "30_BEHAVIORAL_INVARIANTS.md" not in claude and tier >= 2:
         errors.append("CLAUDE.md does not reference 30_BEHAVIORAL_INVARIANTS.md (tier 2+ pack)")
     if gemini and (
         "00_START_HERE.md" not in gemini and "20_CODE_MAP.md" not in gemini
     ):
-        errors.append("GEMINI.md does not reference any agent-context pack files")
+        errors.append("GEMINI.md does not reference any agent-context files")
     if tier >= 3 and agents:
         if "routes.json" not in agents or "search_scope.json" not in agents:
             errors.append("AGENTS.md does not reference routes.json and search_scope.json (tier 3 pack)")
@@ -327,7 +327,7 @@ def validate_coverage(root: pathlib.Path, errors: list[str]) -> None:
     ]
     if missing:
         errors.append(
-            "coverage check: significant source directories are absent from the pack; "
+            "coverage check: significant source directories are absent from .agent-context; "
             "add coverage or list them under 'Not Covered in Detail': "
             + ", ".join(missing)
         )
@@ -337,7 +337,7 @@ def validate_coverage(root: pathlib.Path, errors: list[str]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Verify the machine-checkable subset of an agent-context pack.",
+        description="Verify the machine-checkable subset of agent-context artifacts.",
     )
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("repo_root_positional", nargs="?", default=None,
@@ -373,7 +373,7 @@ def main() -> int:
         return 1
 
     tier_label = f"tier {tier}"
-    print(f"OK: agent-context pack passed machine-checkable validation ({tier_label})")
+    print(f"OK: agent-context passed machine-checkable validation ({tier_label})")
     return 0
 
 

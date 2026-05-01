@@ -14,7 +14,7 @@ Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for a starter pac
 
 ## 2. Open a session in the target repo
 
-Open Claude Code, Cursor, or Codex in the repo you want to create context for. The repo should have **50+ files or 3+ subsystems** to benefit most from a context pack.
+Open Claude Code, Cursor, or Codex in the repo you want to create context for. The repo should have **50+ files or 3+ subsystems** to benefit most from a agent-context.
 
 ## 3. Fill the templates
 
@@ -43,7 +43,7 @@ Add an `agent-context` verification step to your PR workflow. This should fail P
 This is not required for the initial commit, but should be set up before the pack is treated as production-ready. Prefer patching the repo's existing PR workflow rather than adding a second competing workflow. Use [`ci-adaptation.md`](ci-adaptation.md) to choose the right workflow and source-root paths for the repo.
 
 A reference CI job is provided in [`references/ci-example.yml`](references/ci-example.yml). It assumes the repo contains:
-- `.agent-context/tools/verify_context_pack.py`
+- `.agent-context/tools/verify_agent_context.py`
 - `.agent-context/tools/check_freshness.sh`
 
 Those helpers are copied from this repo during `init` and should then be wired into the repo's CI. An advisory pre-push hook is at [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh):
@@ -62,7 +62,7 @@ Open a PR. The pack should pass the quality bar:
 - Every JSON artifact has repo-specific entries
 - `CLAUDE.md` says **"BEFORE starting any task, read these 3 files"**
 - `AGENTS.md` includes **"Search ONLY within scoped directories"**
-- `python3 .agent-context/tools/verify_context_pack.py` passes from the repo root
+- `python3 .agent-context/tools/verify_agent_context.py` passes from the repo root
 - CI verification is either set up or documented as a follow-up with the chosen workflow and `CONTEXT_RELEVANT_PATHS`
 
 ## 7. After merge — it just works

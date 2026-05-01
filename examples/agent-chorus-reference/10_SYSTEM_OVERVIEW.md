@@ -36,8 +36,8 @@
 | `chorus setup` | Wire chorus into a project (scaffolding, managed blocks, gitignore, Claude Code plugin). Node + Rust parity since v0.13.0. | `setup.rs`, `read_session.cjs` |
 | `chorus doctor` | Diagnose installation, per-agent session discovery, pack state. Node + Rust parity since v0.13.0. | `doctor.rs`, `read_session.cjs` |
 | `chorus teardown` | Cleanly reverse setup | `read_session.cjs` |
-| `chorus agent-context init/seal/build` | Init, seal, build context packs | `agent_context.rs`, `agent_context/*.cjs` |
-| `chorus agent-context verify` | Verify context pack completeness (interactive or `--ci` mode) | `agent_context.rs`, `scripts/agent_context/verify.cjs`, `templates/ci-agent-context.yml` |
+| `chorus agent-context init/seal/build` | Init, seal, build agent-context artifacts | `agent_context.rs`, `agent_context/*.cjs` |
+| `chorus agent-context verify` | Verify agent-context completeness (interactive or `--ci` mode) | `agent_context.rs`, `scripts/agent_context/verify.cjs`, `templates/ci-agent-context.yml` |
 | `chorus trash-talk` | Roast agents (easter egg) | `read_session.cjs` |
 
 ## Session Handoff (v0.12.0)
@@ -84,5 +84,5 @@ The routing blocks `init` upserts into `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` n
 | `cli/` | ~16 | Rust implementation (src, Cargo.toml, Cargo.lock) |
 | `docs/` | ~11 | CLI reference, development guide, SVGs, demo WebP assets |
 | `schemas/` | 6 | JSON Schema definitions for all output types |
-| `.agent-context/` | ~12 | Context pack content, structured artifacts, guide, relevance config |
+| `.agent-context/` | ~12 | agent-context content, structured artifacts, guide, relevance config |
 | Root | ~17 | README, PROTOCOL, LICENSE, package.json, CI workflows |

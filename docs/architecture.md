@@ -42,7 +42,7 @@ The repo ships two helper tools that should be copied into `.agent-context/tools
 
 | File | Purpose |
 |---|---|
-| `verify_context_pack.py` | Machine-checkable integrity validation for the pack |
+| `verify_agent_context.py` | Machine-checkable integrity validation for the pack |
 | `check_freshness.sh` | Freshness check for "code changed but pack not updated" |
 
 These scripts are the canonical implementation behind the reference CI and pre-push examples. Teams should adapt how they are invoked, not rewrite their logic from scratch. The Python CLI (`bin/agent-context`) wraps both for a friendlier surface: `bin/agent-context verify` and `bin/agent-context freshness`.

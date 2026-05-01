@@ -4,11 +4,11 @@
 # See references/ci-adaptation.md for workflow-selection guidance.
 #
 # Prerequisite:
-#   copy scripts/verify_context_pack.py -> .agent-context/tools/verify_context_pack.py
+#   copy scripts/verify_agent_context.py -> .agent-context/tools/verify_agent_context.py
 #   copy scripts/check_freshness.sh -> .agent-context/tools/check_freshness.sh
 #
 # What it checks automatically:
-#   - Machine-checkable integrity via .agent-context/tools/verify_context_pack.py
+#   - Machine-checkable integrity via .agent-context/tools/verify_agent_context.py
 #   - Lightweight coverage heuristic for significant source directories
 #   - Freshness via .agent-context/tools/check_freshness.sh
 #
@@ -33,7 +33,7 @@
 
       - name: Verify pack structure and references
         run: |
-          python3 .agent-context/tools/verify_context_pack.py
+          python3 .agent-context/tools/verify_agent_context.py
 
       - name: Check freshness (code changed → pack updated)
         env:

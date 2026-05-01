@@ -13,7 +13,7 @@
 #
 # Files INTENTIONALLY NOT OVERWRITTEN by this script (public-variant maintained
 # in-tree, divergence-by-design):
-#   - tools/verify_context_pack.py   (public CLI + stdlib-only validation)
+#   - tools/verify_agent_context.py   (public CLI + stdlib-only validation)
 #   - templates/manifest.json         (public agent_context_version field)
 #   - docs/architecture.md            (public CLI and tier-model wording)
 #
@@ -83,7 +83,7 @@ echo
 echo "tools/ (verbatim):"
 do_copy "$CANONICAL/scripts/check_freshness.sh"   "$REPO_ROOT/tools/check_freshness.sh"
 do_copy "$CANONICAL/references/pre-push-hook.sh"  "$REPO_ROOT/tools/pre-push-hook.sh"
-echo "  HOLD (public variant maintained here): tools/verify_context_pack.py"
+echo "  HOLD (public variant maintained here): tools/verify_agent_context.py"
 
 echo
 echo "docs/ (verbatim):"

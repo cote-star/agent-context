@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title desc">
+  <title id="title">agent-context cold start flow</title>
+  <desc id="desc">A warm paper hero showing a full repo crawl replaced by a short read through .agent-context before targeted source work.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#F37021"/>
+    </marker>
+    <style>
+      .h1 { font: 900 52px Inter, Arial, sans-serif; fill: #111827; }
+      .body { font: 24px Inter, Arial, sans-serif; fill: #475569; }
+      .label { font: 800 26px Inter, Arial, sans-serif; fill: #111827; }
+      .small { font: 18px Inter, Arial, sans-serif; fill: #64748B; }
+      .mono { font: 20px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #475569; }
+    </style>
+  </defs>
+  <rect width="1080" height="1080" fill="#FDFCF8"/>
+  <rect x="78" y="78" width="924" height="924" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+  <text class="h1" x="540" y="174" text-anchor="middle">agent-context</text>
+  <text class="body" x="540" y="218" text-anchor="middle">from blind crawl to bounded first read</text>
+
+  <g filter="url(#shadow)">
+    <rect x="180" y="302" width="720" height="112" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="540" y="350" text-anchor="middle">Full repo crawl</text>
+    <text class="small" x="540" y="382" text-anchor="middle">many files, repeated every session</text>
+  </g>
+  <path d="M540 434 L540 506" stroke="#F37021" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text class="mono" x="540" y="482" text-anchor="middle" fill="#9A3412">agent-context init</text>
+
+  <g filter="url(#shadow)">
+    <rect x="152" y="546" width="150" height="108" rx="8" fill="#FFFFFF" stroke="#F37021" stroke-width="3"/>
+    <rect x="330" y="546" width="150" height="108" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <rect x="508" y="546" width="150" height="108" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <rect x="686" y="546" width="150" height="108" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="227" y="594" text-anchor="middle">00</text>
+    <text class="small" x="227" y="626" text-anchor="middle">start</text>
+    <text class="label" x="405" y="594" text-anchor="middle">10</text>
+    <text class="small" x="405" y="626" text-anchor="middle">overview</text>
+    <text class="label" x="583" y="594" text-anchor="middle">20</text>
+    <text class="small" x="583" y="626" text-anchor="middle">code map</text>
+    <text class="label" x="761" y="594" text-anchor="middle">30</text>
+    <text class="small" x="761" y="626" text-anchor="middle">invariants</text>
+  </g>
+  <path d="M540 674 L540 744" stroke="#475569" stroke-width="4" stroke-dasharray="10 12" marker-end="url(#arrow)"/>
+  <g filter="url(#shadow)">
+    <rect x="246" y="766" width="588" height="100" rx="8" fill="#111827"/>
+    <text x="540" y="810" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#FDFCF8">Targeted source work</text>
+    <text x="540" y="844" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" fill="#CBD5E1">open only what the index points to</text>
+  </g>
+  <text class="body" x="540" y="936" text-anchor="middle">A new session starts with evidence instead of a blank map.</text>
+</svg>
