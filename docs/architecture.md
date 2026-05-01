@@ -1,4 +1,4 @@
-# Three-Layer Context Pack Architecture
+# Three-Layer Agent-Context Architecture
 
 ## Layer 1 — Content (Markdown)
 

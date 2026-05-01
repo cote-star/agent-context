@@ -20,7 +20,7 @@ agent-context init --tier 3 .
 - **Cold-Start Tax** — every new session re-reads the same files from zero, hits the same dead ends, burns the same tokens on orientation.
 - **Cascade Tax** — one wrong assumption about file relationships ripples into wrong plans, wrong impact analysis, and production-risk answers.
 
-A context pack eliminates both. Agents read 5 ordered docs (~4,500 tokens) instead of scanning the repo.
+An agent-context pack eliminates both. Agents read 5 ordered docs (~4,500 tokens) instead of scanning the repo.
 
 ## The Evidence
 
@@ -50,7 +50,7 @@ This is not a Claude tool or a Codex tool. Different agents use the same contrac
 
 **"Deprecated pattern prevented"** — Claude bare proposed Apollo Client (being deprecated). Claude with context correctly used React Query — because the negative guidance says: *"Do not assume Apollo GraphQL queries are the current data path."*
 
-Full results: [`docs/evidence/results.md`](docs/evidence/results.md) | Interactive dashboard: [context-pack-viz](https://cote-star.github.io/agent-recall/docs/)
+Full results: [`docs/evidence/results.md`](docs/evidence/results.md) | Interactive dashboard: [agent-context-viz](https://cote-star.github.io/agent-recall/docs/)
 
 ## See It Work
 
@@ -214,6 +214,6 @@ If you only want the navigation contract, stay here. If you want multi-agent vis
 
 ---
 
-Every agent session starts cold. A context pack makes it warm.
+Every agent session starts cold. Agent-context makes it warm.
 
 Found a bug or have a feature idea? [Open an issue](https://github.com/cote-star/agent-context/issues).

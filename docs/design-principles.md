@@ -1,4 +1,4 @@
-# Context Pack Design Principles
+# Agent-Context Design Principles
 
 16 principles derived from 6 experiment runs across 3 repo types (ML pipeline, CLI library, React frontend).
 

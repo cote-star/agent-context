@@ -24,7 +24,7 @@
 
 - REPLACE
 
-## Context Pack Maintenance
+## Agent-Context Maintenance
 
 - REPLACE: when to update the pack
 - REPLACE: what sections usually need patching
