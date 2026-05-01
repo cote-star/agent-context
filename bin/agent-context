@@ -390,7 +390,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     p_doctor = subparsers.add_parser(
         "doctor",
-        help="Print environment info and pack status.",
+        help="Print environment info and artifact status.",
     )
     p_doctor.set_defaults(func=cmd_doctor)
 

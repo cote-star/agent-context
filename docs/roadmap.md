@@ -1,23 +1,23 @@
 # Agent-Context Roadmap
 
-This roadmap is intentionally practical. The goal is not to make `agent-context` a runtime platform; it is to make checked-in repo context easier to create, trust, measure, and maintain.
+This roadmap is intentionally practical. The goal is not to make `agent-context` a runtime platform; it is to make checked-in repo evidence easier to create, trust, measure, and maintain.
 
 ## Product Direction
 
 `agent-context` should remain:
 
 - **Local-first**: no server, no API key, no hosted dependency.
-- **Repo-native**: the pack lives beside the code it describes.
+- **Repo-native**: artifacts live beside the code they describe.
 - **Agent-agnostic**: useful to Claude, Codex, Cursor, Gemini, and humans.
 - **Evidence-backed**: claims should be tied to verifier output, experiment results, or before/after measurements.
 
 ## Near Term: v0.3
 
-Focus: make first-pack creation less ambiguous.
+Focus: make first artifact creation less ambiguous.
 
-- Improve `agent-context doctor` so it reports pack tier, missing files, routing block status, and likely next command.
+- Improve `agent-context doctor` so it reports artifact tier, missing files, routing block status, and likely next command.
 - Add clearer verifier messages for common failures: leftover `REPLACE`, glob patterns that match nothing, stale verification shortcuts, and missing routing references.
-- Add a small set of pack-quality examples: "good invariant", "bad invariant", "good search scope", "bad search scope".
+- Add a small set of artifact-quality examples: "good invariant", "bad invariant", "good search scope", "bad search scope".
 - Tighten the examples so a new user can copy patterns without reading every design doc.
 
 ## Mid Term: v0.4
@@ -31,12 +31,12 @@ Focus: make freshness enforcement easier to adopt in real repos.
 
 ## Later: v0.5
 
-Focus: measure whether a pack is actually helping.
+Focus: measure whether agent-context is actually helping.
 
 - Add lightweight before/after evaluation scripts for file opens, token estimates, dead ends, and missed required files.
 - Provide a repeatable task prompt format for teams to grade their own repos.
-- Add more reference packs: backend service, React app, CLI, data pipeline, and monorepo.
-- Publish a compact "pack review checklist" for maintainers reviewing agent-context changes in PRs.
+- Add more reference artifact sets: backend service, React app, CLI, data pipeline, and monorepo.
+- Publish a compact review checklist for maintainers reviewing agent-context changes in PRs.
 
 ## Non-Goals
 
