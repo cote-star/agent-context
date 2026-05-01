@@ -4,17 +4,17 @@
 ![Version](https://img.shields.io/badge/version-0.2.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
-**A repo-native context pack that helps Claude, Codex, Cursor, and Gemini stop rediscovering the same codebase every session.**
+**A repo-native agent-context that helps Claude, Codex, Cursor, and Gemini stop rediscovering the same codebase every session.**
 
 Commit one `.agent-context/` directory to your repo. Every agent gets the same map of what exists, what is risky, which files belong together, and where to verify before it edits.
 
-![Cold-start hero](docs/demos/cold-start-agent-context-hero.webp)
+![agent-context cold start flow](docs/demos/cold-start-agent-context-hero.svg)
 
 ```bash
 # Install once
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 
-# Add a full context pack to any repo
+# Add a full agent-context to any repo
 cd /path/to/your-repo
 ~/agent-context/bin/agent-context init --tier 3 .
 ```
@@ -29,9 +29,9 @@ Coding agents still start cold. On a large repo they spend the first part of eve
 - **Authority** for trust-and-follow agents: task routes, completeness contracts, reporting rules.
 - **Navigation** for search-and-verify agents: scoped directories and verification shortcuts.
 
-The result is not a memory database, orchestrator, or hosted service. It is a small local pack that travels with the repo.
+The result is not a memory database, orchestrator, or hosted service. It is a small local artifact set that travels with the repo.
 
-![Context pack loop](docs/visuals/context-pack-loop.svg)
+![agent-context loop](docs/visuals/agent-context-loop.svg)
 
 ## Proof
 
@@ -57,11 +57,11 @@ Evidence: [full results](docs/evidence/results.md), [metrics summary](docs/evide
 ~/agent-context/bin/agent-context init --tier 3 .
 ```
 
-![agent-context init demo](docs/demos/init.webp)
+![agent-context init demo](docs/demos/init.svg)
 
 The command creates `.agent-context/current/`, copies helper tools into `.agent-context/tools/`, and writes managed routing blocks to `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `.cursorrules`.
 
-### 2. Fill the Pack
+### 2. Fill agent-context
 
 Fill the `REPLACE` markers manually or ask an agent:
 
@@ -69,20 +69,20 @@ Fill the `REPLACE` markers manually or ask an agent:
 
 The included [SKILL.md](SKILL.md) gives agents a concrete creation workflow: inventory subsystems, fill all templates, add acceptance tests, verify with grep, and run the machine checks.
 
-![agent-context workflow](docs/demos/demo-agent-context.webp)
+![agent-context workflow](docs/demos/demo-agent-context.svg)
 
 ### 3. Verify
 
 ```bash
 ~/agent-context/bin/agent-context verify .
-# OK: agent-context pack passed machine-checkable validation (tier 3)
+# OK: agent-context passed machine-checkable validation (tier 3)
 ```
 
-![agent-context verify pass vs fail](docs/demos/verify.webp)
+![agent-context verify pass](docs/demos/verify.svg)
 
 ## What Gets Created
 
-Tier 3, the default, creates the full 11-file pack:
+Tier 3, the default, creates the full 11-file artifact set:
 
 ```text
 .agent-context/current/
@@ -104,7 +104,7 @@ Tier 3, the default, creates the full 11-file pack:
 | Content | `00_*` through `40_*` markdown | Human-readable map, risks, invariants, validation |
 | Authority | `routes.json`, `completeness_contract.json`, `reporting_rules.json` | Tell trust-and-follow agents what must be considered |
 | Navigation | `search_scope.json` | Bound search-and-verify agents to relevant directories |
-| Quality | `manifest.json`, `acceptance_tests.md`, copied tools | Make the pack auditable and CI-friendly |
+| Quality | `manifest.json`, `acceptance_tests.md`, copied tools | Make the artifacts auditable and CI-friendly |
 
 ## Tiers
 
@@ -145,7 +145,7 @@ If you want multi-agent session visibility and messaging, pair it with [agent-ch
 
 | | agent-context | MemGPT / Letta | CrewAI / AutoGen | agent-chorus |
 |---|---|---|---|---|
-| Primitive | Static repo context pack | Long-term memory | Multi-agent orchestration | Cross-agent session visibility |
+| Primitive | Static repo agent-context | Long-term memory | Multi-agent orchestration | Cross-agent session visibility |
 | Best for | Cold-start coding work | Persona/history recall | Worker coordination | Reading and messaging agents |
 | Runtime dependency | none | service/vector store optional | Python + LLM calls | chorus CLI |
 | Lives in repo | yes | no | no | no |

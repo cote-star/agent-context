@@ -67,7 +67,7 @@ The script is **idempotent** — running it twice yields the same state as once.
 
 Three files are public-variant-by-design and are maintained in this repo. The sync script logs them as "HOLD" and leaves them alone:
 
-- `tools/verify_context_pack.py` — keeps public CLI behavior and stdlib-only validation while avoiding internal-only assumptions from the canonical environment.
+- `tools/verify_agent_context.py` — keeps public CLI behavior and stdlib-only validation while avoiding internal-only assumptions from the canonical environment.
 - `templates/manifest.json` — uses `agent_context_version` rather than the internal skill-version field.
 - `docs/architecture.md` — describes the public CLI and tier model rather than chorus-specific runtime behavior.
 

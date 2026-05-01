@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
+  <title id="title">agent-context loop</title>
+  <desc id="desc">A warm paper diagram showing a cold coding agent reading .agent-context before doing bounded work and returning verification signals.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#F37021"/>
+    </marker>
+    <style>
+      .h1 { font: 800 42px Inter, Arial, sans-serif; fill: #111827; }
+      .body { font: 22px Inter, Arial, sans-serif; fill: #475569; }
+      .label { font: 800 28px Inter, Arial, sans-serif; fill: #111827; }
+      .labelDark { font: 800 28px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .mono { font: 18px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #475569; }
+      .monoDark { font: 18px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #CBD5E1; }
+      .tag { font: 700 18px Inter, Arial, sans-serif; fill: #9A3412; }
+    </style>
+  </defs>
+  <rect width="1400" height="720" fill="#FDFCF8"/>
+  <rect x="64" y="58" width="1272" height="604" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+  <text class="h1" x="112" y="132">A warm start for every coding agent</text>
+  <text class="body" x="114" y="176">The repo carries its own map, routing rules, and verification shortcuts.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="118" y="250" width="286" height="232" rx="8" fill="#111827"/>
+    <text class="labelDark" x="150" y="306">Cold session</text>
+    <text class="monoDark" x="150" y="352">unknown files</text>
+    <text class="monoDark" x="150" y="388">unclear risks</text>
+    <text class="monoDark" x="150" y="424">expensive search</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="552" y="220" width="312" height="292" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="592" y="278">.agent-context</text>
+    <rect x="592" y="318" width="230" height="38" rx="6" fill="#FEF3C7" stroke="#E8D9BE"/>
+    <text class="mono" x="612" y="343">content markdown</text>
+    <rect x="592" y="376" width="230" height="38" rx="6" fill="#FFEDD5" stroke="#E8D9BE"/>
+    <text class="mono" x="612" y="401">authority json</text>
+    <rect x="592" y="434" width="230" height="38" rx="6" fill="#ECFDF5" stroke="#B7E4C7"/>
+    <text class="mono" x="612" y="459">search scope</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1024" y="250" width="258" height="232" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="1060" y="306">Bounded work</text>
+    <text class="mono" x="1060" y="352">read order</text>
+    <text class="mono" x="1060" y="388">named blast radius</text>
+    <text class="mono" x="1060" y="424">verified output</text>
+  </g>
+
+  <path d="M420 366 C466 366 498 366 536 366" fill="none" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M882 366 C932 366 970 366 1008 366" fill="none" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M1152 510 C1098 610 808 628 718 540" fill="none" stroke="#475569" stroke-width="4" stroke-dasharray="10 14" marker-end="url(#arrow)"/>
+
+  <text class="tag" x="456" y="334">read first</text>
+  <text class="tag" x="914" y="334">search inside bounds</text>
+  <text class="body" x="780" y="634" font-size="19">freshness checks and PR review keep artifacts aligned</text>
+</svg>

@@ -18,7 +18,7 @@ Patch the repo's existing pull-request gate whenever possible. Do not add a seco
 ## Runtime Reuse Rules
 
 - Reuse the runtime setup already present in the workflow.
-- If the workflow already sets up Python, call `python3 .agent-context/tools/verify_context_pack.py`.
+- If the workflow already sets up Python, call `python3 .agent-context/tools/verify_agent_context.py`.
 - If the workflow already uses shell-only steps, you may call the verifier via `python3` directly.
 - Do not introduce a second package manager or runtime path just for agent-context.
 

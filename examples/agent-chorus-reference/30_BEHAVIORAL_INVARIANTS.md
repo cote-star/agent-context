@@ -7,9 +7,9 @@
 4. **Output boundary markers**: Text output must be wrapped in `--- BEGIN CHORUS OUTPUT ---` / `--- END CHORUS OUTPUT ---`. JSON output must include `chorus_output_version: 1`.
 5. **Backward-compatible env vars**: `CHORUS_*` env vars are canonical; `BRIDGE_*` fallbacks must continue to work.
 6. **Backward-compatible sentinels**: Hook management must detect both `agent-chorus:` and legacy `agent-bridge:` sentinel markers.
-7. **Read-only by default**: No command mutates agent session files. Only `send`, `messages --clear`, `checkpoint`, and context-pack writes modify local state.
-8. **Fail-open hooks**: Pre-push hook context-pack errors must never block `git push`.
-9. **Context-pack backward compatibility**: Markdown-only packs (no structured artifacts) must remain fully functional. Structured validation is opt-in based on `routes.json` presence.
+7. **Read-only by default**: No command mutates agent session files. Only `send`, `messages --clear`, `checkpoint`, and agent-context writes modify local state.
+8. **Fail-open hooks**: Pre-push hook agent-context errors must never block `git push`.
+9. **agent-context backward compatibility**: Markdown-only packs (no structured artifacts) must remain fully functional. Structured validation is opt-in based on `routes.json` presence.
 10. **Checkpoint guard**: `chorus checkpoint` must exit 0 silently when `.agent-chorus/` does not exist in the target cwd. This is what makes `scripts/hooks/chorus-session-end.sh` safe to install globally — it no-ops on non-chorus projects.
 11. **Fallback-hint specificity**: The Gemini and Cursor `NOT_FOUND` enrichments only fire when their specific fallback file types are detected (`.pb` under `<profile>/conversations/` for Gemini, `state.vscdb` under `User/workspaceStorage/` for Cursor). Absent those files, the generic `NOT_FOUND` message must be preserved unchanged — the probes are additive.
 12. **Release gating**: Every `v*` tag push runs `scripts/release/verify_versions.sh`, which enforces `package.json.version === cli/Cargo.toml.version === tag[1:]` before any publish step executes. A mismatch fails the workflow before npm, crates.io, or GitHub Release jobs begin.
@@ -30,10 +30,10 @@
 | New agent adapter | `cli/src/agents.rs` (Agent enum + match arm), `scripts/adapters/<agent>.cjs`, `fixtures/session-store/<agent>/`, `fixtures/golden/read-<agent>.json`, `scripts/conformance.sh`, `PROTOCOL.md` |
 | Output format change | `cli/src/agents.rs` or relevant module, `scripts/read_session.cjs` or relevant adapter, `schemas/<cmd>.json`, ALL `fixtures/golden/*.json` that cover the changed output |
 | New redaction pattern | `cli/src/agents.rs` (`redact_sensitive_text`), `scripts/adapters/utils.cjs` (`redactSecrets`). Silent failure if one is missed — secret passes through in output. |
-| New context-pack artifact | `cli/src/agent_context.rs` (build function + init list + seal validation), `scripts/agent_context/init.cjs` (template function + outputs array), `scripts/agent_context/seal.cjs` (validation), `scripts/test_context_pack.sh` |
-| Context-pack template change | `cli/src/agent_context.rs` (Rust template), `scripts/agent_context/init.cjs` (Node template). Must change both — parity tested by `test_context_pack.sh`. |
-| New agent-context subcommand | `cli/src/main.rs` (Clap subcommand enum), `scripts/read_session.cjs` (command dispatch), `scripts/agent_context/<sub>.cjs` (Node implementation), `scripts/test_context_pack.sh` (integration tests), `docs/CLI_REFERENCE.md` |
-| Skill definition change | `skills/agent-context/SKILL.md`. Update `wip/context-pack-skill/evolution/` log with rationale. |
+| New agent-context artifact | `cli/src/agent_context.rs` (build function + init list + seal validation), `scripts/agent_context/init.cjs` (template function + outputs array), `scripts/agent_context/seal.cjs` (validation), `scripts/test_agent_context.sh` |
+| agent-context template change | `cli/src/agent_context.rs` (Rust template), `scripts/agent_context/init.cjs` (Node template). Must change both — parity tested by `test_agent_context.sh`. |
+| New agent-context subcommand | `cli/src/main.rs` (Clap subcommand enum), `scripts/read_session.cjs` (command dispatch), `scripts/agent_context/<sub>.cjs` (Node implementation), `scripts/test_agent_context.sh` (integration tests), `docs/CLI_REFERENCE.md` |
+| Skill definition change | `skills/agent-context/SKILL.md`. Update `wip/agent-context-skill/evolution/` log with rationale. |
 
 ## File Families
 - `scripts/adapters/*.cjs` (5 files) — one per agent. Report as family when discussing adapter-layer changes. Inspect one representative.

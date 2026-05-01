@@ -96,13 +96,13 @@ Codex structured scored 6/6 yes on agent-chorus -- the highest correctness of an
 The experiments revealed that agents fall into two categories:
 
 ### Trust-and-follow (Claude, likely Gemini)
-- Reads the context pack as authoritative
+- Reads the agent-context as authoritative
 - Opens minimal repo files (2.75 avg in frontend)
 - Zero dead ends consistently
 - Benefits from: completeness contracts, stop rules, grouped reporting
 
 ### Search-and-verify (Codex, likely Cursor)
-- Uses the context pack as scaffolding, then verifies against code
+- Uses the agent-context as scaffolding, then verifies against code
 - Still opens many files (10.25 avg in frontend)
 - Benefits from: answer quality improvement, search scope boundaries
 - Does NOT benefit from: stop rules (ignores them)
@@ -122,7 +122,7 @@ The experiments revealed that agents fall into two categories:
 | 6b | Structured JSON layer experiment | Done |
 | 7 | Integration + release (v0.9.0) | Done |
 | 8 | Generalization -- CLI/library (Run 5) | Done |
-| 8b | Context-pack creation skill | Done |
+| 8b | agent-context creation skill | Done |
 | 8c | Frontend validation (Run 6) | Done |
 | 9 | Showcase | Done (this document) |
 | 10 | Documentation + guide | Done |

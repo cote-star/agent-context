@@ -18,7 +18,7 @@
 | `scripts/adapters/utils.cjs` | Shared Node utilities | Redaction, path normalization, JSON parsing | Silent redaction miss | authoritative |
 | `cli/src/agent_context.rs` | Rust agent-context commands | Init, seal, verify, build, hooks | Complex but self-contained | authoritative |
 | `scripts/agent_context/*.cjs` | Node agent-context commands (v0.14.0 hardening: `init.cjs`, `seal.cjs`, `verify.cjs`, `rollback.cjs`, `check_freshness.cjs`, `relevance.cjs`, `install_hooks.cjs`, `cp_utils.cjs` all touched by P1–P13) | Mirror of Rust agent-context | Parity break if Rust not updated | authoritative |
-| `scripts/agent_context/verify.cjs` | Node verify subcommand | Context pack verification + CI mode; P6 `--enforce-separate-commits`; P13 `last_known_good_sha` promotion | Must stay in parity with Rust | authoritative |
+| `scripts/agent_context/verify.cjs` | Node verify subcommand | agent-context verification + CI mode; P6 `--enforce-separate-commits`; P13 `last_known_good_sha` promotion | Must stay in parity with Rust | authoritative |
 | `scripts/agent_context/rollback.cjs` | Node rollback subcommand | Snapshot restore; P13 `--latest-good` resolves through `history.jsonl` + rotated archives | Must stay in parity with Rust | authoritative |
 | `templates/ci-agent-context.yml` | CI template for verify --ci | Defines CI pipeline step for verification | Referenced by verify subcommand | authoritative |
 | `templates/relevance.json` | Relevance default patterns (v0.14.0) | Seeded into new packs by `init`; overrideable per repo | Referenced by relevance subsystem | authoritative |
@@ -26,7 +26,7 @@
 | `schemas/*.json` | JSON Schema definitions | Output contract for all commands | Breaking change for consumers | authoritative |
 | `fixtures/golden/*.json` | Golden output files | Conformance test baselines | Must update when output changes | derived |
 | `skills/agent-context/SKILL.md` | Agent-context creation skill | Three-flow skill definition (create/update/catchup) | Governs how agents create and maintain packs | authoritative |
-| `tests/behaviour/` | Agent behaviour experiments | Experiment protocol, ground truth, result schema | Validates context pack effectiveness | reference |
+| `tests/behaviour/` | Agent behaviour experiments | Experiment protocol, ground truth, result schema | Validates agent-context effectiveness | reference |
 | `PROTOCOL.md` | CLI contract specification | Canonical source of truth for behavior | Governs both implementations | authoritative |
 | `cli/src/diff.rs` | Session diff logic | LCS-based line comparison | Self-contained | authoritative |
 | `cli/src/messaging.rs` | Agent-to-agent messaging | JSONL message queue (`send_message`) — reused by checkpoint | Self-contained | authoritative |
@@ -35,7 +35,7 @@
 | `scripts/hooks/chorus-session-end.sh` | Claude Code `SessionEnd` hook wrapper (v0.12.0) | Thin shell around `chorus checkpoint --from claude`; backgrounded + `disown` | Hardening of env and timeouts matters — do not inline the message composition | authoritative |
 | `scripts/hooks/README.md` | Hook directory docs | Install snippet and security notes | reference |
 | `scripts/conformance.sh` | Conformance test runner | Validates Node/Rust parity | Gates all merges | reference |
-| `scripts/test_context_pack.sh` | Context-pack test runner | Validates init/seal/parity | Gates all merges | reference |
+| `scripts/test_agent_context.sh` | agent-context test runner | Validates init/seal/parity | Gates all merges | reference |
 
 ## Quick Lookup Shortcuts
 | I need to find... | Open this file | Look for |
@@ -48,13 +48,13 @@
 | Checkpoint broadcast logic | `cli/src/checkpoint.rs` | `fn run`, `compose_state_message` |
 | Read options plumbing (v0.13.0) | `cli/src/agents.rs` | `struct ReadOptions`, `*_with_options` read functions |
 | Summary / timeline / doctor / setup parity (v0.13.0) | `cli/src/{summary,timeline,doctor,setup}.rs` | one module per subcommand, dispatched from `main.rs` |
-| Context-pack template content | `cli/src/agent_context.rs` | `fn build_template_*` functions |
+| agent-context template content | `cli/src/agent_context.rs` | `fn build_template_*` functions |
 | Conformance test for a command | `scripts/conformance.sh` | `expect_success "<label>"` calls |
 
 ## Cross-Cutting Tracing Flows
 - **New CLI command**: `main.rs` Clap enum → `main.rs` dispatch → `agents.rs` or new module → `read_session.cjs` handler → `schemas/<cmd>.json` → `fixtures/golden/<cmd>.json` → `conformance.sh` → `PROTOCOL.md` → `docs/CLI_REFERENCE.md`
 - **New agent adapter**: `agents.rs` Agent enum + match arm → `scripts/adapters/<agent>.cjs` → `fixtures/session-store/<agent>/` → `fixtures/golden/read-<agent>.json` → `conformance.sh` → `PROTOCOL.md`
-- **New context-pack artifact**: `agent_context.rs` build function + init list → `scripts/agent_context/init.cjs` template function + outputs array → `scripts/agent_context/seal.cjs` validation → `scripts/test_context_pack.sh` test
+- **New agent-context artifact**: `agent_context.rs` build function + init list → `scripts/agent_context/init.cjs` template function + outputs array → `scripts/agent_context/seal.cjs` validation → `scripts/test_agent_context.sh` test
 
 ## Minimum Sufficient Evidence
 - **Lookup**: authoritative source file + exact value.

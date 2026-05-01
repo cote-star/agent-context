@@ -7,7 +7,7 @@ npm run conformance    # Node/Rust parity only
 npm run validate:schemas  # JSON schema validation only
 cargo test --manifest-path cli/Cargo.toml  # Rust unit tests (139 tests as of v0.14.0)
 cargo clippy --manifest-path cli/Cargo.toml
-bash scripts/test_context_pack.sh  # Agent-context integration tests (9 tests)
+bash scripts/test_agent_context.sh  # Agent-context integration tests (9 tests)
 ```
 
 ## CI Checks
@@ -49,7 +49,7 @@ The pre-v0.13.0 chain had `package-node.needs = [verify, publish-crate]` and `cr
 ## Known Limitations
 - **`NPM_TOKEN` rotation gate** — automated npm publish now degrades gracefully via `continue-on-error: true` on the `Publish to npm` step (see CI section). The red step remains visible on the workflow run; crates.io, GitHub Packages, and the GitHub Release + binary attachments are unaffected. Manual publish fallback: `npm-play publish --confirm-publish` from a worktree rooted under `~/sandbox/play`. The token still needs to be rotated at https://github.com/cote-star/agent-chorus/settings/secrets/actions for automated npm publish to succeed on its own.
 
-## Context Pack Maintenance
+## agent-context Maintenance
 1. Initialize scaffolding: `chorus agent-context init` (pre-push hook installed automatically)
 2. Have your agent fill in the template sections (markdown + structured JSON).
 3. Seal the pack: `chorus agent-context seal`

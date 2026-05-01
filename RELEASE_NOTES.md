@@ -14,7 +14,7 @@ Meetup-ready release. The pack is now fully self-contained with all three layers
   - Tier 3 (full, default): all 11 files including authority layer
 - **Routing block generation** — `init` now creates managed routing blocks in `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, and `.cursorrules`. Blocks are tier-aware and use HTML comment sentinels for idempotent upsert.
 - **Cursor integration** — `.cursorrules` is generated automatically with the search-and-verify routing pattern. Cursor reads this file natively.
-- **Tool copying** — `init` copies `verify_context_pack.py` and `check_freshness.sh` into the target repo's `.agent-context/tools/` so packs are self-verifiable without agent-context installed.
+- **Tool copying** — `init` copies `verify_agent_context.py` and `check_freshness.sh` into the target repo's `.agent-context/tools/` so packs are self-verifiable without agent-context installed.
 - **Upgraded verifier** — tier-aware validation, authority layer contract checking (glob patterns match real files, no template variables), routing file validation, coverage heuristics.
 - **Evidence materials** — figures from agent-recall research (asymmetry contrast, three-track framework, experiment results), metrics summary, full results breakdown, demo assets.
 - **Real-world reference pack** — `examples/agent-chorus-reference/` shows a mature tier 3 pack from a 155-file dual-implementation CLI repo.
@@ -36,7 +36,7 @@ Initial public release.
 ### What's included
 - Content layer: 5 markdown templates (`00_START_HERE`, `10_SYSTEM_OVERVIEW`, `20_CODE_MAP`, `30_BEHAVIORAL_INVARIANTS`, `40_OPERATIONS_AND_RELEASE`) + `acceptance_tests.md`.
 - Navigation layer: `search_scope.json` template.
-- Validation: `verify_context_pack.py` + `check_freshness.sh` (stdlib-only Python + POSIX shell).
+- Validation: `verify_agent_context.py` + `check_freshness.sh` (stdlib-only Python + POSIX shell).
 - Python CLI: `bin/agent-context init | verify | doctor | freshness`.
 - Worked example: `examples/hello-service/` — small service with a filled pack; verify passes out of the box.
 - Three-way sync policy + tooling: `scripts/sync-from-canonical.sh` + `docs/SYNC.md`.

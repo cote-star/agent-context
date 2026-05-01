@@ -1,6 +1,6 @@
 # Reference Pack: agent-chorus
 
-This directory contains a complete, real-world agent context pack from the
+This directory contains a complete, real-world agent-context artifact set from the
 [agent-chorus](https://github.com/cote-star/agent-chorus) repository -- a
 155-file CLI project with dual Rust and Node.js implementations.
 

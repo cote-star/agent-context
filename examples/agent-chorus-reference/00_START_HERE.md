@@ -1,4 +1,4 @@
-# Context Pack: Start Here
+# agent-context: Start Here
 
 ## Snapshot
 - Repo: `agent-chorus`

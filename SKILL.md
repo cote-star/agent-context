@@ -143,7 +143,7 @@ Create these files:
 - **JSON artifacts** in `.agent-context/current/` — start from the starter templates in `templates/` (routes.json, completeness_contract.json, reporting_rules.json, search_scope.json). For tier 1-2, only copy `search_scope.json`. The templates include inline `_rules` that define the format contract for each file. Remove `_rules` and `_EXAMPLE` entries after filling.
 - **Manifest** in `.agent-context/current/manifest.json` — use the template in `templates/manifest.json`. Fill `repo`, `git_revision` (from `git rev-parse HEAD`), and `generated_at` (ISO 8601 UTC).
 - **Acceptance tests** in `.agent-context/current/acceptance_tests.md` — use the template from `templates/acceptance_tests.md`. Fill during Step 7.
-- **Helper tools** in `.agent-context/tools/` — copy `tools/verify_context_pack.py` and `tools/check_freshness.sh`. These are the canonical machine-checkable validator and freshness checker used by the reference CI and hook examples.
+- **Helper tools** in `.agent-context/tools/` — copy `tools/verify_agent_context.py` and `tools/check_freshness.sh`. These are the canonical machine-checkable validator and freshness checker used by the reference CI and hook examples.
 - **Routing blocks** in `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursorrules` (~90 tokens each). Use these canonical templates:
 
 **CLAUDE.md / GEMINI.md** (trust-and-follow agents — read invariants first, then code map):
@@ -250,7 +250,7 @@ Validate the pack before committing. Run **all** of these checks:
 - All markdown files present and non-empty (no unfilled template markers)
 - All structured artifact file references resolve on disk
 - Grouped families don't point to generated files as authoritative edit targets
-- `.agent-context/tools/verify_context_pack.py` and `.agent-context/tools/check_freshness.sh` exist if you copied the helper tools
+- `.agent-context/tools/verify_agent_context.py` and `.agent-context/tools/check_freshness.sh` exist if you copied the helper tools
 
 **Semantic checks:**
 - Every `required_file_families` glob pattern matches >=1 real file (run each glob and verify)
@@ -270,7 +270,7 @@ Validate the pack before committing. Run **all** of these checks:
 - If any significant directory is absent from all pack files, either add coverage or list it in the "Not covered in detail" section of `00_START_HERE.md`
 
 **Preferred machine check:**
-- Run `python3 .agent-context/tools/verify_context_pack.py` from the repo root and make sure it exits 0 before committing. The shipped verifier checks the machine-checkable subset above, including a lightweight coverage heuristic.
+- Run `python3 .agent-context/tools/verify_agent_context.py` from the repo root and make sure it exits 0 before committing. The shipped verifier checks the machine-checkable subset above, including a lightweight coverage heuristic.
 
 Fix any validation errors before proceeding.
 
