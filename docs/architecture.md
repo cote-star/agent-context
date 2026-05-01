@@ -24,7 +24,7 @@
 
 Claude trusts these as authoritative. Result: answers from pure context, zero files opened.
 
-> **Scope note for this repo.** The authority layer is documented here for completeness but is **not shipped** in this public `agent-context` distribution. It lives in [agent-chorus](https://github.com/cote-star/agent-chorus) where the runtime makes it useful. Everything else in this architecture doc applies unchanged to the public pack.
+> **v0.2.0 note.** The public `agent-context` repo now ships the authority layer as part of tier 3. Earlier public builds documented this layer but left it to `agent-chorus`; tier 3 now includes it directly so a repo can carry the full contract without depending on the chorus CLI.
 
 ## Layer 3 — Navigation (JSON)
 
@@ -59,9 +59,7 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 
 **What helps:** Authoritative completeness lists. Stop conditions. Grouped reporting rules. The more precise the contract, the fewer files Claude opens.
 
-**What hurts:** Vague or incomplete contracts — Claude will trust a wrong contract and produce a wrong answer confidently.
-
-> In this public repo the authority layer is intentionally absent, so trust-agents lean on the content layer (`00_START_HERE.md` read-order + stop rules) rather than a structured JSON contract.
+**What hurts:** Vague or incomplete contracts — Claude will trust a wrong contract and produce a wrong answer confidently. This is why tier 3 validates authority-layer paths and requires example entries to be removed before the pack passes.
 
 ### Search-and-verify (Codex, likely Cursor)
 

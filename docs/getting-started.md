@@ -3,14 +3,14 @@
 ## 1. Clone and install
 
 ```bash
-git clone https://github.com/cote-star/agent-context.git
-cd your-repo
-/path/to/agent-context/bin/agent-context init --tier 3 .
+git clone https://github.com/cote-star/agent-context.git ~/agent-context
+cd /path/to/your-repo
+~/agent-context/bin/agent-context init --tier 3 .
 ```
 
-This scaffolds `.agent-context/current/` with the full pack (5 markdown docs, `search_scope.json`, `manifest.json`, `acceptance_tests.md`) and copies helper tools into `.agent-context/tools/`.
+This scaffolds `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/`.
 
-Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for content + navigation without operations docs. `--tier 3` (the default) gives you everything.
+Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for a starter pack without system overview, operations docs, or authority contracts. `--tier 3` (the default) gives you everything.
 
 ## 2. Open a session in the target repo
 
@@ -31,7 +31,7 @@ You can fill these manually or ask an agent: **"Fill the agent context templates
 ## 4. Verify the pack
 
 ```bash
-/path/to/agent-context/bin/agent-context verify .
+~/agent-context/bin/agent-context verify .
 ```
 
 This runs machine-checkable structural and semantic validation. Fix any reported issues, then re-run until it exits 0.
@@ -49,7 +49,7 @@ A reference CI job is provided in [`references/ci-example.yml`](references/ci-ex
 Those helpers are copied from this repo during `init` and should then be wired into the repo's CI. An advisory pre-push hook is at [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh):
 
 ```bash
-cp /path/to/agent-context/tools/pre-push-hook.sh .git/hooks/pre-push
+cp ~/agent-context/tools/pre-push-hook.sh .git/hooks/pre-push
 chmod +x .git/hooks/pre-push
 ```
 
