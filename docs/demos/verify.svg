@@ -12,5 +12,4 @@
   <text x="70" y="234" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">checking JSON contracts</text>
   <text x="70" y="274" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">checking coverage hints</text>
   <text x="70" y="326" fill="#86EFAC" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">OK: agent-context passed validation (tier 3)</text>
-  <text x="58" y="394" fill="#475569" font-family="Inter, Arial, sans-serif" font-size="18">CI can run the same verifier from .agent-context/tools/.</text>
 </svg>

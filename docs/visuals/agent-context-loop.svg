@@ -55,6 +55,5 @@
   <path d="M1152 510 C1098 610 808 628 718 540" fill="none" stroke="#475569" stroke-width="4" stroke-dasharray="10 14" marker-end="url(#arrow)"/>
 
   <text class="tag" x="456" y="334">read first</text>
-  <text class="tag" x="914" y="334">search inside bounds</text>
-  <text class="body" x="780" y="634" font-size="19">freshness checks and PR review keep artifacts aligned</text>
+  <text class="tag" x="914" y="320">search bounds</text>
 </svg>

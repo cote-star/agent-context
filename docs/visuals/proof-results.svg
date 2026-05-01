@@ -56,20 +56,17 @@
     <text class="label" x="140" y="538">Correctness snapshots</text>
     <text class="mono" x="630" y="538">results.md</text>
 
-    <text class="label" x="140" y="602" font-size="20">stream-models</text>
-    <text class="small" x="140" y="628">Claude + Codex: 50 -> 83</text>
+    <text x="140" y="616" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">stream-models: 50 -> 83</text>
     <rect x="502" y="586" width="140" height="18" rx="6" fill="#FCA5A5"/>
     <rect x="502" y="614" width="232" height="18" rx="6" fill="#F37021"/>
 
-    <text class="label" x="140" y="680" font-size="20">agent-chorus</text>
-    <text class="small" x="140" y="706">Claude held; Codex reached 6/6</text>
+    <text x="140" y="686" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">agent-chorus: 83 + 100</text>
     <rect x="502" y="664" width="232" height="18" rx="6" fill="#FCA5A5"/>
     <rect x="502" y="692" width="280" height="18" rx="6" fill="#F37021"/>
 
-    <text class="label" x="140" y="758" font-size="20">trust-stream-frontend</text>
-    <text class="small" x="140" y="784">Claude: 50 -> 100; Codex: 50 -> 75</text>
-    <rect x="502" y="742" width="140" height="18" rx="6" fill="#FCA5A5"/>
-    <rect x="502" y="770" width="280" height="18" rx="6" fill="#F37021"/>
+    <text x="140" y="756" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">frontend: 50 -> 100</text>
+    <rect x="502" y="724" width="140" height="18" rx="6" fill="#FCA5A5"/>
+    <rect x="502" y="752" width="280" height="18" rx="6" fill="#F37021"/>
   </g>
 
   <g filter="url(#shadow)">
