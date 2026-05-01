@@ -47,7 +47,7 @@ Across 78+ reviewer-graded experiment runs on three repo types, structured packs
 
 Evidence: [full results](docs/evidence/results.md), [metrics summary](docs/evidence/metrics.md), [interactive dashboard](https://cote-star.github.io/agent-recall/docs/).
 
-![Task-level results across 3 repos](docs/evidence/figures/experiment-results.png)
+![Agent-context proof summary](docs/visuals/proof-results.svg)
 
 ## See It Work
 
