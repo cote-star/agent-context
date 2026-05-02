@@ -21,13 +21,13 @@ cd /path/to/your-repo
 
 > Or skip the manual fill and let an agent do it: open Claude / Codex / Cursor / Gemini in the repo and ask **"Set up agent context for this repo."** The included [SKILL.md](SKILL.md) drives the rest.
 
-## Hero features
+## Features
 
 | | Feature | Why it matters | Where in this README |
 |---:|---|---|---|
-| 1 | **Dual-mode routing** | Same artifacts work for trust-and-follow agents (Claude, Gemini) and search-and-verify agents (Codex, Cursor) — opposite reading patterns, one pack | [§Architecture](#architecture-same-artifacts-opposite-agent-loops) |
-| 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Proof](#proof) |
-| 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Adoption ladder](#adoption-ladder) |
+| 1 | **Dual-mode routing** | Same artifacts work for trust-and-follow agents (Claude, Gemini) and search-and-verify agents (Codex, Cursor) — opposite reading patterns, one pack | [§Architecture](#architecture) |
+| 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Results](#results) |
+| 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Tiers](#tiers) |
 | 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the whole pack via the included skill | [SKILL.md](SKILL.md) |
 | 5 | **Machine-checkable** | `verify`, `freshness`, and `doctor` make every artifact auditable in CI | [§How it works](#how-it-works) |
 | 6 | **Zero infra** | Markdown + JSON committed to your repo — no server, vector store, or API key | [§The cold-start tax](#the-cold-start-tax) |
@@ -47,7 +47,7 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 ![agent-context loop](docs/visuals/agent-context-loop.svg)
 
-## Proof
+## Results
 
 78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
 
@@ -63,7 +63,7 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 → [Full results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
 
-### What we measure
+### Definitions
 
 Every claim above maps to an operational definition and a citation in the evidence docs.
 
@@ -112,9 +112,9 @@ Edit the `REPLACE` markers manually, or hand the work to an agent:
 
 `verify` checks structure, JSON schema, real glob matches, and template-variable elimination. `freshness` flags drift between code and pack. `doctor` audits local setup. All three are CI-friendly.
 
-## Architecture: same artifacts, opposite agent loops
+## Architecture
 
-The core design is dual routing. **One pack, two reading patterns:**
+The core design is dual routing — **same artifacts, opposite agent loops**. One pack, two reading patterns:
 
 ```text
 Trust-and-follow (Claude, Gemini)
@@ -160,7 +160,7 @@ The same `.agent-context/` content is consumed differently by each agent family.
 
 → [Architecture deep-dive](docs/architecture.md) · [16 design principles](docs/design-principles.md)
 
-## Where it works
+## Tested repositories
 
 The same `.agent-context/` template has been validated across stacks and across two orders of magnitude in repo size — with **zero modifications**.
 
@@ -174,7 +174,7 @@ The same `.agent-context/` template has been validated across stacks and across 
 
 **Non-code corpora — not yet tested.** The same content + authority + navigation pattern is designed to generalize to datasets, design systems, runbooks, and other stable corpora that an agent must read before acting. Currently validated only on code repos. The first non-code corpus test is on the [v0.5 roadmap](docs/roadmap.md).
 
-## Adoption ladder
+## Tiers
 
 Start small. Scale when the team is ready. Each tier is a valid stopping point — no hidden dependency on the full pack.
 
@@ -193,7 +193,7 @@ Two worked examples ship in this repo. Both pass `verify` as-is — clone, read,
 | [`examples/hello-service/`](examples/hello-service/) | 6 files, ~300 LOC HTTP service | Read the whole pack in five minutes |
 | [`examples/agent-chorus-reference/`](examples/agent-chorus-reference/) | 155 files, dual Rust/Node.js CLI | Real repo, full tier 3 pack — scored 6/6 with Codex, 69% token savings with Claude |
 
-## Compared with nearby tools
+## Comparison
 
 | | agent-context | MemGPT / Letta | CrewAI / AutoGen | agent-chorus |
 |---|---|---|---|---|
@@ -213,11 +213,11 @@ For multi-agent session visibility and messaging, pair with [agent-chorus](https
 
 → [Full roadmap](docs/roadmap.md)
 
-## Docs
+## Documentation
 
-Each doc maps to one of the hero features above (or to general onboarding).
+Each doc maps to one of the features above (or to general onboarding).
 
-| Need | Document | Hero feature |
+| Need | Document | Feature |
 |---|---|---|
 | First install | [Getting started](docs/getting-started.md) | — |
 | Architecture deep-dive | [Architecture guide](docs/architecture.md) | Dual-mode routing |
@@ -227,7 +227,7 @@ Each doc maps to one of the hero features above (or to general onboarding).
 | Design rationale | [16 design principles](docs/design-principles.md) | — |
 | Release history | [Release notes](RELEASE_NOTES.md) | — |
 
-## Repository boundary
+## Project scope
 
 The public `agent-context` CLI, templates, verifier, examples, and evidence docs live here. `chorus` session-reading commands live in [agent-chorus](https://github.com/cote-star/agent-chorus).
 
