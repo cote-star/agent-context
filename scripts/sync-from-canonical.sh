@@ -13,9 +13,9 @@
 #
 # Files INTENTIONALLY NOT OVERWRITTEN by this script (public-variant maintained
 # in-tree, divergence-by-design):
-#   - tools/verify_context_pack.py   (public-variant: drops authority-layer checks)
-#   - templates/manifest.json         (public-variant: no authority files group)
-#   - docs/architecture.md            (public-variant: adds caveat about authority layer)
+#   - tools/verify_agent_context.py   (public CLI + stdlib-only validation)
+#   - templates/manifest.json         (public agent_context_version field)
+#   - docs/architecture.md            (public CLI and tier-model wording)
 #
 # If a future sync needs to pick up changes to the canonical versions of those
 # files, the maintainer merges them by hand.
@@ -83,13 +83,13 @@ echo
 echo "tools/ (verbatim):"
 do_copy "$CANONICAL/scripts/check_freshness.sh"   "$REPO_ROOT/tools/check_freshness.sh"
 do_copy "$CANONICAL/references/pre-push-hook.sh"  "$REPO_ROOT/tools/pre-push-hook.sh"
-echo "  HOLD (public variant maintained here): tools/verify_context_pack.py"
+echo "  HOLD (public variant maintained here): tools/verify_agent_context.py"
 
 echo
 echo "docs/ (verbatim):"
 do_copy "$CANONICAL/references/design-principles.md" "$REPO_ROOT/docs/design-principles.md"
 do_copy "$CANONICAL/references/ci-adaptation.md"     "$REPO_ROOT/docs/ci-adaptation.md"
-echo "  HOLD (public variant adds authority-layer caveat): docs/architecture.md"
+echo "  HOLD (public variant describes public CLI/tier model): docs/architecture.md"
 
 echo
 echo "templates/ (verbatim):"
@@ -100,14 +100,12 @@ do_copy "$CANONICAL/references/templates/30_BEHAVIORAL_INVARIANTS.md" "$REPO_ROO
 do_copy "$CANONICAL/references/templates/40_OPERATIONS_AND_RELEASE.md" "$REPO_ROOT/templates/40_OPERATIONS_AND_RELEASE.md"
 do_copy "$CANONICAL/references/templates/acceptance_tests.md"        "$REPO_ROOT/templates/acceptance_tests.md"
 do_copy "$CANONICAL/references/templates/search_scope.json"          "$REPO_ROOT/templates/search_scope.json"
-echo "  HOLD (public variant drops authority files group): templates/manifest.json"
+do_copy "$CANONICAL/references/templates/routes.json"                "$REPO_ROOT/templates/routes.json"
+do_copy "$CANONICAL/references/templates/completeness_contract.json" "$REPO_ROOT/templates/completeness_contract.json"
+do_copy "$CANONICAL/references/templates/reporting_rules.json"       "$REPO_ROOT/templates/reporting_rules.json"
+echo "  HOLD (public variant uses agent_context_version): templates/manifest.json"
 
 echo
-echo "DROPPED (authority layer — chorus-coupled):"
-echo "  - references/templates/routes.json"
-echo "  - references/templates/completeness_contract.json"
-echo "  - references/templates/reporting_rules.json"
-dropped=$((dropped + 3))
 echo "DROPPED (chorus-specific content):"
 echo "  - references/getting-started.md"
 echo "  - references/ci-example.yml"

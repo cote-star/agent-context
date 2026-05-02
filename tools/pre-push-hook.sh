@@ -5,7 +5,7 @@
 # Or: add to your pre-push hook chain via pre-commit framework
 #
 # This hook warns (never blocks) when context-relevant code was modified
-# but the agent-agent context was not updated in the commits being pushed.
+# but agent-context artifacts were not updated in the commits being pushed.
 #
 # Prerequisite:
 #   copy scripts/check_freshness.sh -> .agent-context/tools/check_freshness.sh

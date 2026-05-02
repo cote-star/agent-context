@@ -57,6 +57,10 @@ class InitThenVerifyTests(unittest.TestCase):
 
             pack_dir = pathlib.Path(tmpdir) / ".agent-context" / "current"
             self.assertTrue(pack_dir.is_dir())
+            tools_dir = pathlib.Path(tmpdir) / ".agent-context" / "tools"
+            self.assertTrue((tools_dir / "verify_agent_context.py").is_file())
+            old_verifier_name = "verify_" + "context" + "_pack.py"
+            self.assertFalse((tools_dir / old_verifier_name).exists())
 
             # Verifier should fail: search_scope.json has _EXAMPLE_feature_work marker.
             result_verify = _run(["verify", tmpdir])

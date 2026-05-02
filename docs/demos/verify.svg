@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="789" height="450" viewBox="0 0 789 450" role="img" aria-labelledby="title desc">
+  <title id="title">agent-context verify demo</title>
+  <desc id="desc">A warm paper terminal-style screenshot showing agent-context verification passing after template markers are removed.</desc>
+  <rect width="789" height="450" fill="#FDFCF8"/>
+  <rect x="28" y="28" width="733" height="394" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+  <rect x="58" y="70" width="673" height="292" rx="8" fill="#111827"/>
+  <circle cx="86" cy="96" r="7" fill="#FCA5A5"/>
+  <circle cx="110" cy="96" r="7" fill="#FDE68A"/>
+  <circle cx="134" cy="96" r="7" fill="#86EFAC"/>
+  <text x="70" y="142" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">$ agent-context verify .</text>
+  <text x="70" y="194" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">checking required files</text>
+  <text x="70" y="234" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">checking JSON contracts</text>
+  <text x="70" y="274" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">checking coverage hints</text>
+  <text x="70" y="326" fill="#86EFAC" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">OK: agent-context passed validation (tier 3)</text>
+</svg>

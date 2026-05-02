@@ -1,4 +1,4 @@
-# Three-Layer Context Pack Architecture
+# Three-Layer Agent-Context Architecture
 
 ## Layer 1 — Content (Markdown)
 
@@ -24,7 +24,7 @@
 
 Claude trusts these as authoritative. Result: answers from pure context, zero files opened.
 
-> **Scope note for this repo.** The authority layer is documented here for completeness but is **not shipped** in this public `agent-context` distribution. It lives in [agent-chorus](https://github.com/cote-star/agent-chorus) where the runtime makes it useful. Everything else in this architecture doc applies unchanged to the public pack.
+> **v0.2.0 note.** The public `agent-context` repo now ships the authority layer as part of tier 3. Earlier public builds documented this layer but left it to `agent-chorus`; tier 3 now includes it directly so a repo can carry the full contract without depending on the chorus CLI.
 
 ## Layer 3 — Navigation (JSON)
 
@@ -42,7 +42,7 @@ The repo ships two helper tools that should be copied into `.agent-context/tools
 
 | File | Purpose |
 |---|---|
-| `verify_context_pack.py` | Machine-checkable integrity validation for the pack |
+| `verify_agent_context.py` | Machine-checkable integrity validation for the pack |
 | `check_freshness.sh` | Freshness check for "code changed but pack not updated" |
 
 These scripts are the canonical implementation behind the reference CI and pre-push examples. Teams should adapt how they are invoked, not rewrite their logic from scratch. The Python CLI (`bin/agent-context`) wraps both for a friendlier surface: `bin/agent-context verify` and `bin/agent-context freshness`.
@@ -59,9 +59,7 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 
 **What helps:** Authoritative completeness lists. Stop conditions. Grouped reporting rules. The more precise the contract, the fewer files Claude opens.
 
-**What hurts:** Vague or incomplete contracts — Claude will trust a wrong contract and produce a wrong answer confidently.
-
-> In this public repo the authority layer is intentionally absent, so trust-agents lean on the content layer (`00_START_HERE.md` read-order + stop rules) rather than a structured JSON contract.
+**What hurts:** Vague or incomplete contracts — Claude will trust a wrong contract and produce a wrong answer confidently. This is why tier 3 validates authority-layer paths and requires example entries to be removed before the pack passes.
 
 ### Search-and-verify (Codex, likely Cursor)
 
@@ -107,7 +105,7 @@ The target enforcement model for `agent-context` CI verification combines integr
 
 Teams should set up a verification check in their CI pipeline to run on PRs against main. At minimum, the check should run the machine-checkable structural and semantic validation by invoking the copied helper tools in `.agent-context/tools/`.
 
-Repo adaptation guidance lives in `ci-adaptation.md`, and an advisory pre-push hook is in `../tools/pre-push-hook.sh`. Teams should adapt these to their existing CI pipeline. Manifest checksum sealing is a future enhancement — the current manifest is informational.
+A reference CI job is provided in [`references/ci-example.yml`](references/ci-example.yml), repo adaptation guidance in [`ci-adaptation.md`](ci-adaptation.md), and an advisory pre-push hook in [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh). Teams should adapt these to their existing CI pipeline. Manifest checksum sealing is a future enhancement — the current manifest is informational.
 
 ## Maintenance
 
