@@ -8,12 +8,38 @@ visit the [agent-context dashboard](https://cote-star.github.io/agent-recall/doc
 
 ## Headline Numbers
 
+Historical March/April 2026 aggregate:
+
 | Metric | Bare | Structured |
 |---|---|---|
 | Correctness (3 repos avg) | 50% | **88%** |
 | Token reduction (route-trusting family) | -- | **58-74%** |
 | Dead ends (route-trusting family, 3 repos) | 2-3/repo | **0** |
 | Production risk flags | 7 total | **0** |
+
+Current focused Codex check from May 2, 2026:
+
+| Metric | Bare | Structured |
+|---|---:|---:|
+| Reviewer grade, CLI/library rerun | 5 yes / 1 partial | 5 yes / 1 partial |
+| Self-reported task-local files opened | 58 | **30** |
+| Self-reported dead ends | **0** | 3 |
+| Production-risk answers | **0** | **0** |
+
+Current focused Cursor Agent check from May 2, 2026:
+
+| Metric | Bare | Structured |
+|---|---:|---:|
+| Reviewer grade, CLI/library rerun | 3 yes / 3 partial | 3 yes / 3 partial |
+| Self-reported task-local files opened | 35 | **18** |
+| Self-reported dead ends | 1 | 1 |
+| Production-risk answers | **0** | **0** |
+
+Readout: the current Codex and Cursor reruns support the navigation-efficiency
+claim, not a fresh correctness-lift claim. Cursor was run through authenticated
+Cursor Agent CLI with `composer-2-fast`; Chorus did not expose Cursor CLI session
+telemetry for these temp workspaces, so Cursor metrics are from the CLI final
+answers.
 
 ## Repos Tested
 
@@ -25,6 +51,9 @@ visit the [agent-context dashboard](https://cote-star.github.io/agent-recall/doc
 
 The same general-purpose template was used across all three repos with zero
 modifications.
+
+The May 2026 Codex check reused the CLI/library protocol only. It was a focused
+freshness check, not a full replication of the 78+ result matrix.
 
 ## Key Stories
 

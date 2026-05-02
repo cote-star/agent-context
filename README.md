@@ -51,6 +51,13 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
 
+Freshness note: a focused Codex rerun on May 2, 2026 found the current claim is
+narrower for Codex. Structured context reduced self-reported task-local file
+opens on the CLI/library protocol (58 → 30) but did not improve reviewer grade
+in that one-repo rerun (5 yes / 1 partial in both conditions). Cursor Agent
+showed the same shape after CLI setup: fewer self-reported files opened (35 →
+18), but no grade lift (3 yes / 3 partial in both conditions).
+
 | Metric | Bare session | With agent-context | Change |
 |---|---:|---:|---:|
 | Correct answers | 50% | 88% | **+76%** |
