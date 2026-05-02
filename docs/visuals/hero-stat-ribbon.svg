@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="300" viewBox="0 0 1400 300" role="img" aria-labelledby="rt rd">
+  <title id="rt">agent-context impact at a glance</title>
+  <desc id="rd">Three headline metrics from 78+ reviewer-graded agent runs across three real repos: correctness rises from 50 to 88 percent, Claude tokens drop 58 to 74 percent, dead ends and production-risk answers fall to zero.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#F37021"/>
+    </marker>
+    <style>
+      .eyebrow { font: 800 18px Inter, Arial, sans-serif; fill: #9A3412; }
+      .eyebrowL { font: 800 18px Inter, Arial, sans-serif; fill: #FDE68A; }
+      .metric { font: 900 58px Inter, Arial, sans-serif; fill: #111827; }
+      .metricL { font: 900 58px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .label { font: 800 22px Inter, Arial, sans-serif; fill: #111827; }
+      .labelL { font: 800 22px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .small { font: 16px Inter, Arial, sans-serif; fill: #64748B; }
+      .smallL { font: 16px Inter, Arial, sans-serif; fill: #CBD5E1; }
+    </style>
+  </defs>
+  <rect width="1400" height="300" fill="#FDFCF8"/>
+  <rect x="58" y="30" width="1284" height="240" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+
+  <g filter="url(#shadow)">
+    <rect x="108" y="60" width="386" height="180" rx="8" fill="#111827"/>
+    <text class="eyebrowL" x="140" y="104">CORRECTNESS</text>
+    <text class="metricL" x="140" y="180">50%</text>
+    <path d="M286 158 L342 158" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <text class="metricL" x="364" y="180">88%</text>
+    <text class="smallL" x="140" y="218">reviewer-graded, three real repos</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="532" y="60" width="344" height="180" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="eyebrow" x="564" y="104">CLAUDE TOKENS</text>
+    <text class="metric" x="564" y="180">58–74%</text>
+    <text class="label" x="564" y="208">fewer per session</text>
+    <text class="small" x="564" y="232">40–53K → 4–22K</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="914" y="60" width="378" height="180" rx="8" fill="#111827"/>
+    <text class="eyebrowL" x="946" y="104">FAILURE MODES</text>
+    <text class="labelL" x="946" y="160">dead ends</text>
+    <text class="metricL" x="1260" y="170" text-anchor="end">0</text>
+    <text class="labelL" x="946" y="218">production-risk answers</text>
+    <text class="metricL" x="1260" y="228" text-anchor="end">0</text>
+  </g>
+</svg>
