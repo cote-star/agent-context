@@ -9,6 +9,10 @@ Agent-context makes AI agents **dramatically better** at navigating large codeba
 - **Risk elimination**: agent-context prevented every "would break production" answer
 - **Template is general-purpose**: ML pipeline, CLI library, React frontend -- zero modifications
 
+These headline numbers are historical March/April 2026 results. A focused
+Codex rerun on May 2, 2026 is documented below; it supports the navigation
+claim more strongly than the correctness-lift claim for current Codex.
+
 ---
 
 ## The Problem
@@ -75,6 +79,65 @@ Claude structured: **zero dead ends across all 3 repos.**
 
 ---
 
+## May 2026 Focused Codex Rerun
+
+Why this rerun exists: the Codex-specific claims above were based on experiments
+from roughly four weeks earlier, which is old enough to matter in agent behavior.
+We reran the canonical CLI/library behavior protocol with current local tools:
+
+| Tool | Version / status |
+|---|---|
+| Codex CLI | `codex-cli 0.128.0` |
+| Cursor Agent | `cursor 3.2.11`, `composer-2-fast`, authenticated and run headlessly after setup |
+
+Scope: one play-side CLI/library repo, bare vs structured condition, six tasks
+(`L1`, `L2`, `M1`, `M2`, `H1`, `H2`). Work repos were not used. Raw transcripts
+were kept temporary; only scrubbed aggregate results are reported here.
+
+### Codex Result
+
+| Metric | Bare | Structured | Readout |
+|---|---:|---:|---|
+| Reviewer grade | 5 yes / 1 partial | 5 yes / 1 partial | No correctness lift in this focused rerun |
+| Self-reported task-local files opened | 58 | 30 | 48% fewer files with structured context |
+| Self-reported dead ends | 0 | 3 | Structured run hit stale/scope mismatches |
+| Session duration | ~4 min | ~4 min | Roughly tied |
+| Production-risk answers | 0 | 0 | No production-risk answer in either condition |
+
+### Cursor Agent Result
+
+| Metric | Bare | Structured | Readout |
+|---|---:|---:|---|
+| Reviewer grade | 3 yes / 3 partial | 3 yes / 3 partial | No correctness lift in this focused rerun |
+| Self-reported task-local files opened | 35 | 18 | 49% fewer files with structured context |
+| Self-reported dead ends | 1 | 1 | Tied |
+| Production-risk answers | 0 | 0 | No production-risk answer in either condition |
+
+Cursor evidence caveat: Cursor Agent CLI completed the headless runs, but its
+sessions were not visible to `chorus read/list` for these temporary workspaces.
+The table uses the CLI final answers and self-reported task-local metrics, not
+Chorus-extracted tool telemetry.
+
+Interpretation:
+
+- The current Codex claim should be narrowed: agent-context still acts as useful
+  scaffolding for Codex and reduced the number of task-local files it opened.
+- The current rerun does not support saying Codex correctness improves
+  automatically from the pack. In this run both conditions graded the same.
+- Cursor showed the same broad shape: structured context reduced file opens, but
+  did not improve grade in this focused rerun.
+- The structured runs followed the pack first, then verified against source.
+  That still supports the "search-and-verify" characterization for Codex and is
+  consistent with Cursor in this run.
+- Freshness matters. The structured run found a stale pack mismatch around the
+  current modular adapter architecture; that mismatch caused extra dead ends and
+  should be treated as evidence for stricter freshness checks, not as a reason to
+  trust stale packs.
+- Do not present Cursor as fully proven equivalent to Codex from this evidence:
+  the run is one repo, one model, and lacks Chorus-extracted Cursor telemetry.
+
+---
+
 ## Best Stories
 
 ### "Zero files, 12 seconds" (stream-models, Claude structured, M2)
@@ -87,7 +150,10 @@ Both Claude and Codex in bare condition missed `src/__tests__/setup.tsx` store r
 Claude bare proposed using Apollo Client (being deprecated) in its implementation plan. Claude structured correctly used React Query because the behavioral invariants say "Do not assume Apollo GraphQL queries are the current data path -- React Query is the primary pattern."
 
 ### "Codex achieves 6/6" (agent-chorus, Run 5)
-Codex structured scored 6/6 yes on agent-chorus -- the highest correctness of any agent in any condition across all experiments. The completeness contracts gave Codex the information it needed to be thorough without over-exploring.
+In the historical run, Codex structured scored 6/6 yes on agent-chorus -- the
+highest correctness of any agent in any condition across those experiments. The
+May 2026 focused rerun did not reproduce a Codex correctness lift on the current
+checkout; it showed a navigation-efficiency lift instead.
 
 ---
 
@@ -101,10 +167,10 @@ The experiments revealed that agents fall into two categories:
 - Zero dead ends consistently
 - Benefits from: completeness contracts, stop rules, grouped reporting
 
-### Search-and-verify (Codex, likely Cursor)
+### Search-and-verify (Codex; Cursor provisional)
 - Uses the agent-context as scaffolding, then verifies against code
 - Still opens many files (10.25 avg in frontend)
-- Benefits from: answer quality improvement, search scope boundaries
+- Benefits from: search scope boundaries and completeness cues
 - Does NOT benefit from: stop rules (ignores them)
 
 **The three-layer architecture serves both**: authority layer for Claude, navigation layer for Codex, content layer for both.
