@@ -61,7 +61,7 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 
 **What hurts:** Vague or incomplete contracts — Claude will trust a wrong contract and produce a wrong answer confidently. This is why tier 3 validates authority-layer paths and requires example entries to be removed before the pack passes.
 
-### Search-and-verify (Codex; Cursor still needs a logged-in rerun)
+### Search-and-verify (Codex; Cursor provisional)
 
 1. Reads the index as one signal among many
 2. Greps the repo to build its own understanding
@@ -74,9 +74,10 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 **What hurts:** Stop rules (Codex doesn't stop). Read-order prescriptions (Codex reads in grep-result order). Verify budgets (Codex's budget is "until I'm satisfied").
 
 **May 2026 check:** current Codex still followed this pattern: it read the pack
-first in the structured condition, then verified against source. The structured
-run opened fewer task-local files than bare, but stale pack guidance caused a few
-dead ends. Cursor Agent was not verified because the local CLI was not logged in.
+first in the structured condition, then verified against source. Cursor Agent
+showed the same broad shape after CLI setup. Structured runs opened fewer
+task-local files than bare for both agents, but stale pack guidance still caused
+dead ends and neither agent showed a correctness lift in the focused rerun.
 
 ## Agent Routing Blocks
 
