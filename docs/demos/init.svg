@@ -8,8 +8,8 @@
   <circle cx="110" cy="96" r="7" fill="#FDE68A"/>
   <circle cx="134" cy="96" r="7" fill="#86EFAC"/>
   <text x="70" y="142" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">$ agent-context init --tier 3 .</text>
-  <text x="70" y="184" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Initialized .agent-context/current/ with 11 files</text>
-  <text x="70" y="224" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Copied helper tools to .agent-context/tools/</text>
-  <text x="70" y="264" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Wrote routing blocks for agents</text>
-  <text x="70" y="316" fill="#F37021" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Next: fill templates, then verify.</text>
+  <text x="70" y="194" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Initialized .agent-context/current/ with 11 files</text>
+  <text x="70" y="234" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Copied helper tools to .agent-context/tools/</text>
+  <text x="70" y="274" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Wrote routing blocks for agents</text>
+  <text x="70" y="326" fill="#F37021" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Next: fill templates, then verify.</text>
 </svg>

@@ -42,9 +42,9 @@
   <g filter="url(#shadow)">
     <rect x="914" y="60" width="378" height="180" rx="8" fill="#111827"/>
     <text class="eyebrowL" x="946" y="104">FAILURE MODES</text>
-    <text class="labelL" x="946" y="160">dead ends</text>
-    <text class="metricL" x="1260" y="170" text-anchor="end">0</text>
-    <text class="labelL" x="946" y="218">production-risk answers</text>
-    <text class="metricL" x="1260" y="228" text-anchor="end">0</text>
+    <text class="metricL" x="1010" y="180" text-anchor="middle">0</text>
+    <text class="metricL" x="1196" y="180" text-anchor="middle">0</text>
+    <text class="smallL" x="1010" y="218" text-anchor="middle">dead ends</text>
+    <text class="smallL" x="1196" y="218" text-anchor="middle">risk outputs</text>
   </g>
 </svg>

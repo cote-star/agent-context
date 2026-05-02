@@ -32,14 +32,14 @@
   </g>
 
   <g filter="url(#shadow)">
-    <rect x="552" y="220" width="312" height="292" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
-    <text class="label" x="592" y="278">.agent-context</text>
-    <rect x="592" y="318" width="230" height="38" rx="6" fill="#FEF3C7" stroke="#E8D9BE"/>
-    <text class="mono" x="612" y="343">content markdown</text>
-    <rect x="592" y="376" width="230" height="38" rx="6" fill="#FFEDD5" stroke="#E8D9BE"/>
-    <text class="mono" x="612" y="401">authority json</text>
-    <rect x="592" y="434" width="230" height="38" rx="6" fill="#ECFDF5" stroke="#B7E4C7"/>
-    <text class="mono" x="612" y="459">search scope</text>
+    <rect x="552" y="250" width="312" height="232" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="592" y="306">.agent-context</text>
+    <rect x="592" y="326" width="230" height="38" rx="6" fill="#FEF3C7" stroke="#E8D9BE"/>
+    <text class="mono" x="612" y="351">content markdown</text>
+    <rect x="592" y="374" width="230" height="38" rx="6" fill="#FFEDD5" stroke="#E8D9BE"/>
+    <text class="mono" x="612" y="399">authority json</text>
+    <rect x="592" y="422" width="230" height="38" rx="6" fill="#ECFDF5" stroke="#B7E4C7"/>
+    <text class="mono" x="612" y="447">search scope</text>
   </g>
 
   <g filter="url(#shadow)">
@@ -52,7 +52,7 @@
 
   <path d="M420 366 C466 366 498 366 536 366" fill="none" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
   <path d="M882 366 C932 366 970 366 1008 366" fill="none" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
-  <path d="M1152 510 C1098 610 808 628 718 540" fill="none" stroke="#475569" stroke-width="4" stroke-dasharray="10 14" marker-end="url(#arrow)"/>
+  <path d="M1152 510 C1098 580 808 598 718 510" fill="none" stroke="#475569" stroke-width="4" stroke-dasharray="10 14" marker-end="url(#arrow)"/>
 
   <text class="tag" x="456" y="334">read first</text>
   <text class="tag" x="914" y="320">search bounds</text>

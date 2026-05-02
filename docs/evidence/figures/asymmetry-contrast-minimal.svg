@@ -23,7 +23,7 @@
     <rect x="86" y="174" width="488" height="314" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
     <text class="label" x="330" y="226" text-anchor="middle">Claude</text>
     <text class="small" x="330" y="260" text-anchor="middle">Beacon Web / state-reset lookup</text>
-    <text class="metric" x="330" y="346" text-anchor="middle">14 -> 4</text>
+    <text class="metric" x="330" y="346" text-anchor="middle">14 → 4</text>
     <text class="mono" x="330" y="390" text-anchor="middle">files opened</text>
     <line x1="126" y1="416" x2="534" y2="416" stroke="#E8D9BE" stroke-width="2"/>
     <text class="small" x="330" y="450" text-anchor="middle">Effect in this run</text>
@@ -32,13 +32,13 @@
 
   <g filter="url(#shadow)">
     <rect x="626" y="174" width="488" height="314" rx="8" fill="#111827"/>
-    <text x="870" y="226" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#FDFCF8">Codex</text>
-    <text x="870" y="260" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="17" fill="#CBD5E1">Atlas Models / parameter-threading plan</text>
-    <text x="870" y="346" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="74" font-weight="900" fill="#FDFCF8">3 -> 12</text>
-    <text x="870" y="390" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" fill="#CBD5E1">files opened</text>
+    <text class="label" x="870" y="226" text-anchor="middle" fill="#FDFCF8">Codex</text>
+    <text class="small" x="870" y="260" text-anchor="middle" fill="#CBD5E1">Atlas Models / parameter-threading plan</text>
+    <text class="metric" x="870" y="346" text-anchor="middle" fill="#FDFCF8">3 → 12</text>
+    <text class="mono" x="870" y="390" text-anchor="middle" fill="#CBD5E1">files opened</text>
     <line x1="666" y1="416" x2="1074" y2="416" stroke="#334155" stroke-width="2"/>
-    <text x="870" y="450" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="17" fill="#CBD5E1">Effect in this run</text>
-    <text x="870" y="476" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#FDFCF8">expanded proof burden</text>
+    <text class="small" x="870" y="450" text-anchor="middle" fill="#CBD5E1">Effect in this run</text>
+    <text class="label" x="870" y="482" text-anchor="middle" font-size="24" fill="#FDFCF8">expanded proof burden</text>
   </g>
 
 </svg>
