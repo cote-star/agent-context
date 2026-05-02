@@ -21,6 +21,17 @@ cd /path/to/your-repo
 
 > Or skip the manual fill and let an agent do it: open Claude / Codex / Cursor / Gemini in the repo and ask **"Set up agent context for this repo."** The included [SKILL.md](SKILL.md) drives the rest.
 
+## Hero features
+
+| | Feature | Why it matters | Where in this README |
+|---:|---|---|---|
+| 1 | **Dual-mode routing** | Same artifacts work for trust-and-follow agents (Claude, Gemini) and search-and-verify agents (Codex, Cursor) — opposite reading patterns, one pack | [§Architecture](#architecture-same-artifacts-opposite-agent-loops) |
+| 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Proof](#proof) |
+| 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Adoption ladder](#adoption-ladder) |
+| 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the whole pack via the included skill | [SKILL.md](SKILL.md) |
+| 5 | **Machine-checkable** | `verify`, `freshness`, and `doctor` make every artifact auditable in CI | [§How it works](#how-it-works) |
+| 6 | **Zero infra** | Markdown + JSON committed to your repo — no server, vector store, or API key | [§The cold-start tax](#the-cold-start-tax) |
+
 ## The cold-start tax
 
 Every coding agent session starts cold. On a real repo it spends the first chunk of every task re-reading the directory tree, guessing ownership boundaries, and missing the one setup file or invariant that should have shaped the answer. That cost compounds over every question, every reviewer, every agent.
@@ -51,6 +62,19 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 ![agent-context proof summary](docs/visuals/proof-results.svg)
 
 → [Full results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
+
+### What we measure
+
+Every claim above maps to an operational definition and a citation in the evidence docs.
+
+| Term | What we count | Source |
+|---|---|---|
+| **Correct answer** | Reviewer judges all required claims true and complete; reported as the "yes rate" across 78 graded answers | [`docs/evidence/results.md`](docs/evidence/results.md) §Correctness |
+| **Files opened** | Source files the agent reads via the `Read` tool during one task — `grep` and `find` listings excluded | [`docs/evidence/results.md`](docs/evidence/results.md) §Efficiency |
+| **Tokens** | Per-session total of prompt + response tokens, reported in K | [`docs/evidence/results.md`](docs/evidence/results.md) §Efficiency |
+| **Dead end** | A file the agent opens that turns out to be irrelevant to the task — P8: *"track files opened that turned out irrelevant as the primary metric, not just file count"* | [`docs/design-principles.md`](docs/design-principles.md) P8 |
+| **Production-risk answer** | An answer that, if acted on, would break production: wrong API, wrong file, missing invariant | [`docs/evidence/results.md`](docs/evidence/results.md) §Risk Flags |
+| **Time-to-answer** | One observed task hit zero files and **12 seconds** end-to-end with the pack — vs. multi-minute baselines. Aggregate time measurement is on the v0.5 roadmap. | [`docs/evidence/results.md`](docs/evidence/results.md) §Best Stories · [v0.5 roadmap](docs/roadmap.md) |
 
 ## How it works
 
@@ -136,6 +160,20 @@ The same `.agent-context/` content is consumed differently by each agent family.
 
 → [Architecture deep-dive](docs/architecture.md) · [16 design principles](docs/design-principles.md)
 
+## Where it works
+
+The same `.agent-context/` template has been validated across stacks and across two orders of magnitude in repo size — with **zero modifications**.
+
+| Repo | Files | Stack | Result |
+|---|---:|---|---|
+| ML pipeline (`stream-models`) | 501 | Python | 50% → 83% correct · 74% fewer tokens · 0 dead ends |
+| Dual CLI (`agent-chorus`) | 155 | Rust + Node.js | Codex hit **6/6** (highest of any condition across all experiments) · 69% fewer tokens |
+| React frontend (`trust-stream-frontend`) | 1,982 | TypeScript | 50% → 100% correct · 58% fewer tokens · 0 dead ends |
+
+**Repo-agnostic by design.** Principle P1 ([`docs/design-principles.md`](docs/design-principles.md)) is tagged `[all repos]` — the artifact set is built to "apply regardless of repo type, size, or stack."
+
+**Non-code corpora — not yet tested.** The same content + authority + navigation pattern is designed to generalize to datasets, design systems, runbooks, and other stable corpora that an agent must read before acting. Currently validated only on code repos. The first non-code corpus test is on the [v0.5 roadmap](docs/roadmap.md).
+
 ## Adoption ladder
 
 Start small. Scale when the team is ready. Each tier is a valid stopping point — no hidden dependency on the full pack.
@@ -177,15 +215,17 @@ For multi-agent session visibility and messaging, pair with [agent-chorus](https
 
 ## Docs
 
-| Need | Start here |
-|---|---|
-| First install | [Getting started](docs/getting-started.md) |
-| Architecture deep-dive | [Architecture guide](docs/architecture.md) |
-| Design rationale | [16 design principles](docs/design-principles.md) |
-| CI setup | [CI adaptation](docs/ci-adaptation.md) |
-| Evidence | [Experiment results](docs/evidence/results.md) |
-| Agent-driven creation | [SKILL.md](SKILL.md) |
-| Release history | [Release notes](RELEASE_NOTES.md) |
+Each doc maps to one of the hero features above (or to general onboarding).
+
+| Need | Document | Hero feature |
+|---|---|---|
+| First install | [Getting started](docs/getting-started.md) | — |
+| Architecture deep-dive | [Architecture guide](docs/architecture.md) | Dual-mode routing |
+| Evidence | [Experiment results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) | Quantified evidence |
+| Agent-driven creation | [SKILL.md](SKILL.md) | Agent-creatable |
+| CI setup | [CI adaptation](docs/ci-adaptation.md) | Machine-checkable |
+| Design rationale | [16 design principles](docs/design-principles.md) | — |
+| Release history | [Release notes](RELEASE_NOTES.md) | — |
 
 ## Repository boundary
 
