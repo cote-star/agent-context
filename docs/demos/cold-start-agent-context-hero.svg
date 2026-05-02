@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title desc">
+  <title id="title">agent-context artifact system</title>
+  <desc id="desc">A warm paper hero showing agent-context as content, authority, navigation, and quality artifacts that guide different coding agents.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
+    </filter>
+    <style>
+      .h1 { font: 900 54px Inter, Arial, sans-serif; fill: #111827; }
+      .body { font: 24px Inter, Arial, sans-serif; fill: #475569; }
+      .label { font: 800 26px Inter, Arial, sans-serif; fill: #111827; }
+      .small { font: 18px Inter, Arial, sans-serif; fill: #64748B; }
+      .mono { font: 19px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #475569; }
+      .monoDark { font: 18px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #CBD5E1; }
+      .tag { font: 800 17px Inter, Arial, sans-serif; fill: #9A3412; }
+    </style>
+  </defs>
+  <rect width="1080" height="1080" fill="#FDFCF8"/>
+  <rect x="78" y="70" width="924" height="940" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+
+  <text class="h1" x="540" y="154" text-anchor="middle">agent-context</text>
+  <text class="body" x="540" y="198" text-anchor="middle">repo-native evidence for every coding agent</text>
+
+  <g filter="url(#shadow)">
+    <rect x="174" y="252" width="732" height="118" rx="8" fill="#111827"/>
+    <text x="540" y="300" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#FDFCF8">.agent-context/current/</text>
+    <text x="540" y="334" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#CBD5E1">checked in, reviewed, verified in CI</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="152" y="432" width="338" height="150" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="tag" x="184" y="474">CONTENT</text>
+    <text class="label" x="184" y="514">Markdown map</text>
+    <text class="small" x="184" y="546">overview, code map, invariants</text>
+    <text class="mono" x="184" y="572">00_* through 40_*</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="590" y="432" width="338" height="150" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="tag" x="622" y="474">AUTHORITY</text>
+    <text class="label" x="622" y="514">Required evidence</text>
+    <text class="small" x="622" y="546">routes and completeness contracts</text>
+    <text class="mono" x="622" y="572">routes.json + contracts</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="152" y="632" width="338" height="150" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="tag" x="184" y="674">NAVIGATION</text>
+    <text class="label" x="184" y="714">Bounded search</text>
+    <text class="small" x="184" y="746">scoped dirs and verification shortcuts</text>
+    <text class="mono" x="184" y="772">search_scope.json</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="590" y="632" width="338" height="150" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="tag" x="622" y="674">QUALITY</text>
+    <text class="label" x="622" y="714">Machine checks</text>
+    <text class="small" x="622" y="746">manifest, acceptance tests, helpers</text>
+    <text class="mono" x="622" y="772">verify_agent_context.py</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="214" y="850" width="652" height="78" rx="8" fill="#111827"/>
+    <text x="540" y="884" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#FDFCF8">Claude reads contracts. Codex verifies paths.</text>
+    <text class="monoDark" x="540" y="914" text-anchor="middle">same artifacts, different agent loops</text>
+  </g>
+</svg>
