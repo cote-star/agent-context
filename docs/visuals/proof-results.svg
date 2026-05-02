@@ -37,9 +37,9 @@
   <g filter="url(#shadow)">
     <rect x="532" y="214" width="344" height="222" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
     <text class="eyebrow" x="564" y="266">CLAUDE TOKEN USE</text>
-    <text class="metric" x="564" y="342">58-74%</text>
-    <text class="label" x="564" y="386">fewer tokens</text>
-    <text class="small" x="564" y="414">40-53K down to 4-22K</text>
+    <text class="metric" x="564" y="346">58–74%</text>
+    <text class="label" x="564" y="390">fewer tokens</text>
+    <text class="small" x="564" y="418">40–53K → 4–22K</text>
   </g>
 
   <g filter="url(#shadow)">
