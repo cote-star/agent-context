@@ -73,83 +73,89 @@ style: |
 
 # agent-context
 
-### Stop re-teaching your repo to every coding agent
+### A repo evidence standard for coding agents
 
-Checked-in maps, boundaries, and checks that agents read before editing.
+Make context portable, reviewable, fresh, and testable before the agent edits.
 
-What we built · what held up · what we narrowed
+A concrete workflow for Cursor, Claude, Codex, Gemini, and OpenCode.
 
 Cursor Meetup · May 2026
 [github.com/cote-star/agent-context](https://github.com/cote-star/agent-context)
 
 ---
 
-## The cold-start tax
+## The agent is new here every time
 
-A familiar Cursor meetup moment:
+Most coding agents enter a repo as a bright visitor with no durable map.
 
-- the agent re-reads the tree
-- it guesses ownership boundaries
-- it misses the invariant that should have shaped the answer
+- They rediscover the tree.
+- They infer ownership from whatever file they open first.
+- They miss the invariant that decides whether an answer is safe.
+- They repeat the same exploration in the next session, editor, or model.
 
-The model is smart. The session is still a stranger to your repo.
-
-Same shape across **Claude, Codex, Cursor, Gemini, OpenCode**. The tax compounds across every question, reviewer, and agent.
+**The failure is often not intelligence. It is missing repo evidence.**
 
 ![w:900](../docs/visuals/agent-context-loop.svg)
 
 ---
 
-## One folder, every agent
+## Thesis: every serious repo needs a navigation layer
 
-Commit `.agent-context/` to your repo: a small, reviewable evidence layer beside the code.
+We already check in tests, docs, schemas, CI, runbooks, and migration history.
 
-Not memory. Not RAG. Not another hosted service.
+**Agent context should be another checked-in repo artifact:** the map of what is true, risky, connected, and out-of-bounds.
 
-`init` writes the same routing block into four standard project-rule files. Modern agents read several of these **together** — not 1:1 — so the redundancy is the feature.
+- **Portable:** markdown and JSON, not vendor memory.
+- **Reviewable:** context changes can be reviewed like code changes.
+- **Fresh:** drift is a failing preflight, not a quiet footnote.
 
-| Routing file | Common pick-ups |
-|---|---|
-| `.cursorrules` | Cursor |
-| `CLAUDE.md` | Claude · Claude Code · Cursor |
-| `AGENTS.md` | Codex · OpenCode · Cursor |
-| `GEMINI.md` | Gemini |
-
-**One pack. Four routing files. Any one can route the agent to the same context.**
+**The standard is simple: read the repo map before editing the repo.**
 
 ---
 
-## Three layers, one pack
+## Explorable recall has three tracks
 
-![w:430](../docs/demos/cold-start-agent-context-hero.svg)
+The idea is bigger than a docs folder. A useful context layer has to coordinate **navigation**, **operating loop**, and **engineering**.
 
-| Layer | Files | Job |
-|---|---|---|
-| **Content** | `00_*` through `40_*` markdown | What is this system? What matters? |
-| **Authority** | `routes.json`, contracts, reporting rules | What must a complete answer include? |
-| **Navigation** | `search_scope.json` | Where should search-and-verify agents look first? |
-
-Quality wraps all three: manifest, acceptance tests, `verify`, and `freshness`.
+![w:1050](../docs/evidence/figures/three-tracks-importance-minimal.svg)
 
 ---
 
-## Two reading patterns, one pack
+## The artifact: `.agent-context/`
 
-```text
-Search-and-verify  (Codex, Cursor, OpenCode w/ local model)
-  search_scope   →  scoped grep   →  verification shortcut  →  answer
+A committed folder next to the code. No hosted service. No hidden memory. No editor lock-in.
 
-Trust-and-follow   (Claude, Gemini, OpenCode w/ Anthropic backend)
-  routing block  →  required files  →  completeness contract  →  answer
+![w:620](../docs/demos/cold-start-agent-context-hero.svg)
+
+Three pack layers:
+
+- **Content:** overview, code map, invariants, operations.
+- **Authority:** routes, completeness contracts, reporting rules.
+- **Navigation:** search scope, exclusions, verification shortcuts.
+
+The idea is not “more docs.” It is **docs with contracts, scopes, and checks.**
+
+---
+
+## The workflow teams can copy
+
+1. **Initialize** — create a tier 1 or tier 3 pack.
+2. **Fill** — have an agent enumerate subsystems before writing.
+3. **Verify** — run structural checks and grep-backed acceptance tests.
+4. **Freshness** — fail the run when relevant code changed but context did not.
+5. **Measure** — compare bare vs structured runs on hard tasks.
+
+```bash
+agent-context init --tier 1 .
+agent-context verify .
+agent-context freshness . --base-ref origin/main
 ```
 
-Same content. Two reading paths.
-
-That is the design constraint: one repo artifact has to help agents that verify by search and agents that follow explicit contracts.
+That is the meetup takeaway: not a library trick, a repeatable operating loop.
 
 ---
 
-## Live demo · init
+## Demo: from empty repo to first-read contract
 
 ```bash
 $ cd examples/hello-service
@@ -162,108 +168,136 @@ Wrote routing block in GEMINI.md
 Wrote routing block in .cursorrules
 ```
 
-This is the mechanical part: create the pack, copy local checks, and route all agent entry points to the same first reads.
+Then ask the agent:
+
+> **Set up agent context for this repo.**
+
+The agent fills the templates, writes acceptance tests, runs verify, and leaves a diff the team can review.
 
 ---
 
-## Live demo · agent fills the pack
+## What a reviewer actually checks
 
-> **"Set up agent context for this repo."**
+- **File families:** does the pack name every file family that must change together?
+- **Negative guidance:** does it say which plausible files are deprecated, generated, or near-misses?
+- **Silent failures:** does it call out the thing that can break without a compile error?
 
-![w:900](../docs/demos/demo-agent-context.svg)
+![w:1000](../docs/demos/demo-agent-context.svg)
 
-[`SKILL.md`](../SKILL.md) drives the agent:
-
-1. enumerate subsystems first, so nothing silently gets skipped
-2. fill all 11 templates
-3. write acceptance tests with grep verification
-4. run the machine checks
+The review target is the context diff, not the model's private memory.
 
 ---
 
-## Live demo · verify
+## How to test whether it works
 
-```bash
-$ ~/agent-context/bin/agent-context verify .
-OK: agent-context passed machine-checkable validation (tier 3)
-```
+The methodology is deliberately boring:
 
-Checks: structure · JSON schema · real glob matches · template-marker elimination.
+| Protocol piece | Why it matters |
+|---|---|
+| Bare clone vs `structured_fresh` clone | Same repo, same task, only the context layer changes. |
+| Hard multi-hop tasks | Lookup tasks prove little; synthesis tasks expose wrong turns. |
+| Grep-backed ground truth | Every expected file family is mechanically checkable. |
+| Independent judge + human audit | Self-scores are evidence, not verdicts. |
 
-CI-friendly. Pair with `freshness` (drift detection) and `doctor` (env diagnostics).
-
----
-
-## Success stories worth telling
-
-![w:900](../docs/visuals/proof-results.svg)
-
-- **Zero files, 12 seconds:** complex impact analysis answered from context alone.
-- **Silent test failure caught:** bare agents missed the store-reset invariant; structured agents found it.
-- **Deprecated pattern avoided:** context steered planning away from Apollo and toward React Query.
-- **Codex 6/6:** highest historical score on the dual CLI/library protocol.
-
-These are the stories to tell first: context works when repo-specific knowledge decides the answer.
+**If the pack is stale, the run fails before agents start.**
 
 ---
 
-## Evidence, not vibes
+## Evidence dashboard
 
-![w:1100](../docs/visuals/hero-stat-ribbon.svg)
+Different agents expose different telemetry. The clean read is agent-by-agent, not one blended scoreboard.
 
-78+ reviewer-graded answers across three repos:
+| Agent | Strongest available metric | Bare | With context |
+|---|---|---:|---:|
+| **Claude** | files opened / task | 6.3 | 1.9 |
+| **Codex** | tokens / 6-task cell | 163K | 130K |
+| **Cursor** | dead ends / task | 0.24 | 0.07 |
 
-- ML pipeline · 501 files · Python
-- Dual CLI · 155 files · Rust + Node.js
-- React frontend · 1,982 files · TypeScript
-
-Same template, zero modifications. Production-risk answers went to zero in the structured condition.
-
----
-
-## Freshness is the quality gate
-
-![w:1100](../docs/visuals/may-2026-rerun-ribbon.svg)
-
-The May rerun taught one important thing: a stale pack is not a success metric or a failure metric.
-
-It is a maintenance failure. Discard it, update the pack, and rerun.
-
-Before stage:
-
-- `agent-context verify`
-- `agent-context freshness`
-- Codex + Cursor: bare vs `structured_fresh`
-- human reviewer grading against ground truth
+Each agent slide uses only the telemetry available for that agent. No unfinished lanes are included.
 
 ---
 
-## Model-agnostic by construction
+## Claude evidence
 
-![w:1100](../docs/visuals/opencode-tunnel-deployment.svg)
+Claude showed the strongest navigation compression: it followed the context contract and opened far fewer files.
 
-The pack is markdown and JSON; routing blocks are plain text.
+| Metric | Bare | With context | What changed |
+|---|---:|---:|---:|
+| Files opened / task | 6.3 | 1.9 | **~70% fewer files** |
+| Tokens / task | 38.6K | 13.1K | **~65-70% fewer tokens** |
 
-Operator-verified with **OpenCode + OSS model** (Devstral Small 2 / Qwen 4B) over an SSH tunnel.
+Best use case: impact analysis where the completeness contract names every file family and silent failure mode.
 
-The point is portability: repo context should not depend on one vendor, one editor, or one hosted memory layer.
-
----
-
-## The honest claim
-
-**agent-context reduces wrong turns by making repo knowledge explicit before the agent edits.**
-
-- Strongest when repo-specific invariants decide the answer.
-- Freshness is part of the product, not an afterthought.
-- Success is measured by reviewer grade, file opens, dead ends, and risk flags.
-- Start at tier 1, scale only when the repo needs it.
-
-Not magic intelligence. Better starting evidence.
+<small>Metric source: reviewer-graded Claude run set.</small>
 
 ---
 
-## Try it tonight
+## Codex evidence
+
+Codex still verifies aggressively, but context reduced token load and cut self-reported risk flags.
+
+| Metric | Bare | With context | What changed |
+|---|---:|---:|---:|
+| Tokens / 6-task cell | 163K | 130K | **20% fewer tokens** |
+| Risk flags | 12 | 6 | **50% reduction** |
+| Files opened / task | 7.7 | 7.1 | **7% fewer files** |
+
+Codex is a search-and-verify agent: the pack mostly reduces search breadth and risk, not verification behavior.
+
+---
+
+## Cursor evidence
+
+Cursor's strongest signal was operational: fewer dead ends and fewer files opened with the same task set.
+
+| Metric | Bare | With context | What changed |
+|---|---:|---:|---:|
+| Dead ends / task | 0.24 | 0.07 | **71% fewer dead ends** |
+| Files opened / task | 3.6 | 2.7 | **25% fewer files** |
+| Risk flags | 14 | 10 | **29% reduction** |
+
+Token telemetry is not available for Cursor in this harness, so the Cursor slide does not claim token savings.
+
+---
+
+## Lessons learned the hard way
+
+| Lesson | Operational rule |
+|---|---|
+| Stale context can make a good agent worse. | Freshness is a hard experiment gate. |
+| Easy tasks create fake confidence. | Use multi-hop tasks with near-misses and “do not touch” clauses. |
+| Self-scores are unreliable. | Judge independently; audit before public claims. |
+| Different agents read differently. | Design for trust-and-follow and search-and-verify paths. |
+
+This is why the methodology matters as much as the folder.
+
+---
+
+## Tradeoffs, not magic
+
+- **Maintenance cost:** the pack must change when relevant code changes.
+- **Overfitting risk:** packs should route and bound search, not quote every answer.
+- **Repo-size fit:** small repos may only need tier 1.
+- **Telemetry gaps:** Cursor and local models expose different metrics than CLI agents.
+- **Human review remains:** context improves first drafts; it does not replace code review.
+
+**The bargain:** spend a little repo-maintenance effort to stop every agent from rediscovering the same map.
+
+---
+
+## Try this on one repo tomorrow
+
+1. Pick one painful workflow: impact analysis, auth, cache, release, migration, or docs corpus.
+2. Create tier 1: code map + search scope.
+3. Add one invariant: the silent failure and near-miss files.
+4. Run bare vs context: same task, same repo, two clones.
+5. Review the diff: files opened, dead ends, missing surfaces, risk.
+
+That is enough to decide whether the repo needs the full tier 3 pack.
+
+---
+
+## The first command
 
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
@@ -275,9 +309,9 @@ Or open the repo in your agent of choice and ask:
 
 > **Set up agent context for this repo.**
 
-Start small: tier 1 is two files. Move to tier 3 when the repo needs routes, search scopes, and CI checks.
+Start small. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.
 
-**One folder. Every coding agent. Read before any edit.**
+**Make repo knowledge explicit before asking agents to change it.**
 
 [github.com/cote-star/agent-context](https://github.com/cote-star/agent-context)
 
@@ -285,10 +319,10 @@ Start small: tier 1 is two files. Move to tier 3 when the repo needs routes, sea
 
 <!-- _class: lead -->
 
-## Questions
+# Make context part of the repo
+
+Not a prompt trick. Not a vendor feature. A checked-in standard teams can review.
+
+`init` · `verify` · `freshness` · `bare vs structured_fresh`
 
 [github.com/cote-star/agent-context](https://github.com/cote-star/agent-context)
-
-`agent-context init` · `verify` · `freshness` · `doctor`
-
-Thank you.
