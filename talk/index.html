@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>agent-context — Cursor Meetup, May 2026</title>
-  <meta name="description" content="Checked-in repo evidence for coding agents. What we built, what we measured, what we narrowed.">
+  <meta name="description" content="A repo evidence standard and repeatable workflow for making coding agents navigate large codebases with less re-discovery, lower risk, and clearer review gates.">
   <style>
     /* Warm-paper palette matches the README and SVGs exactly */
     :root {
@@ -65,11 +65,11 @@
     }
 
     /* Typography */
-    h1 { font-size: 2.6em; font-weight: 800; margin: 0 0 0.4em; line-height: 1.1; letter-spacing: -0.01em; }
+    h1 { font-size: 2.6em; font-weight: 800; margin: 0 0 0.4em; line-height: 1.1; letter-spacing: 0; }
     h2 {
       font-size: 1.9em; font-weight: 800; margin: 0 0 0.7em; line-height: 1.15;
       border-bottom: 3px solid var(--orange); padding-bottom: 0.25em;
-      letter-spacing: -0.005em;
+      letter-spacing: 0;
     }
     h3 { font-size: 1.15em; font-weight: 600; color: var(--slate); margin: 0 0 0.6em; }
     p { margin: 0 0 0.8em; max-width: 60em; font-size: 1.1em; }
@@ -128,7 +128,7 @@
     img {
       display: block;
       max-width: 100%;
-      max-height: 65vh;
+      max-height: 76vh;
       margin: 0.3em auto;
     }
 
@@ -160,6 +160,119 @@
     .checks li.no::before { content: "✗"; color: #B91C1C; }
     .checks li.warn::before { content: "⚠"; color: var(--orange-deep); }
 
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1em;
+      margin: 0.4em 0 1em;
+      max-width: 72em;
+    }
+    .stat-card {
+      background: var(--cream);
+      border: 1px solid var(--cream-stroke);
+      border-left: 5px solid var(--orange);
+      border-radius: 8px;
+      padding: 0.9em 1em;
+    }
+    .stat-card .kicker { color: var(--slate-mid); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat-card .value { font-size: 2.1em; font-weight: 800; line-height: 1.05; color: var(--ink); }
+    .stat-card .note { color: var(--slate); font-size: 0.9em; }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9em;
+      max-width: 74em;
+      margin: 0.5em 0 0.9em;
+    }
+    .compare-card {
+      border: 1px solid var(--cream-stroke);
+      border-radius: 8px;
+      background: #fffaf0;
+      padding: 0.85em;
+    }
+    .compare-card h3 { color: var(--ink); margin-bottom: 0.25em; }
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55em;
+      margin: 0.55em 0;
+    }
+    .metric-box {
+      border: 1px solid var(--cream-stroke);
+      border-radius: 8px;
+      padding: 0.55em;
+      background: var(--paper);
+    }
+    .metric-box .label { color: var(--slate-mid); font-size: 0.72em; text-transform: uppercase; }
+    .metric-box .num { color: var(--ink); font-weight: 800; font-size: 1.8em; line-height: 1; }
+    .metric-box.after {
+      border-color: var(--orange);
+      background: var(--cream);
+    }
+    .delta-good {
+      display: inline-block;
+      color: #15803D;
+      font-weight: 800;
+      margin-top: 0.15em;
+      font-size: 1.05em;
+    }
+    .evidence-note {
+      color: var(--slate);
+      font-size: 0.85em;
+      border-top: 1px solid var(--cream-stroke);
+      padding-top: 0.7em;
+      margin-top: 0.8em;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 1.2em;
+      align-items: start;
+      max-width: 74em;
+    }
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1em;
+      max-width: 74em;
+      margin: 0.4em 0 1em;
+    }
+    .method-card {
+      border: 1px solid var(--cream-stroke);
+      background: #fffaf0;
+      border-radius: 8px;
+      padding: 1em;
+      min-height: 10em;
+    }
+    .method-card h3 { color: var(--ink); margin-bottom: 0.35em; }
+    .method-card p { font-size: 0.95em; color: var(--slate); margin-bottom: 0.4em; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0.6em 0 1em; }
+    .pill {
+      border: 1px solid var(--cream-stroke);
+      background: var(--cream);
+      border-radius: 999px;
+      padding: 0.25em 0.7em;
+      color: var(--slate);
+      font-size: 0.9em;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.7em;
+      max-width: 74em;
+      margin: 0.7em 0 1.2em;
+    }
+    .flow-step {
+      border: 1px solid var(--cream-stroke);
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 0.8em;
+      min-height: 7em;
+    }
+    .flow-step .n { color: var(--orange); font-weight: 800; font-size: 1.25em; }
+    .flow-step strong { display: block; margin: 0.2em 0; }
+    .flow-step span { color: var(--slate); font-size: 0.88em; }
+
     /* Print / PDF — one slide per page, drop the snap behavior */
     @media print {
       .deck { height: auto; overflow: visible; scroll-snap-type: none; }
@@ -186,6 +299,8 @@
       th, td { padding: 0.35em 0.45em; }
       img { max-height: 42vh !important; }
       .slide-num { bottom: 1vh; right: 4vw; }
+      .split, .method-grid, .flow, .stat-grid, .compare-grid { grid-template-columns: 1fr; }
+      .before-after { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -195,80 +310,100 @@
   <!-- Slide 1 — Title -->
   <section class="slide lead">
     <h1>agent-context</h1>
-    <h3 style="font-size:1.4em;color:var(--slate);margin-bottom:1.0em;">Stop re-teaching your repo to every coding agent</h3>
-    <p class="meta">Checked-in maps, boundaries, and checks that agents read before editing.</p>
-    <p class="meta">What we built · what held up · what we narrowed</p>
+    <h3 style="font-size:1.35em;color:var(--slate);margin-bottom:1.0em;">A repo evidence standard for coding agents</h3>
+    <p class="meta">Make context portable, reviewable, fresh, and testable before the agent edits.</p>
+    <p class="meta">A concrete workflow for Cursor, Claude, Codex, Gemini, and OpenCode.</p>
     <p class="meta" style="margin-top:2em;">Cursor Meetup · May 2026</p>
     <p class="meta"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
-    <span class="slide-num">1 / 15</span>
+    <span class="slide-num">1 / 19</span>
   </section>
 
-  <!-- Slide 2 — Cold-start tax -->
+  <!-- Slide 2 — Problem -->
   <section class="slide">
-    <h2>The cold-start tax</h2>
-    <p>A familiar Cursor meetup moment:</p>
-    <ul>
-      <li>the agent re-reads the tree</li>
-      <li>it guesses ownership boundaries</li>
-      <li>it misses the invariant that should have shaped the answer</li>
-    </ul>
-    <p>The model is smart. The session is still a stranger to your repo.</p>
-    <p>Same shape across <strong>Claude, Codex, Cursor, Gemini, OpenCode</strong>. The tax compounds across every question, reviewer, and agent.</p>
-    <img src="../docs/visuals/agent-context-loop.svg" alt="agent-context loop diagram" style="max-height:50vh;">
-    <span class="slide-num">2 / 15</span>
+    <h2>The agent is new here every time</h2>
+    <div class="split">
+      <div>
+        <p>Most coding agents enter a repo as a bright visitor with no durable map.</p>
+        <ul>
+          <li>They rediscover the tree.</li>
+          <li>They infer ownership from whatever file they open first.</li>
+          <li>They miss the invariant that decides whether an answer is safe.</li>
+          <li>They repeat the same exploration in the next session, editor, or model.</li>
+        </ul>
+        <p><strong>The failure is often not intelligence. It is missing repo evidence.</strong></p>
+      </div>
+      <img src="../docs/visuals/agent-context-loop.svg" alt="agent-context loop diagram" style="max-height:56vh;">
+    </div>
+    <span class="slide-num">2 / 19</span>
   </section>
 
-  <!-- Slide 3 — One folder, every agent -->
+  <!-- Slide 3 — Thesis -->
   <section class="slide">
-    <h2>One folder, every agent</h2>
-    <p>Commit <code>.agent-context/</code> to your repo: a small, reviewable evidence layer beside the code.</p>
-    <p>Not memory. Not RAG. Not another hosted service.</p>
-    <p><code>init</code> writes the same routing block into four standard project-rule files. Modern agents read several of these <strong>together</strong> — not 1:1 — so the redundancy is the feature.</p>
-    <table>
-      <thead><tr><th>Routing file</th><th>Common pick-ups</th></tr></thead>
-      <tbody>
-        <tr><td><code>.cursorrules</code></td><td>Cursor</td></tr>
-        <tr><td><code>CLAUDE.md</code></td><td>Claude · Claude Code · Cursor</td></tr>
-        <tr><td><code>AGENTS.md</code></td><td>Codex · OpenCode · Cursor</td></tr>
-        <tr><td><code>GEMINI.md</code></td><td>Gemini</td></tr>
-      </tbody>
-    </table>
-    <p style="margin-top:1.5em;"><strong>One pack. Four routing files. Any one can route the agent to the same context.</strong></p>
-    <span class="slide-num">3 / 15</span>
+    <h2>Thesis: every serious repo needs a navigation layer</h2>
+    <p>We already check in tests, docs, schemas, CI, runbooks, and migration history.</p>
+    <p><strong>Agent context should be another checked-in repo artifact:</strong> the map of what is true, risky, connected, and out-of-bounds.</p>
+    <div class="method-grid">
+      <div class="method-card"><h3>Portable</h3><p>Works across agents because it is markdown and JSON, not vendor memory.</p></div>
+      <div class="method-card"><h3>Reviewable</h3><p>Lives in git. Teams can review context changes like code changes.</p></div>
+      <div class="method-card"><h3>Fresh</h3><p>Drift is a failing preflight, not a quiet footnote.</p></div>
+    </div>
+    <p style="font-size:1.28em;"><strong>The standard is simple: read the repo map before editing the repo.</strong></p>
+    <span class="slide-num">3 / 19</span>
   </section>
 
-  <!-- Slide 4 — Three-layer design -->
+  <!-- Slide 4 — Three-track idea -->
   <section class="slide">
-    <h2>Three layers, one pack</h2>
-    <img src="../docs/demos/cold-start-agent-context-hero.svg" alt="agent-context artifact map" style="max-height:34vh;">
-    <table>
-      <thead><tr><th>Layer</th><th>Files</th><th>Job</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Content</strong></td><td><code>00_*</code> through <code>40_*</code> markdown</td><td>What is this system? What matters?</td></tr>
-        <tr><td><strong>Authority</strong></td><td><code>routes.json</code>, contracts, reporting rules</td><td>What must a complete answer include?</td></tr>
-        <tr><td><strong>Navigation</strong></td><td><code>search_scope.json</code></td><td>Where should search-and-verify agents look first?</td></tr>
-      </tbody>
-    </table>
-    <p>Quality wraps all three: manifest, acceptance tests, <code>verify</code>, and <code>freshness</code>.</p>
-    <span class="slide-num">4 / 15</span>
+    <h2>Explorable recall has three tracks</h2>
+    <p>The idea is bigger than a docs folder. A useful context layer has to coordinate <strong>navigation</strong>, <strong>operating loop</strong>, and <strong>engineering</strong>.</p>
+    <img src="../docs/evidence/figures/three-tracks-importance-minimal.svg" alt="Explorable recall as a three-track system" style="max-height:68vh;">
+    <span class="slide-num">4 / 19</span>
   </section>
 
-  <!-- Slide 5 — Two reading patterns -->
+  <!-- Slide 5 — Standard and architecture -->
   <section class="slide">
-    <h2>Two reading patterns, one pack</h2>
-    <pre><code>Search-and-verify  (Codex, Cursor, OpenCode w/ local model)
-  search_scope   →  scoped grep   →  verification shortcut  →  answer
-
-Trust-and-follow   (Claude, Gemini, OpenCode w/ Anthropic backend)
-  routing block  →  required files  →  completeness contract  →  answer</code></pre>
-    <p>Same content. Two reading paths.</p>
-    <p>That is the design constraint: one repo artifact has to help agents that verify by search and agents that follow explicit contracts.</p>
-    <span class="slide-num">5 / 15</span>
+    <h2>The artifact: <code>.agent-context/</code></h2>
+    <div class="split">
+      <div>
+        <p>A committed folder next to the code. No hosted service. No hidden memory. No editor lock-in.</p>
+        <div class="method-card">
+          <h3>Three pack layers</h3>
+          <p><strong>Content:</strong> overview, code map, invariants, operations.</p>
+          <p><strong>Authority:</strong> routes, completeness contracts, reporting rules.</p>
+          <p><strong>Navigation:</strong> search scope, exclusions, verification shortcuts.</p>
+        </div>
+        <div class="pill-row">
+          <span class="pill">Cursor</span>
+          <span class="pill">Claude</span>
+          <span class="pill">Codex</span>
+          <span class="pill">Gemini</span>
+          <span class="pill">OpenCode</span>
+        </div>
+      </div>
+      <img src="../docs/demos/cold-start-agent-context-hero.svg" alt="agent-context artifact map" style="max-height:70vh;">
+    </div>
+    <span class="slide-num">5 / 19</span>
   </section>
 
-  <!-- Slide 6 — Live demo: init -->
+  <!-- Slide 6 — Concrete workflow -->
   <section class="slide">
-    <h2>Live demo · init</h2>
+    <h2>The workflow teams can copy</h2>
+    <div class="flow">
+      <div class="flow-step"><div class="n">1</div><strong>Initialize</strong><span>Create a tier 1 or tier 3 pack in the repo.</span></div>
+      <div class="flow-step"><div class="n">2</div><strong>Fill</strong><span>Have an agent enumerate subsystems before writing.</span></div>
+      <div class="flow-step"><div class="n">3</div><strong>Verify</strong><span>Run structural checks and grep-backed acceptance tests.</span></div>
+      <div class="flow-step"><div class="n">4</div><strong>Freshness</strong><span>Fail the run when relevant code changed but context did not.</span></div>
+      <div class="flow-step"><div class="n">5</div><strong>Measure</strong><span>Compare bare vs structured runs on hard tasks.</span></div>
+    </div>
+    <pre><code>agent-context init --tier 1 .
+agent-context verify .
+agent-context freshness . --base-ref origin/main</code></pre>
+    <p>That is the meetup takeaway: not a library trick, a repeatable operating loop.</p>
+    <span class="slide-num">6 / 19</span>
+  </section>
+
+  <!-- Slide 7 — Live demo -->
+  <section class="slide">
+    <h2>Demo: from empty repo to first-read contract</h2>
     <pre><code>$ cd examples/hello-service
 $ ~/agent-context/bin/agent-context init --tier 3 .
 Initialized .agent-context/current/ with 11 files (tier 3)
@@ -277,124 +412,235 @@ Wrote routing block in CLAUDE.md
 Wrote routing block in AGENTS.md
 Wrote routing block in GEMINI.md
 Wrote routing block in .cursorrules</code></pre>
-    <p>This is the mechanical part: create the pack, copy local checks, and route all agent entry points to the same first reads.</p>
-    <span class="slide-num">6 / 15</span>
-  </section>
-
-  <!-- Slide 7 — Live demo: agent fills the pack -->
-  <section class="slide">
-    <h2>Live demo · agent fills the pack</h2>
+    <p>Then ask the agent:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
-    <img src="../docs/demos/demo-agent-context.svg" alt="agent filling agent-context files" style="max-height:36vh;">
-    <p><a href="../SKILL.md"><code>SKILL.md</code></a> drives the agent:</p>
-    <ol>
-      <li>enumerate subsystems first, so nothing silently gets skipped</li>
-      <li>fill all 11 templates</li>
-      <li>write acceptance tests with grep verification</li>
-      <li>run the machine checks</li>
-    </ol>
-    <span class="slide-num">7 / 15</span>
+    <p>The agent fills the templates, writes acceptance tests, runs verify, and leaves a diff the team can review.</p>
+    <span class="slide-num">7 / 19</span>
   </section>
 
-  <!-- Slide 8 — Live demo: verify -->
+  <!-- Slide 8 — What gets reviewed -->
   <section class="slide">
-    <h2>Live demo · verify</h2>
-    <pre><code>$ ~/agent-context/bin/agent-context verify .
-OK: agent-context passed machine-checkable validation (tier 3)</code></pre>
-    <p>Checks: structure · JSON schema · real glob matches · template-marker elimination.</p>
-    <p>CI-friendly. Pair with <code>freshness</code> (drift detection) and <code>doctor</code> (env diagnostics).</p>
-    <span class="slide-num">8 / 15</span>
+    <h2>What a reviewer actually checks</h2>
+    <div class="method-grid">
+      <div class="method-card"><h3>File families</h3><p>Does the pack name every file family that must change together?</p></div>
+      <div class="method-card"><h3>Negative guidance</h3><p>Does it say which plausible files are deprecated, generated, or near-misses?</p></div>
+      <div class="method-card"><h3>Silent failures</h3><p>Does it call out the thing that can break without a compile error?</p></div>
+    </div>
+    <img src="../docs/demos/demo-agent-context.svg" alt="agent filling agent-context files" style="max-height:52vh;">
+    <p class="footer-note">This is where the talk becomes concrete: the review target is the context diff, not the model's private memory.</p>
+    <span class="slide-num">8 / 19</span>
   </section>
 
-  <!-- Slide 9 — Success stories -->
+  <!-- Slide 9 — Experiment protocol -->
   <section class="slide">
-    <h2>Success stories worth telling</h2>
-    <img src="../docs/visuals/proof-results.svg" alt="agent-context proof summary" style="max-height:34vh;">
+    <h2>How to test whether it works</h2>
+    <p>The methodology is deliberately boring:</p>
+    <table>
+      <thead><tr><th>Protocol piece</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td>Bare clone vs <code>structured_fresh</code> clone</td><td>Same repo, same task, only the context layer changes.</td></tr>
+        <tr><td>Hard multi-hop tasks</td><td>Lookup tasks prove little; synthesis tasks expose wrong turns.</td></tr>
+        <tr><td>Grep-backed ground truth</td><td>Every expected file family is mechanically checkable.</td></tr>
+        <tr><td>Independent judge + human audit</td><td>Self-scores are evidence, not verdicts.</td></tr>
+      </tbody>
+    </table>
+    <p><strong>If the pack is stale, the run fails before agents start.</strong></p>
+    <span class="slide-num">9 / 19</span>
+  </section>
+
+  <!-- Slide 10 — Evidence dashboard -->
+  <section class="slide">
+    <h2>Evidence by agent</h2>
+    <p>Different agents expose different telemetry. The clean read is agent-by-agent, not one blended scoreboard.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>Claude</h3>
+        <div class="before-after">
+          <div class="metric-box"><div class="label">Bare files</div><div class="num">6.3</div></div>
+          <div class="metric-box after"><div class="label">With context</div><div class="num">1.9</div></div>
+        </div>
+        <span class="delta-good">~70% fewer files</span>
+        <p class="note">Available: files, tokens, reviewer grade.</p>
+      </div>
+      <div class="compare-card">
+        <h3>Codex</h3>
+        <div class="before-after">
+          <div class="metric-box"><div class="label">Bare tokens</div><div class="num">163K</div></div>
+          <div class="metric-box after"><div class="label">With context</div><div class="num">130K</div></div>
+        </div>
+        <span class="delta-good">20% fewer tokens</span>
+        <p class="note">Available: tokens, files, dead ends, risk flags.</p>
+      </div>
+      <div class="compare-card">
+        <h3>Cursor</h3>
+        <div class="before-after">
+          <div class="metric-box"><div class="label">Bare dead ends</div><div class="num">0.24</div></div>
+          <div class="metric-box after"><div class="label">With context</div><div class="num">0.07</div></div>
+        </div>
+        <span class="delta-good">71% fewer dead ends</span>
+        <p class="note">Available: files, dead ends, risk flags.</p>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Agent</th><th>Strongest available metric</th><th>Bare</th><th>With context</th></tr></thead>
+      <tbody>
+        <tr><td>Claude</td><td>files opened / task</td><td>6.3</td><td>1.9</td></tr>
+        <tr><td>Codex</td><td>tokens / 6-task cell</td><td>163K</td><td>130K</td></tr>
+        <tr><td>Cursor</td><td>dead ends / task</td><td>0.24</td><td>0.07</td></tr>
+      </tbody>
+    </table>
+    <p class="evidence-note">Each agent slide uses only the telemetry available for that agent. No unfinished lanes are included.</p>
+    <span class="slide-num">10 / 19</span>
+  </section>
+
+  <!-- Slide 11 — Claude evidence -->
+  <section class="slide">
+    <h2>Claude evidence</h2>
+    <p>Claude showed the strongest navigation compression: it followed the context contract and opened far fewer files.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>Files opened / task</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">6.3</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">1.9</div></div></div>
+        <span class="delta-good">~70% fewer files</span>
+      </div>
+      <div class="compare-card">
+        <h3>Tokens / task</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">38.6K</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">13.1K</div></div></div>
+        <span class="delta-good">~65–70% fewer tokens</span>
+      </div>
+      <div class="compare-card">
+        <h3>Best use case</h3>
+        <p>Impact analysis where the completeness contract names every file family and silent failure mode.</p>
+      </div>
+    </div>
+    <p class="evidence-note">Metric source: reviewer-graded Claude run set.</p>
+    <span class="slide-num">11 / 19</span>
+  </section>
+
+  <!-- Slide 12 — Codex evidence -->
+  <section class="slide">
+    <h2>Codex evidence</h2>
+    <p>Codex still verifies aggressively, but context reduced token load and cut self-reported risk flags.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>Tokens / 6-task cell</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">163K</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">130K</div></div></div>
+        <span class="delta-good">20% fewer tokens</span>
+      </div>
+      <div class="compare-card">
+        <h3>Risk flags</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">12</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">6</div></div></div>
+        <span class="delta-good">50% reduction</span>
+      </div>
+      <div class="compare-card">
+        <h3>Files opened / task</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">7.7</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">7.1</div></div></div>
+        <span class="delta-good">7% fewer files</span>
+      </div>
+    </div>
+    <p class="evidence-note">Codex is a search-and-verify agent: the pack mostly reduces search breadth and risk, not verification behavior.</p>
+    <span class="slide-num">12 / 19</span>
+  </section>
+
+  <!-- Slide 13 — Cursor evidence -->
+  <section class="slide">
+    <h2>Cursor evidence</h2>
+    <p>Cursor's strongest signal was operational: fewer dead ends and fewer files opened with the same task set.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>Dead ends / task</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">0.24</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">0.07</div></div></div>
+        <span class="delta-good">71% fewer dead ends</span>
+      </div>
+      <div class="compare-card">
+        <h3>Files opened / task</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">3.6</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">2.7</div></div></div>
+        <span class="delta-good">25% fewer files</span>
+      </div>
+      <div class="compare-card">
+        <h3>Risk flags</h3>
+        <div class="before-after"><div class="metric-box"><div class="label">Bare</div><div class="num">14</div></div><div class="metric-box after"><div class="label">With context</div><div class="num">10</div></div></div>
+        <span class="delta-good">29% reduction</span>
+      </div>
+    </div>
+    <p class="evidence-note">Token telemetry is not available for Cursor in this harness, so the Cursor slide does not claim token savings.</p>
+    <span class="slide-num">13 / 19</span>
+  </section>
+
+  <!-- Slide 14 — Lessons learned -->
+  <section class="slide">
+    <h2>Lessons learned the hard way</h2>
+    <table>
+      <thead><tr><th>Lesson</th><th>Operational rule</th></tr></thead>
+      <tbody>
+        <tr><td>Stale context can make a good agent worse.</td><td>Freshness is a hard experiment gate.</td></tr>
+        <tr><td>Easy tasks create fake confidence.</td><td>Use multi-hop tasks with near-misses and “do not touch” clauses.</td></tr>
+        <tr><td>Self-scores are unreliable.</td><td>Judge independently; audit before public claims.</td></tr>
+        <tr><td>Different agents read differently.</td><td>Design for trust-and-follow and search-and-verify paths.</td></tr>
+      </tbody>
+    </table>
+    <p>This is why the methodology matters as much as the folder.</p>
+    <span class="slide-num">14 / 19</span>
+  </section>
+
+  <!-- Slide 15 — Tradeoffs -->
+  <section class="slide">
+    <h2>Tradeoffs, not magic</h2>
     <ul>
-      <li><strong>Zero files, 12 seconds:</strong> complex impact analysis answered from context alone.</li>
-      <li><strong>Silent test failure caught:</strong> bare agents missed the store-reset invariant; structured agents found it.</li>
-      <li><strong>Deprecated pattern avoided:</strong> context steered planning away from Apollo and toward React Query.</li>
-      <li><strong>Codex 6/6:</strong> highest historical score on the dual CLI/library protocol.</li>
+      <li><strong>Maintenance cost:</strong> the pack must change when relevant code changes.</li>
+      <li><strong>Overfitting risk:</strong> packs should route and bound search, not quote every answer.</li>
+      <li><strong>Repo-size fit:</strong> small repos may only need tier 1.</li>
+      <li><strong>Telemetry gaps:</strong> Cursor and local models expose different metrics than CLI agents.</li>
+      <li><strong>Human review remains:</strong> context improves first drafts; it does not replace code review.</li>
     </ul>
-    <p>These are the stories to tell first: context works when repo-specific knowledge decides the answer.</p>
-    <span class="slide-num">9 / 15</span>
+    <p><strong>The bargain:</strong> spend a little repo-maintenance effort to stop every agent from rediscovering the same map.</p>
+    <span class="slide-num">15 / 19</span>
   </section>
 
-  <!-- Slide 10 — Evidence -->
+  <!-- Slide 16 — Concrete workflow after meetup -->
   <section class="slide">
-    <h2>Evidence, not vibes</h2>
-    <img src="../docs/visuals/hero-stat-ribbon.svg" alt="historical aggregate stat ribbon" style="max-height:42vh;">
-    <p>78+ reviewer-graded answers across three repos:</p>
-    <ul>
-      <li>ML pipeline · 501 files · Python</li>
-      <li>Dual CLI · 155 files · Rust + Node.js</li>
-      <li>React frontend · 1,982 files · TypeScript</li>
-    </ul>
-    <p>Same template, zero modifications. Production-risk answers went to zero in the structured condition.</p>
-    <span class="slide-num">10 / 15</span>
+    <h2>Try this on one repo tomorrow</h2>
+    <div class="flow">
+      <div class="flow-step"><div class="n">1</div><strong>Pick one painful workflow</strong><span>Impact analysis, auth, cache, release, migration, or docs corpus.</span></div>
+      <div class="flow-step"><div class="n">2</div><strong>Create tier 1</strong><span>Start with code map + search scope.</span></div>
+      <div class="flow-step"><div class="n">3</div><strong>Add one invariant</strong><span>Name the silent failure and near-miss files.</span></div>
+      <div class="flow-step"><div class="n">4</div><strong>Run bare vs context</strong><span>Same task, same repo, two clones.</span></div>
+      <div class="flow-step"><div class="n">5</div><strong>Review the diff</strong><span>Files opened, dead ends, missing surfaces, risk.</span></div>
+    </div>
+    <p>That is enough to decide whether the repo needs the full tier 3 pack.</p>
+    <span class="slide-num">16 / 19</span>
   </section>
 
-  <!-- Slide 11 — Freshness gate -->
+  <!-- Slide 17 — Command -->
   <section class="slide">
-    <h2>Freshness is the quality gate</h2>
-    <img src="../docs/visuals/may-2026-rerun-ribbon.svg" alt="May 2026 focused rerun: Codex 58 to 30, Cursor 35 to 18" style="max-height:34vh;">
-    <p>The May rerun taught one important thing: a stale pack is not a success metric or a failure metric.</p>
-    <p>It is a maintenance failure. Discard it, update the pack, and rerun.</p>
-    <p><strong>Before stage:</strong></p>
-    <ul>
-      <li><code>agent-context verify</code></li>
-      <li><code>agent-context freshness</code></li>
-      <li>Codex + Cursor: bare vs <code>structured_fresh</code></li>
-      <li>human reviewer grading against ground truth</li>
-    </ul>
-    <span class="slide-num">11 / 15</span>
-  </section>
-
-  <!-- Slide 12 — Model-agnostic -->
-  <section class="slide">
-    <h2>Model-agnostic by construction</h2>
-    <img src="../docs/visuals/opencode-tunnel-deployment.svg" alt="OpenCode + SSH tunnel deployment diagram" style="max-height:48vh;">
-    <p>The pack is markdown and JSON; routing blocks are plain text.</p>
-    <p>Operator-verified with <strong>OpenCode + OSS model</strong> (Devstral Small 2 / Qwen 4B) over an SSH tunnel.</p>
-    <p>The point is portability: repo context should not depend on one vendor, one editor, or one hosted memory layer.</p>
-    <span class="slide-num">12 / 15</span>
-  </section>
-
-  <!-- Slide 13 — Honest claim -->
-  <section class="slide">
-    <h2>The honest claim</h2>
-    <p><strong>agent-context reduces wrong turns by making repo knowledge explicit before the agent edits.</strong></p>
-    <ul>
-      <li>Strongest when repo-specific invariants decide the answer.</li>
-      <li>Freshness is part of the product, not an afterthought.</li>
-      <li>Success is measured by reviewer grade, file opens, dead ends, and risk flags.</li>
-      <li>Start at tier 1, scale only when the repo needs it.</li>
-    </ul>
-    <p>Not magic intelligence. Better starting evidence.</p>
-    <span class="slide-num">13 / 15</span>
-  </section>
-
-  <!-- Slide 14 — Try it tonight -->
-  <section class="slide">
-    <h2>Try it tonight</h2>
+    <h2>The first command</h2>
     <pre><code>git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
 ~/agent-context/bin/agent-context init --tier 1 .</code></pre>
     <p>Or open the repo in your agent of choice and ask:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
-    <p>Start small: tier 1 is two files. Move to tier 3 when the repo needs routes, search scopes, and CI checks.</p>
-    <p style="font-size:1.3em;margin-top:1.2em;"><strong>One folder. Every coding agent. Read before any edit.</strong></p>
+    <p>Start small. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.</p>
+    <p style="font-size:1.3em;margin-top:1.2em;"><strong>Make repo knowledge explicit before asking agents to change it.</strong></p>
     <p><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
-    <span class="slide-num">14 / 15</span>
+    <span class="slide-num">17 / 19</span>
   </section>
 
-  <!-- Slide 15 — Q&A -->
+  <!-- Slide 18 — Operating claim -->
+  <section class="slide">
+    <h2>The operating claim</h2>
+    <p><strong>agent-context does not make agents omniscient.</strong></p>
+    <p>It makes repo knowledge explicit enough that agents can start in the right neighborhood, humans can audit their routes, and stale context can fail before it misleads anyone.</p>
+    <p>That is the standard worth adopting: <strong>context as a checked-in interface between repos and agents.</strong></p>
+    <span class="slide-num">18 / 19</span>
+  </section>
+
+  <!-- Slide 19 — Q&A -->
   <section class="slide lead">
-    <h1>Questions</h1>
-    <p class="meta" style="margin-top:1em;font-size:1.3em;"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
-    <p class="meta" style="margin-top:1.5em;"><code>agent-context init</code> · <code>verify</code> · <code>freshness</code> · <code>doctor</code></p>
-    <p class="meta" style="margin-top:2.5em;">Thank you.</p>
-    <span class="slide-num">15 / 15</span>
+    <h1>Make context part of the repo</h1>
+    <p class="meta" style="margin-top:1em;font-size:1.25em;">Not a prompt trick. Not a vendor feature. A checked-in standard teams can review.</p>
+    <p class="meta" style="margin-top:1.5em;"><code>init</code> · <code>verify</code> · <code>freshness</code> · <code>bare vs structured_fresh</code></p>
+    <p class="meta" style="margin-top:1.5em;"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
+    <span class="slide-num">19 / 19</span>
   </section>
 
 </main>
