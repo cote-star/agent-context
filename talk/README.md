@@ -8,6 +8,10 @@ Files in this folder:
 | [`cursor-meetup-may-2026.md`](cursor-meetup-may-2026.md) | Marp markdown source (single source of truth for the talk content). The HTML deck is hand-rendered to match. |
 | [`demo-script.md`](demo-script.md) | Live-demo commands, on-stage flow, backup plan if anything fails, reset commands for rehearsal. |
 | [`pre-recorded-fill.md`](pre-recorded-fill.md) | Recording instructions for the slide-7 MP4 (the agent-fills-the-pack clip). |
+| [`audience-presenter-devrel-review.md`](audience-presenter-devrel-review.md) | Narrative review across audience, presenter, and DevRel perspectives. |
+
+For fresh Codex/Cursor evidence before the meetup, use
+[`docs/experiments/codex-cursor-fresh-pack-rerun.md`](../docs/experiments/codex-cursor-fresh-pack-rerun.md).
 
 ## Rendering
 

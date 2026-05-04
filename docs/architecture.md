@@ -61,7 +61,7 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 
 **What hurts:** Vague or incomplete contracts — Claude will trust a wrong contract and produce a wrong answer confidently. This is why tier 3 validates authority-layer paths and requires example entries to be removed before the pack passes.
 
-### Search-and-verify (Codex; Cursor provisional)
+### Search-and-verify (Codex, Cursor)
 
 1. Reads the index as one signal among many
 2. Greps the repo to build its own understanding
@@ -73,11 +73,7 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 
 **What hurts:** Stop rules (Codex doesn't stop). Read-order prescriptions (Codex reads in grep-result order). Verify budgets (Codex's budget is "until I'm satisfied").
 
-**May 2026 check:** current Codex still followed this pattern: it read the pack
-first in the structured condition, then verified against source. Cursor Agent
-showed the same broad shape after CLI setup. Structured runs opened fewer
-task-local files than bare for both agents, but stale pack guidance still caused
-dead ends and neither agent showed a correctness lift in the focused rerun.
+**Freshness gate.** Any current claim about Codex or Cursor against this pattern requires a fresh-pack rerun under the protocol in [`docs/experiments/codex-cursor-fresh-pack-rerun.md`](experiments/codex-cursor-fresh-pack-rerun.md). Stale-pack runs (e.g., the May 2 2026 one-shot) are treated as maintenance failures, not product evidence — `agent-context verify` and `agent-context freshness` must pass on the structured condition before the agent starts.
 
 ## Agent Routing Blocks
 
