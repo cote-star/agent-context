@@ -1,13 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="300" viewBox="0 0 1400 300" role="img" aria-labelledby="rt rd">
   <title id="rt">agent-context impact at a glance</title>
-  <desc id="rd">Three headline metrics from 78+ reviewer-graded agent runs across three real repos: correctness rises from 50 to 88 percent, Claude tokens drop 58 to 74 percent, dead ends and production-risk answers fall to zero.</desc>
+  <desc id="rd">Three per-agent headline metrics from current measured runs. Claude opens around 70 percent fewer files per task, Codex uses 20 percent fewer tokens per six-task cell, and Cursor hits 71 percent fewer dead ends per task with agent-context. Other agents (Gemini, OpenCode, local OSS) read the same pack under the same dual-routing architecture.</desc>
   <defs>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
     </filter>
-    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 L10 5 L0 10 Z" fill="#F37021"/>
-    </marker>
     <style>
       .eyebrow { font: 800 18px Inter, Arial, sans-serif; fill: #9A3412; }
       .eyebrowL { font: 800 18px Inter, Arial, sans-serif; fill: #FDE68A; }
@@ -24,27 +21,25 @@
 
   <g filter="url(#shadow)">
     <rect x="108" y="60" width="386" height="180" rx="8" fill="#111827"/>
-    <text class="eyebrowL" x="140" y="104">CORRECTNESS</text>
-    <text class="metricL" x="140" y="180">50%</text>
-    <path d="M286 158 L342 158" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
-    <text class="metricL" x="364" y="180">88%</text>
-    <text class="smallL" x="140" y="218">reviewer-graded, three real repos</text>
+    <text class="eyebrowL" x="140" y="104">CLAUDE · files / task</text>
+    <text class="metricL" x="140" y="180">~70%</text>
+    <text class="labelL" x="140" y="208">fewer files opened</text>
+    <text class="smallL" x="140" y="232">6.3 → 1.9 per task</text>
   </g>
 
   <g filter="url(#shadow)">
     <rect x="532" y="60" width="344" height="180" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
-    <text class="eyebrow" x="564" y="104">CLAUDE TOKENS</text>
-    <text class="metric" x="564" y="180">58–74%</text>
-    <text class="label" x="564" y="208">fewer per session</text>
-    <text class="small" x="564" y="232">40–53K → 4–22K</text>
+    <text class="eyebrow" x="564" y="104">CODEX · tokens / cell</text>
+    <text class="metric" x="564" y="180">20%</text>
+    <text class="label" x="564" y="208">fewer tokens</text>
+    <text class="small" x="564" y="232">163K → 130K per 6-task cell</text>
   </g>
 
   <g filter="url(#shadow)">
     <rect x="914" y="60" width="378" height="180" rx="8" fill="#111827"/>
-    <text class="eyebrowL" x="946" y="104">FAILURE MODES</text>
-    <text class="metricL" x="1010" y="180" text-anchor="middle">0</text>
-    <text class="metricL" x="1196" y="180" text-anchor="middle">0</text>
-    <text class="smallL" x="1010" y="218" text-anchor="middle">dead ends</text>
-    <text class="smallL" x="1196" y="218" text-anchor="middle">risk outputs</text>
+    <text class="eyebrowL" x="946" y="104">CURSOR · dead ends / task</text>
+    <text class="metricL" x="946" y="180">71%</text>
+    <text class="labelL" x="946" y="208">fewer dead ends</text>
+    <text class="smallL" x="946" y="232">0.24 → 0.07 per task</text>
   </g>
 </svg>

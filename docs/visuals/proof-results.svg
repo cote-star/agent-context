@@ -1,62 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
-  <title id="title">agent-context proof summary</title>
-  <desc id="desc">A warm paper proof graphic showing higher correctness, lower token use, no dead ends, and no production risk outputs after using agent-context.</desc>
+  <title id="title">agent-context proof summary — per-agent + historical</title>
+  <desc id="desc">Per-agent measured evidence for Claude, Codex, and Cursor (current rerun) above the historical 78-graded run set across three real repos. The same dual-routing pattern supports any agent that reads CLAUDE.md, AGENTS.md, GEMINI.md, or .cursorrules; measured runs only exist for these three agents today.</desc>
   <defs>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
     </filter>
-    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 L10 5 L0 10 Z" fill="#F37021"/>
-    </marker>
     <style>
       .h1 { font: 800 44px Inter, Arial, sans-serif; fill: #111827; }
       .body { font: 21px Inter, Arial, sans-serif; fill: #475569; }
       .eyebrow { font: 800 18px Inter, Arial, sans-serif; fill: #9A3412; letter-spacing: 0; }
+      .eyebrowL { font: 800 18px Inter, Arial, sans-serif; fill: #FDE68A; letter-spacing: 0; }
       .metric { font: 900 58px Inter, Arial, sans-serif; fill: #111827; }
-      .metricDark { font: 900 58px Inter, Arial, sans-serif; fill: #FDFCF8; }
-      .label { font: 800 25px Inter, Arial, sans-serif; fill: #111827; }
-      .small { font: 17px Inter, Arial, sans-serif; fill: #64748B; }
+      .metricL { font: 900 58px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .label { font: 800 22px Inter, Arial, sans-serif; fill: #111827; }
+      .labelL { font: 800 22px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .small { font: 16px Inter, Arial, sans-serif; fill: #64748B; }
+      .smallL { font: 16px Inter, Arial, sans-serif; fill: #CBD5E1; }
       .mono { font: 17px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #475569; }
       .monoDark { font: 17px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #CBD5E1; }
     </style>
   </defs>
   <rect width="1400" height="900" fill="#FDFCF8"/>
   <rect x="58" y="54" width="1284" height="792" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
-  <text class="h1" x="108" y="126">Proof from 78+ graded agent runs</text>
-  <text class="body" x="110" y="166">Same repos, reviewer scoring, and grep-backed verification.</text>
+  <text class="h1" x="108" y="126">Per-agent evidence + 78-graded historical set</text>
+  <text class="body" x="110" y="166">Three measured agents today (Claude, Codex, Cursor). The same dual-routing pattern</text>
+  <text class="body" x="110" y="196">supports any agent reading CLAUDE.md / AGENTS.md / GEMINI.md / .cursorrules.</text>
 
   <g filter="url(#shadow)">
-    <rect x="108" y="214" width="386" height="222" rx="8" fill="#111827"/>
-    <text class="eyebrow" x="140" y="266" fill="#FDE68A">CORRECT ANSWERS</text>
-    <text class="metricDark" x="140" y="346">50%</text>
-    <path d="M286 323 L342 323" stroke="#F37021" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
-    <text class="metricDark" x="364" y="346">88%</text>
-    <text class="monoDark" x="140" y="394">bare sessions -> agent-context</text>
+    <rect x="108" y="234" width="386" height="222" rx="8" fill="#111827"/>
+    <text class="eyebrowL" x="140" y="276">CLAUDE · 3-repo measured</text>
+    <text class="metricL" x="140" y="358">~70%</text>
+    <text class="labelL" x="140" y="394">fewer files opened</text>
+    <text class="smallL" x="140" y="422">6.3 → 1.9 files / task</text>
+    <text class="smallL" x="140" y="442">38.6K → 13.1K tokens / task</text>
   </g>
 
   <g filter="url(#shadow)">
-    <rect x="532" y="214" width="344" height="222" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
-    <text class="eyebrow" x="564" y="266">CLAUDE TOKEN USE</text>
-    <text class="metric" x="564" y="346">58–74%</text>
-    <text class="label" x="564" y="390">fewer tokens</text>
-    <text class="small" x="564" y="418">40–53K → 4–22K</text>
+    <rect x="532" y="234" width="344" height="222" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="eyebrow" x="564" y="276">CODEX · 6-task cell rerun</text>
+    <text class="metric" x="564" y="358">20%</text>
+    <text class="label" x="564" y="394">fewer tokens</text>
+    <text class="small" x="564" y="422">163K → 130K tokens / cell</text>
+    <text class="small" x="564" y="442">12 → 6 risk flags · 7.7 → 7.1 files</text>
   </g>
 
   <g filter="url(#shadow)">
-    <rect x="914" y="214" width="378" height="222" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
-    <text class="eyebrow" x="946" y="266">FAILURE MODES</text>
-    <text class="label" x="946" y="324">dead ends</text>
-    <text class="metric" x="1110" y="334">0</text>
-    <text class="label" x="946" y="386">risk outputs</text>
-    <text class="metric" x="1110" y="396">0</text>
+    <rect x="914" y="234" width="378" height="222" rx="8" fill="#111827"/>
+    <text class="eyebrowL" x="946" y="276">CURSOR · 6-task cell rerun</text>
+    <text class="metricL" x="946" y="358">71%</text>
+    <text class="labelL" x="946" y="394">fewer dead ends</text>
+    <text class="smallL" x="946" y="422">0.24 → 0.07 dead ends / task</text>
+    <text class="smallL" x="946" y="442">3.6 → 2.7 files · 14 → 10 risk flags</text>
   </g>
 
   <g filter="url(#shadow)">
     <rect x="108" y="488" width="760" height="286" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
-    <text class="label" x="140" y="538">Correctness snapshots</text>
-    <text class="mono" x="630" y="538">results.md</text>
+    <text class="label" x="140" y="538">Earlier evidence: 78 reviewer-graded answers</text>
+    <text class="mono" x="630" y="538">3 repos</text>
 
-    <text x="140" y="616" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">ml-pipeline-reference: 50 -> 83</text>
+    <text x="140" y="616" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">ml-pipeline-reference: 50 → 83</text>
     <rect x="502" y="586" width="140" height="18" rx="6" fill="#FCA5A5"/>
     <rect x="502" y="614" width="232" height="18" rx="6" fill="#F37021"/>
 
@@ -64,14 +66,14 @@
     <rect x="502" y="664" width="232" height="18" rx="6" fill="#FCA5A5"/>
     <rect x="502" y="692" width="280" height="18" rx="6" fill="#F37021"/>
 
-    <text x="140" y="756" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">frontend: 50 -> 100</text>
+    <text x="140" y="756" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">frontend: 50 → 100</text>
     <rect x="502" y="724" width="140" height="18" rx="6" fill="#FCA5A5"/>
     <rect x="502" y="752" width="280" height="18" rx="6" fill="#F37021"/>
   </g>
 
   <g filter="url(#shadow)">
     <rect x="906" y="488" width="386" height="286" rx="8" fill="#111827"/>
-    <text class="label" x="938" y="540" fill="#FDFCF8">What changed?</text>
+    <text class="label" x="938" y="540" fill="#FDFCF8">What the pack does</text>
     <rect x="938" y="582" width="132" height="42" rx="6" fill="#FEF3C7"/>
     <text class="mono" x="960" y="609" fill="#7C2D12">content</text>
     <text class="monoDark" x="1110" y="609">read first</text>

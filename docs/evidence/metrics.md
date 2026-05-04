@@ -13,7 +13,7 @@ Historical March/April 2026 aggregate:
 | Metric | Bare | Structured |
 |---|---|---|
 | Correctness (3 repos avg) | 50% | **88%** |
-| Token reduction (route-trusting family) | -- | **58-74%** |
+| Token reduction (Claude, 3-repo avg: 38.6K → 13.1K) | -- | **~66%** |
 | Dead ends (route-trusting family, 3 repos) | 2-3/repo | **0** |
 | Production risk flags | 7 total | **0** |
 

@@ -1,5 +1,21 @@
 # Release Notes
 
+## v0.3.0 — 2026-05-05
+
+README and evidence-doc makeover release. Skill-first install becomes the headline; the CLI path-read becomes an advanced foldout. Per-agent evidence gets its own subsection alongside the historical 78-graded run set, and the hero/proof figures are redrawn as per-agent grids matching the meetup deck. Doc-only release — no CLI behavior change; `bin/agent-context --version` still reports `0.2.1` since templates and the verifier are untouched.
+
+### What's new
+
+- **README leads with skill install.** §Quickstart now shows the per-agent skill-install table (Claude Code / Codex / Cursor) followed by `Set up agent context for this repo.`. The CLI path-read flow (`git clone … && bin/agent-context init`) is demoted to a labeled "if you want the CLI directly (advanced)" foldout. §How it works reframes each step as "the skill invokes this; you can also run it yourself."
+- **README §Results restructured around per-agent evidence.** Historical 78-graded run set stays primary (50→88% correct, ~70% fewer files for Claude, dead ends and risk eliminated, per-repo correctness). A new "Per-agent evidence (current rerun)" subsection adds the deck-aligned per-agent table for Claude / Codex / Cursor. New caveat paragraph says other agents (Gemini, OpenCode, anything reading `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules`) consume the same pack — measured runs only exist for the three agents above today.
+- **Hero ribbon and proof figure redrawn as per-agent grids.** `docs/visuals/hero-stat-ribbon.svg` and `docs/visuals/proof-results.svg` now show three per-agent panels (Claude / Codex / Cursor) using the same visual language as the deck "Evidence by agent" slide. The historical 78-task per-repo correctness band is preserved as a footer on `proof-results.svg`. Both figures now use the cross-repo averages that match the meetup deck instead of the previous 2-of-3-repo range.
+- **Evidence docs aligned with README + deck.** `docs/evidence/results.md`, `docs/evidence/metrics.md`, and `docs/evidence/figures/experiment-results.svg` now use the cross-repo Claude token average (~66%, 38.6K → 13.1K) instead of the previous 2-of-3-repo range, so README, evidence docs, and visuals all agree.
+
+### Compatibility
+
+- Existing v0.2.x packs remain valid. CLI behavior, templates, and verifier are unchanged.
+- README badge bumps to 0.3.0; CLI self-reports 0.2.1.
+
 ## v0.2.1.4 — 2026-05-04
 
 Deck install-path refresh. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.

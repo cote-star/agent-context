@@ -1,7 +1,7 @@
 # agent-context
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.2.1-green.svg)
+![Version](https://img.shields.io/badge/version-0.3.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
 **Checked-in repo evidence for coding agents.**
@@ -10,16 +10,35 @@ Commit one `.agent-context/` directory to your repo. Cursor, Claude, Codex, Gemi
 
 ![agent-context impact at a glance](docs/visuals/hero-stat-ribbon.svg)
 
-```bash
-# Install once
-git clone https://github.com/cote-star/agent-context.git ~/agent-context
+## Install the skill, then ask your agent
 
-# Add the full artifact set to any repo
+Install the bundled skill into your agent of choice (one-time):
+
+| Agent       | Install |
+|-------------|---------|
+| Claude Code | `git clone https://github.com/cote-star/agent-context.git && cp -r agent-context/skills/agent-context ~/.claude/skills/` |
+| Codex       | register `skills/agent-context/agents/openai.yaml` with your Codex skill registry |
+| Cursor      | reads `.cursorrules` from the target repo natively — open the repo, no extra install step |
+
+Then in any repo, ask your agent:
+
+> **Set up agent context for this repo.**
+
+The skill drives scaffold → fill from the subsystem inventory → acceptance tests with grep verification → `verify` → advisory pre-push freshness hook. Output is a reviewable diff in one PR.
+
+**Other agents are supported.** Gemini, OpenCode, and any agent that reads `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules` consume the same pack under the same dual-routing architecture; measured runs only exist for Claude, Codex, and Cursor today.
+
+<details>
+<summary>If you want the CLI directly (advanced)</summary>
+
+```bash
+git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
 ~/agent-context/bin/agent-context init --tier 3 --install-hook .
 ```
 
-> Or skip the manual fill and let an agent do it: open Cursor / Claude / Codex / Gemini / OpenCode in the repo and ask **"Set up agent context for this repo."** The included [SKILL.md](SKILL.md) drives the rest.
+The skill invokes the same `agent-context` CLI under the hood. Running it yourself is useful for scripted setup or CI where an agent isn't in the loop.
+</details>
 
 ## Features
 
@@ -49,6 +68,8 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 ## Results
 
+### Quantified evidence (78-graded run set)
+
 78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
 
 **Freshness is the quality gate.** A May 2 2026 one-shot rerun used a stale pack and produced muddled numbers — that result is recategorized as a maintenance failure, not a product result. Fresh-pack evidence uses an isolated `bare` vs `structured_fresh` protocol maintained outside the public repo, where every structured run must pass `agent-context verify` and the strict `.agent-context/tools/check_freshness.sh` gate before the agent starts.
@@ -61,21 +82,24 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 | Dead ends | 2–3 per repo | 0 | **eliminated** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
-![agent-context proof summary](docs/visuals/proof-results.svg)
+### Per-agent evidence (current rerun)
 
-**Current Codex/Cursor evidence for the meetup.** The talk separates evidence
-by agent because telemetry differs by tool. Claude uses the older
-reviewer-graded run set above; Codex and Cursor use the current focused rerun
-available for the meetup deck:
+![agent-context proof summary — per-agent + historical](docs/visuals/proof-results.svg)
+
+Telemetry differs by tool, so the per-agent table reports each agent's strongest measured signal — not one blended scoreboard.
 
 | Agent | Metric | Bare | With agent-context | Change |
 |---|---|---:|---:|---:|
-| Codex | Tokens / 6-task cell | 163K | 130K | **20% fewer** |
-| Codex | Risk flags | 12 | 6 | **50% reduction** |
-| Codex | Files opened / task | 7.7 | 7.1 | **7% fewer** |
-| Cursor | Dead ends / task | 0.24 | 0.07 | **71% fewer** |
-| Cursor | Files opened / task | 3.6 | 2.7 | **25% fewer** |
-| Cursor | Risk flags | 14 | 10 | **29% reduction** |
+| **Claude** (3-repo avg) | Files opened / task | 6.3 | 1.9 | **~70% fewer** |
+| **Claude** (3-repo avg) | Tokens / task | 38.6K | 13.1K | **~66% fewer** |
+| **Codex** (6-task cell rerun) | Tokens / 6-task cell | 163K | 130K | **20% fewer** |
+| **Codex** (6-task cell rerun) | Risk flags | 12 | 6 | **50% reduction** |
+| **Codex** (6-task cell rerun) | Files opened / task | 7.7 | 7.1 | **7% fewer** |
+| **Cursor** (6-task cell rerun) | Dead ends / task | 0.24 | 0.07 | **71% fewer** |
+| **Cursor** (6-task cell rerun) | Files opened / task | 3.6 | 2.7 | **25% fewer** |
+| **Cursor** (6-task cell rerun) | Risk flags | 14 | 10 | **29% reduction** |
+
+**Other agents read the same pack.** Gemini, OpenCode (with local OSS or Anthropic backend), and any agent that consumes `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules` route through the same dual architecture (trust-and-follow vs search-and-verify). Measured runs only exist for Claude, Codex, and Cursor today; the artifact set is the same.
 
 → [Full results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
 
@@ -94,10 +118,14 @@ Every claim above maps to an operational definition and a citation in the eviden
 
 ## How it works
 
+The skill drives the workflow end-to-end. Each step is a CLI subcommand the skill invokes — and that you can run directly if you skip the agent path.
+
 ### 1. Initialize
 
+The skill starts by scaffolding the pack:
+
 ```bash
-~/agent-context/bin/agent-context init --tier 3 --install-hook .
+agent-context init --tier 3 --install-hook .
 ```
 
 ![agent-context init demo](docs/demos/init.svg)
@@ -106,22 +134,22 @@ Creates `.agent-context/current/`, copies helper tools into `.agent-context/tool
 
 ### 2. Fill the artifacts
 
-Edit the `REPLACE` markers manually, or hand the work to an agent:
+Once scaffolded, the agent enumerates every subsystem (so nothing silently gets skipped), fills all templates, writes acceptance tests with grep verification, and leaves a reviewable diff. [SKILL.md](SKILL.md) is the workflow it follows.
 
 > Set up agent context for this repo.
 
-[SKILL.md](SKILL.md) gives the agent a concrete creation workflow — enumerate every subsystem first (so nothing silently gets skipped), fill all templates, write acceptance tests with grep verification, then run the machine checks.
+If you skipped the skill path, you can edit the `REPLACE` markers manually instead.
 
 ![agent-context workflow](docs/demos/demo-agent-context.svg)
 
 ### 3. Verify
 
 ```bash
-~/agent-context/bin/agent-context verify .
+agent-context verify .
 # OK: agent-context passed machine-checkable validation (tier 3)
 
-~/agent-context/bin/agent-context freshness . --base-ref origin/main
-~/agent-context/bin/agent-context doctor
+agent-context freshness . --base-ref origin/main
+agent-context doctor
 ```
 
 ![agent-context verify pass](docs/demos/verify.svg)
