@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.3.1 — 2026-05-05
+
+Self-contained installable skill release. Doc-only patch — no CLI behavior change; `bin/agent-context --version` still reports `0.2.1`.
+
+### What's new
+
+- **Installable skill is now self-contained.** `skills/agent-context/` now bundles its own `templates/` (10 files) and `tools/` (`verify_agent_context.py`, `check_freshness.sh`, `pre-push-hook.sh`) alongside `SKILL.md`. A fresh `cp -r skills/agent-context ~/.claude/skills/` install actually works end-to-end — the agent can follow `SKILL.md` Step 2's manual-scaffolding fallback because the templates and helper tools the SKILL references are present without needing the rest of the repo on disk. Previously the install left the skill folder pointing at `templates/` and `tools/` paths that only existed in the cloned repo, so the SKILL fallback was broken from a clean install.
+- **Drift guard extended.** `tests/test_skill_sync.py` now asserts byte-equality between the repo root copies and the bundled-in-skill copies for both `templates/` and `tools/`, in addition to the existing `SKILL.md` check. CI fails fast if anyone updates one location and forgets the other.
+
 ## v0.3.0 — 2026-05-05
 
 README and evidence-doc makeover release. Skill-first install becomes the headline; the CLI path-read becomes an advanced foldout. Per-agent evidence gets its own subsection alongside the historical 78-graded run set, and the hero/proof figures are redrawn as per-agent grids matching the meetup deck. Doc-only release — no CLI behavior change; `bin/agent-context --version` still reports `0.2.1` since templates and the verifier are untouched.
