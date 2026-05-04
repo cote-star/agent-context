@@ -56,8 +56,8 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 | Metric | Bare session | With agent-context | Change |
 |---|---:|---:|---:|
 | Correct answers | 50% | 88% | **+76%** |
-| Files opened by Claude | 6–10 | 1–3 | **~70% fewer** |
-| Tokens used by Claude | 40–53K | 4–22K | **58–74% fewer** |
+| Files opened by Claude (3-repo avg) | 6.3 | 1.9 | **~70% fewer** |
+| Tokens used by Claude (3-repo avg) | 38.6K | 13.1K | **~66% fewer** |
 | Dead ends | 2–3 per repo | 0 | **eliminated** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
