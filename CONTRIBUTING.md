@@ -1,10 +1,10 @@
 # Contributing
 
-Thanks for taking the time. This is a small repo with a clear scope — a navigation contract for AI agents working in large codebases. The core templates, verifier, and design docs are distilled from an internal team skill, and changes there flow through a three-way sync. Please read `docs/SYNC.md` before opening a PR.
+Thanks for taking the time. This is a small repo with a clear scope — a navigation contract for AI agents working in large codebases. The core templates, verifier, and design docs are distilled from a canonical skill source maintained outside this public repo, and changes there flow through a three-way sync. Please read `docs/SYNC.md` before opening a PR.
 
 ## How to propose changes
 
-1. **Templates, verifier, or design docs**: the canonical source is `team_skills/skills/agent-context/` (internal). If you can, open the PR there first. If you do not have access, open a PR or issue here and we will route it. See `docs/SYNC.md` for the policy.
+1. **Templates, verifier, or design docs**: the canonical source is a private skill repository maintained outside this public repo. If you can, open the PR there first. If you do not have access, open a PR or issue here and we will route it. See `docs/SYNC.md` for the policy.
 2. **Public-repo-only surfaces** (the Python CLI in `bin/agent-context`, the sync script in `scripts/`, the worked example under `examples/`, the README, or the CI workflows): PRs here, directly.
 3. Keep PRs focused. One logical change per PR.
 4. Run the checks before pushing:
@@ -26,7 +26,7 @@ If the bug is in the pack content itself (for example, a template that is confus
 
 ## Three-way sync reminder
 
-This repo is one of three tracks. Changes to core content flow from `team_skills` (canonical) to here and to `agent-chorus`. Public-repo-only changes live here. `docs/SYNC.md` has the full policy and a table of what belongs in each track.
+This repo is one of three tracks. Changes to core content flow from the canonical skill source to here and to `agent-chorus`. Public-repo-only changes live here. `docs/SYNC.md` has the full policy and a table of what belongs in each track.
 
 ## Licensing
 

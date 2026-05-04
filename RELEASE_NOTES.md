@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.2.1.1 — 2026-05-04
+
+Public-readiness scrub. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
+
+### What's new
+
+- **Removed remaining private-repo references.** `CONTRIBUTING.md`, `docs/SYNC.md`, and `talk/README.md` now use the same neutral "canonical skill source maintained outside this public repo" phrasing as the rest of the repo. No more `team_skills` or "internal team skill" mentions in the public tree.
+- **Talk README uses repo-relative paths.** `talk/README.md` now documents `open talk/index.html` and `python3 -m http.server 8000` from the repo root instead of a maintainer-specific home directory layout.
+
 ## v0.2.1 — 2026-05-04
 
 Meetup demo hardening release. The public repo and the included skill now match the workflow shown in the talk: an agent can scaffold a repo, fill the pack, verify it, set up local freshness warnings, and document or wire CI enforcement.
