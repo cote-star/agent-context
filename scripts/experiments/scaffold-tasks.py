@@ -12,9 +12,11 @@ block". This script extracts those blocks and writes them to EXPERIMENT.md and
 GROUND_TRUTH.md inside the target rerun directory, replacing whatever scaffold
 prepare-codex-cursor-rerun.sh produced.
 
-Stdlib-only. Refuses to overwrite if either output file is missing the scaffold
-"# Agent-Context Fresh-Pack Rerun" header — that's a safety check to confirm
-the script is running against a freshly prepared rerun root.
+Stdlib-only. Refuses to overwrite if either output file is missing the
+prepare-codex-cursor-rerun.sh scaffold header (`# Agent-Context Fresh-Pack
+Rerun` for EXPERIMENT.md, `# Ground Truth` for GROUND_TRUTH.md). This guards
+against silently destroying hand-edited rerun content if someone points the
+script at the wrong directory. Pass --force to override.
 """
 
 from __future__ import annotations
@@ -79,11 +81,32 @@ def extract_block(text: str, header_re: re.Pattern[str]) -> str:
     raise ValueError(f"unclosed fenced block after header {header_re.pattern!r}")
 
 
+EXPERIMENT_SCAFFOLD_HEADER = "# Agent-Context Fresh-Pack Rerun"
+GROUND_TRUTH_SCAFFOLD_HEADER = "# Ground Truth"
+
+
+def _looks_like_scaffold(path: pathlib.Path, expected_header: str) -> bool:
+    """Quick guard: does this file look like a fresh scaffold or a re-scaffold target?
+
+    A file is safe to overwrite only when it begins with the scaffold header.
+    Hand-edited rerun content (or content already populated by a previous
+    scaffold-tasks run) keeps the same header on top, so re-scaffolding the
+    same rerun dir is fine. But if the file has been heavily rewritten or
+    points at the wrong dir entirely, refuse.
+    """
+    try:
+        head = path.read_text(errors="ignore").lstrip().splitlines()
+    except Exception:
+        return False
+    return bool(head) and head[0].strip() == expected_header
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("template", help="Path to docs/experiments/tasks/<repo>.md")
     parser.add_argument("rerun_root", help="Path to the prepared rerun directory (created by prepare-codex-cursor-rerun.sh)")
     parser.add_argument("--allow-todo", action="store_true", help="Permit TODO markers in the extracted blocks (skeleton mode)")
+    parser.add_argument("--force", action="store_true", help="Overwrite EXPERIMENT.md / GROUND_TRUTH.md even if their scaffold headers are missing (use only when you know the target dir is correct)")
     args = parser.parse_args(argv)
 
     template_path = pathlib.Path(args.template).resolve()
@@ -105,6 +128,25 @@ def main(argv: list[str]) -> int:
                   f"  Did you run scripts/experiments/prepare-codex-cursor-rerun.sh first?",
                   file=sys.stderr)
             return 1
+
+    # Scaffold-header safety guard: refuse to overwrite content that doesn't
+    # look like a fresh prepare-codex-cursor-rerun.sh scaffold (or a previous
+    # scaffold-tasks run). Override with --force.
+    if not args.force:
+        for p, expected in (
+            (experiment_path, EXPERIMENT_SCAFFOLD_HEADER),
+            (ground_truth_path, GROUND_TRUTH_SCAFFOLD_HEADER),
+        ):
+            if not _looks_like_scaffold(p, expected):
+                print(
+                    f"ERROR: {p} does not start with the scaffold header "
+                    f"{expected!r}.\n"
+                    f"  Refusing to overwrite — this looks like hand-edited content,\n"
+                    f"  or you may be pointed at the wrong rerun dir.\n"
+                    f"  If you really want to replace it, re-run with --force.",
+                    file=sys.stderr,
+                )
+                return 1
 
     template_text = template_path.read_text()
 

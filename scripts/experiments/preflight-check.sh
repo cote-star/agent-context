@@ -10,7 +10,10 @@
 #   4. structured_fresh passes agent-context verify.
 #   5. structured_fresh passes agent-context freshness against the given base ref.
 #   6. Every grep command embedded in fenced code blocks in GROUND_TRUTH.md
-#      returns at least one line when run against the bare/ copy.
+#      returns at least one line when run against the structured_fresh/
+#      copy. structured_fresh is the canonical "complete" condition with
+#      both code and the .agent-context/ pack — running from bare/ would
+#      falsely fail any citation that points at a pack file.
 #
 # Usage:
 #   scripts/experiments/preflight-check.sh \
