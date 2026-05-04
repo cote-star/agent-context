@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """extract-tokens-from-chorus.py — stamp post-hoc token usage onto result JSONs.
 
-Reads each agent's native session log via the `chorus` CLI, sums input + output
-tokens across the experiment session, and stamps the totals onto result JSON
-files for that (agent, condition) cell. Run this AFTER agents finish writing
+Reads each agent's native session log via the `chorus` CLI from the rerun clone
+for each condition (`<rerun>/bare` or `<rerun>/structured_fresh`), sums input +
+output tokens across that experiment session, and stamps the totals onto result
+JSON files for that (agent, condition) cell. Run this AFTER agents finish writing
 result JSONs and AFTER apply-provenance.py.
 
 Coverage:
@@ -17,11 +18,12 @@ Coverage:
 
 Methodology note: each (agent, condition) cell ran 6 tasks inside ONE
 agent-CLI session, so the chorus-reported total is a per-CELL number, not a
-per-task number. This script stamps the per-cell total onto every task in
-that cell — `summarize-results.py`'s `mean(tokens_total)` over the 6 tasks
-then returns the per-cell total (matching the historical viz's "Avg tokens"
-field, which is also per-cell). Per-task token attribution requires parsing
-message boundaries inside the session and is left for a future revision.
+per-task number. This script stamps the per-cell total onto every task in that
+cell and sets `token_metric_scope="cell_replicated"` — `summarize-results.py`'s
+`mean(tokens_total)` over the 6 tasks then returns the per-cell total (matching
+the historical viz's "Avg tokens" field, which is also per-cell). Per-task token
+attribution requires parsing message boundaries inside the session and is left
+for a future revision.
 
 Usage:
   scripts/experiments/extract-tokens-from-chorus.py \\
@@ -179,15 +181,12 @@ def main(argv: list[str]) -> int:
         print(f"ERROR: _provenance.json not found at {prov_path}", file=sys.stderr)
         return 1
     prov = json.loads(prov_path.read_text())
-    source_repo = prov.get("source_repo_path")
-    if not source_repo:
-        print("ERROR: _provenance.json missing source_repo_path", file=sys.stderr)
-        return 1
     started = prov.get("prepared_at", "")
 
     requested_agents = [a.strip() for a in args.agents.split(",") if a.strip()]
     skipped: list[str] = []
     stamped_cells = 0
+    seen_sessions: dict[tuple[str, str], str] = {}
 
     for agent in requested_agents:
         if agent not in SUPPORTED_AGENTS:
@@ -199,15 +198,26 @@ def main(argv: list[str]) -> int:
             if not results:
                 continue
 
-            session = find_session_for_cell(agent, source_repo, (started, ""))
+            cell_cwd = str((rerun / condition).resolve())
+            session = find_session_for_cell(agent, cell_cwd, (started, ""))
             if not session:
-                print(f"  [{agent}/{condition}] no chorus session found")
+                print(f"  [{agent}/{condition}] no chorus session found for cwd={cell_cwd}")
                 continue
             session_id = session.get("session_id") or session.get("id")
             if not session_id:
                 print(f"  [{agent}/{condition}] session has no id")
                 continue
-            data = chorus_read(agent, session_id, source_repo)
+            duplicate = [cond for (seen_agent, cond), sid in seen_sessions.items() if seen_agent == agent and sid == session_id]
+            if duplicate:
+                print(
+                    f"  [{agent}/{condition}] WARN: session {session_id} already used for {agent}/{duplicate[0]}; "
+                    "not stamping to avoid mixing condition-level token metrics",
+                    file=sys.stderr,
+                )
+                continue
+            seen_sessions[(agent, condition)] = session_id
+
+            data = chorus_read(agent, session_id, cell_cwd)
             if not data:
                 continue
 
@@ -217,7 +227,7 @@ def main(argv: list[str]) -> int:
                 continue
             ttot = (tin or 0) + (tout or 0)
 
-            print(f"  [{agent}/{condition}] session={session_id} tokens_in={tin} tokens_out={tout} cached={tcached} model={mid}")
+            print(f"  [{agent}/{condition}] cwd={cell_cwd} session={session_id} tokens_in={tin} tokens_out={tout} cached={tcached} model={mid}")
 
             if args.dry_run:
                 continue
@@ -227,6 +237,7 @@ def main(argv: list[str]) -> int:
                 d["tokens_input"] = tin
                 d["tokens_output"] = tout
                 d["tokens_total"] = ttot
+                d["token_metric_scope"] = "cell_replicated"
                 if tcached is not None:
                     d["tokens_cached"] = tcached
                 if mid:

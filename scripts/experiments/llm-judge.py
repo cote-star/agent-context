@@ -175,11 +175,14 @@ def judge_one(
     model: str,
     max_tokens: int,
     dry_run: bool,
+    only_ungraded: bool = False,
 ) -> tuple[str, dict[str, Any] | None]:
     result = json.loads(result_path.read_text())
 
     if result.get("grading_method") == "reviewer-confirmed":
         return ("skip-reviewer-confirmed", None)
+    if only_ungraded and result.get("grading_method") == "llm-provisional":
+        return ("skip-already-llm-provisional", None)
 
     task_id = result["task_id"]
     question = experiment_tasks.get(task_id, f"(no EXPERIMENT.md entry for {task_id})")
@@ -247,6 +250,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
     parser.add_argument("--dry-run", action="store_true", help="Build prompts but don't call API")
     parser.add_argument("--only-task", help="Judge only this task_id (for debugging)")
+    parser.add_argument("--only-ungraded", action="store_true", help="Skip rows already marked llm-provisional or reviewer-confirmed; useful for follow-on runs that should only judge new results")
     args = parser.parse_args(argv)
 
     rerun = pathlib.Path(args.rerun).expanduser()
@@ -276,12 +280,19 @@ def main(argv: list[str]) -> int:
         print(f"ERROR: no result files found under {rerun / 'results'}", file=sys.stderr)
         return 1
 
-    counts = {"judged": 0, "skip-reviewer-confirmed": 0, "dry-run": 0, "error": 0}
+    counts = {
+        "judged": 0,
+        "skip-reviewer-confirmed": 0,
+        "skip-already-llm-provisional": 0,
+        "dry-run": 0,
+        "error": 0,
+    }
     for path in result_paths:
         try:
             status, _ = judge_one(
                 path, experiment_tasks, ground_truth_tasks,
                 api_key, args.model, args.max_tokens, args.dry_run,
+                only_ungraded=args.only_ungraded,
             )
             counts[status] = counts.get(status, 0) + 1
             print(f"  [{status:24}] {path}")

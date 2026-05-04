@@ -60,11 +60,19 @@ OPTIONAL = {
     "tokens_output",
     "tokens_total",
     "tokens_cached",
+    "token_metric_scope",
     "cost_usd",
     # Run identity and operational signals.
     "model_id",
     "permission_prompts_count",
     "interrupted",
+}
+
+PROVENANCE_FIELDS = {
+    "source_repo_sha",
+    "pack_manifest_sha",
+    "task_template_hash",
+    "agent_context_cli_version",
 }
 
 # Optional fields with their type (for validate)
@@ -78,6 +86,7 @@ OPTIONAL_TYPES = {
     "tokens_output": "non_negative_int",
     "tokens_total": "non_negative_int",
     "tokens_cached": "non_negative_int",
+    "token_metric_scope": "token_scope",
     "permission_prompts_count": "non_negative_int",
     "cost_usd": "non_negative_number",
     "interrupted": "bool",
@@ -88,6 +97,7 @@ CAPTURE_METHODS = {"cli", "ide", "tunnel"}
 CONDITIONS = {"bare", "structured_fresh"}
 CORRECT = {"yes", "partial", "no", "ungraded"}
 GRADING_METHODS = {"ungraded", "llm-provisional", "reviewer-confirmed"}
+TOKEN_SCOPES = {"task", "cell_replicated"}
 
 NULLABLE_WHEN_NON_CLI = {
     "tool_calls",
@@ -130,6 +140,9 @@ def validate(path: pathlib.Path, data: dict[str, Any]) -> None:
         elif expected_type == "bool":
             if not isinstance(v, bool):
                 raise ValueError(f"{path}: optional field {field} must be a boolean or null")
+        elif expected_type == "token_scope":
+            if v not in TOKEN_SCOPES:
+                raise ValueError(f"{path}: optional field {field} must be one of {sorted(TOKEN_SCOPES)} or null")
     if data["agent"] not in AGENTS:
         raise ValueError(f"{path}: agent must be one of {sorted(AGENTS)}")
     if data["capture_method"] not in CAPTURE_METHODS:
@@ -220,8 +233,8 @@ def summarize(results: list[dict[str, Any]], public_only: bool = False) -> str:
     # Aggregate by (agent, capture_method, condition)
     lines.append("## Aggregate")
     lines.append("")
-    lines.append("| Agent | Capture | Condition | Tasks | Yes | Partial | No | Ungraded | Avg files | Avg dead ends | Avg first hit | Risk | Avg tokens | Avg cost |")
-    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+    lines.append("| Agent | Capture | Condition | Tasks | Yes | Partial | No | Ungraded | Avg files | Avg dead ends | Avg first hit | Risk | Avg tokens | Token scope | Avg cost |")
+    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|")
     for agent in sorted(AGENTS):
         for capture in sorted(CAPTURE_METHODS):
             for condition in ("bare", "structured_fresh"):
@@ -240,8 +253,10 @@ def summarize(results: list[dict[str, Any]], public_only: bool = False) -> str:
                     if t is not None:
                         token_vals.append(t)
                 cost_vals = [x.get("cost_usd") for x in items if x.get("cost_usd") is not None]
+                token_scopes = sorted({x.get("token_metric_scope") for x in items if x.get("token_metric_scope")})
+                token_scope = ",".join(token_scopes) if token_scopes else "n/a"
                 lines.append(
-                    "| {agent} | {capture} | {condition} | {tasks} | {yes} | {partial} | {no} | {ungraded} | {files} | {dead} | {hop} | {risk} | {tok} | {cost} |".format(
+                    "| {agent} | {capture} | {condition} | {tasks} | {yes} | {partial} | {no} | {ungraded} | {files} | {dead} | {hop} | {risk} | {tok} | {scope} | {cost} |".format(
                         agent=agent,
                         capture=capture,
                         condition=condition,
@@ -255,12 +270,13 @@ def summarize(results: list[dict[str, Any]], public_only: bool = False) -> str:
                         hop=fmt_avg([x["first_correct_file_hop"] for x in items]),
                         risk=sum(1 for x in items if x["risk_flag"]),
                         tok=(f"{statistics.mean(token_vals):,.0f}" if token_vals else "n/a"),
+                        scope=token_scope,
                         cost=(f"${statistics.mean(cost_vals):.3f}" if cost_vals else "n/a"),
                     )
                 )
 
     lines.append("")
-    lines.append("> `n/a` indicates the metric is not captured for that capture_method (typically IDE captures lack tool-level telemetry, and tokens are only available where the agent's CLI exposes per-task usage or where extract-tokens-from-chorus.py has stamped post-hoc).")
+    lines.append("> `n/a` indicates the metric is not captured for that capture_method. `cell_replicated` token scope means one 6-task session/cell token total was copied onto every task row; aggregate averages recover the per-condition session total, but per-task token claims are not valid.")
 
     # Per-task detail
     lines.append("")
@@ -297,9 +313,9 @@ def reproducibility_bundle(results: list[dict[str, Any]]) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     missing_anchor_rows = 0
     for r in results:
-        anchors = {f: r.get(f) for f in OPTIONAL}
+        anchors = {f: r.get(f) for f in PROVENANCE_FIELDS}
         # bare condition legitimately has null pack_manifest_sha; the other three anchors must be present.
-        required_anchor_fields = [f for f in OPTIONAL if f != "pack_manifest_sha"]
+        required_anchor_fields = [f for f in PROVENANCE_FIELDS if f != "pack_manifest_sha"]
         if any(anchors.get(f) in (None, "") for f in required_anchor_fields):
             missing_anchor_rows += 1
         if r["condition"] == "structured_fresh" and not anchors.get("pack_manifest_sha"):

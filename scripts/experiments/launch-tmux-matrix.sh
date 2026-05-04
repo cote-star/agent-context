@@ -7,15 +7,15 @@
 #   RERUN_ROOT=/custom/path scripts/experiments/launch-tmux-matrix.sh <alias>
 #
 # Creates session "rerun-<alias>" with ONE window ("cells") containing
-# 8 panes in a 4×2 grid (4 agents across, 2 conditions stacked):
+# 6 panes in a 3×2 grid (3 agents across, 2 conditions stacked):
 #
-#   +------------+-----------+------------+--------------+
-#   | claude     | codex     | cursor     | opencode     |
-#   |   bare     |   bare    |   bare     |   bare       |
-#   +------------+-----------+------------+--------------+
-#   | claude     | codex     | cursor     | opencode     |
-#   |  s_fresh   |  s_fresh  |  s_fresh   |  s_fresh     |
-#   +------------+-----------+------------+--------------+
+#   +------------+-----------+------------+
+#   | claude     | codex     | cursor     |
+#   |   bare     |   bare    |   bare     |
+#   +------------+-----------+------------+
+#   | claude     | codex     | cursor     |
+#   |  s_fresh   |  s_fresh  |  s_fresh   |
+#   +------------+-----------+------------+
 #
 # All 8 cells visible at once so permission prompts can't hide on a
 # different window. Each pane shows its title (agent / condition) on
@@ -30,10 +30,9 @@
 # Pre-conditions:
 #   - prepare-codex-cursor-rerun.sh has populated $RERUN_ROOT/$alias/
 #     with bare/, structured_fresh/, EXPERIMENT.md, GROUND_TRUTH.md,
-#     and results/{claude,codex,cursor,opencode}/{bare,structured_fresh}/
+#     and results/{claude,codex,cursor}/{bare,structured_fresh}/
 #   - tmux installed
-#   - The four agent CLIs are reachable on PATH (warn-only, not hard fail —
-#     OpenCode tunnel may be down)
+#   - The three active agent CLIs are reachable on PATH (warn-only, not hard fail)
 #
 # Exit codes:
 #   0  session created (or already existed; re-attach with tmux attach)
@@ -49,8 +48,8 @@ Usage:
 
   RERUN_ROOT=/custom/path scripts/experiments/launch-tmux-matrix.sh <alias>
 
-Opens a tmux session "rerun-<alias>" with 4 windows (one per agent) and
-2 panes per window (bare, structured_fresh). Each pane shows the prompt
+Opens a tmux session "rerun-<alias>" with one window and 6 panes
+(claude/codex/cursor × bare/structured_fresh). Each pane shows the prompt
 to paste into the agent CLI.
 
 After the script finishes:
@@ -83,7 +82,7 @@ SESSION="rerun-$ALIAS"
 [[ -f "$RERUN_DIR/result.schema.json" ]] || die "Missing $RERUN_DIR/result.schema.json" 2
 
 for cond in bare structured_fresh; do
-  for agent in claude codex cursor opencode; do
+  for agent in claude codex cursor; do
     rdir="$RERUN_DIR/results/$agent/$cond"
     [[ -d "$rdir" ]] || die "Missing results dir: $rdir" 2
   done
@@ -92,14 +91,9 @@ done
 command -v tmux >/dev/null || die "tmux not installed"
 
 # CLI presence: warn-only. Operator might be running a single agent.
-for cli in claude codex cursor-agent opencode-play; do
+for cli in claude codex cursor-agent; do
   command -v "$cli" >/dev/null || warn "$cli not in PATH (its panes will still open; invoke manually if available elsewhere)"
 done
-
-# OpenCode tunnel sanity (informational only)
-if ! curl -s -m 2 -o /dev/null -w '%{http_code}' http://127.0.0.1:11434/v1/models 2>/dev/null | grep -q '200'; then
-  warn "OpenCode local endpoint http://127.0.0.1:11434 not reachable. The opencode pane will open but the agent will fail until the tunnel is up."
-fi
 
 # Existing session?
 if tmux has-session -t "$SESSION" 2>/dev/null; then
@@ -149,7 +143,7 @@ post_hit_dead_ends) may be null.
 
 Optional fields (leave null if your CLI doesn't expose them — the harness
 will extract post-hoc from session telemetry):
-  tokens_input, tokens_output, tokens_total, tokens_cached, cost_usd
+  tokens_input, tokens_output, tokens_total, tokens_cached, token_metric_scope, cost_usd
   model_id (the exact model identifier you ran)
   permission_prompts_count (how many times you paused for approval)
   interrupted (true if you hit a turn/context cap, false otherwise)
@@ -185,45 +179,42 @@ setup_pane_by_id() {
   tmux send-keys -t "$pane_id" "echo ''" Enter
 }
 
-# --- Build the matrix: ONE window, 8 panes in 4×2 grid ------------------
+# --- Build the matrix: ONE window, 6 panes in 3×2 grid ------------------
 # Layout target:
-#   +-------------+-------------+-------------+-------------+
-#   | claude/bare | codex/bare  | cursor/bare | opencode/   |
-#   |             |             |             |   bare      |
-#   +-------------+-------------+-------------+-------------+
-#   | claude/sf   | codex/sf    | cursor/sf   | opencode/sf |
-#   +-------------+-------------+-------------+-------------+
-# 4 agents left-to-right (same order on both rows). Top row = bare,
+#   +-------------+-------------+-------------+
+#   | claude/bare | codex/bare  | cursor/bare |
+#   +-------------+-------------+-------------+
+#   | claude/sf   | codex/sf    | cursor/sf   |
+#   +-------------+-------------+-------------+
+# 3 agents left-to-right (same order on both rows). Top row = bare,
 # bottom row = structured_fresh. All 8 cells visible at once so you
 # never miss a permission prompt.
 
 # Step 1: create session. The -x/-y flags set the headless canvas
-# large enough to accommodate 8 panes; tmux refits to the actual
+# large enough to accommodate 6 panes; tmux refits to the actual
 # terminal size on attach. Without this, splits fail with "no space
 # for new pane" because the default 80x24 canvas can't hold 4 columns.
-tmux new-session -d -s "$SESSION" -n cells -x 240 -y 60
+tmux new-session -d -s "$SESSION" -n cells -x 210 -y 60
 
-# Step 2: build 4 columns by splitting horizontally with explicit
+# Step 2: build 3 columns by splitting horizontally with explicit
 # pane-ID targeting (so each split goes to the rightmost column, not
 # the recursively shrinking active pane).
 P_TL_1=$(tmux list-panes -t "$SESSION:cells" -F '#{pane_id}' | head -1)
 P_TL_2=$(tmux split-window -h -t "$P_TL_1" -P -F '#{pane_id}')
 P_TL_3=$(tmux split-window -h -t "$P_TL_2" -P -F '#{pane_id}')
-P_TL_4=$(tmux split-window -h -t "$P_TL_3" -P -F '#{pane_id}')
 tmux select-layout -t "$SESSION:cells" even-horizontal
 
 # Step 3: split each column vertically to add the bottom row. Default
 # split is 50/50 per column, so the result is a clean 4-column × 2-row
 # grid. (We deliberately do NOT call `select-layout tiled` afterwards
 # because tmux's tiled algorithm picks based on aspect ratio and on a
-# narrow canvas would scramble our 4×2 into a 3×3-ish layout.)
+# narrow canvas could scramble our 3×2 layout.)
 P_BL_1=$(tmux split-window -v -t "$P_TL_1" -P -F '#{pane_id}')
 P_BL_2=$(tmux split-window -v -t "$P_TL_2" -P -F '#{pane_id}')
 P_BL_3=$(tmux split-window -v -t "$P_TL_3" -P -F '#{pane_id}')
-P_BL_4=$(tmux split-window -v -t "$P_TL_4" -P -F '#{pane_id}')
 
 # Step 4: even-vertical evens out the row heights within each column.
-# (No 4×2 grid built-in — but the column splits + this row-evening get
+# (No 3×2 grid built-in — but the column splits + this row-evening get
 # us where we want without the tiled scramble.)
 
 # Step 5: per-pane title border so each cell is labeled.
@@ -233,15 +224,13 @@ tmux setw -t "$SESSION:cells" pane-border-format ' #T '
 # Step 6: assign cells to known pane IDs.
 #   Top row    = bare condition for each agent
 #   Bottom row = structured_fresh for each agent
-#   Columns left-to-right: claude, codex, cursor, opencode
+#   Columns left-to-right: claude, codex, cursor
 setup_pane_by_id "$P_TL_1" "bare"             "claude"   "cli"    "claude    (interactive: run 'claude' and paste the prompt)"
 setup_pane_by_id "$P_TL_2" "bare"             "codex"    "cli"    "codex     (interactive: run 'codex' and paste the prompt)"
 setup_pane_by_id "$P_TL_3" "bare"             "cursor"   "cli"    "cursor-agent   (interactive: 'cursor-agent' then paste the prompt)"
-setup_pane_by_id "$P_TL_4" "bare"             "opencode" "tunnel" "OPENCODE_MODEL=ollama/devstral-small-2 opencode-play"
 setup_pane_by_id "$P_BL_1" "structured_fresh" "claude"   "cli"    "claude    (interactive)"
 setup_pane_by_id "$P_BL_2" "structured_fresh" "codex"    "cli"    "codex     (interactive)"
 setup_pane_by_id "$P_BL_3" "structured_fresh" "cursor"   "cli"    "cursor-agent   (interactive)"
-setup_pane_by_id "$P_BL_4" "structured_fresh" "opencode" "tunnel" "OPENCODE_MODEL=ollama/devstral-small-2 opencode-play"
 
 # Step 7: land focus on the top-left (claude/bare).
 tmux select-pane -t "$P_TL_1"
@@ -256,16 +245,16 @@ Tmux session ready.
   Zoom one:  Ctrl-b z (toggle a pane to fullscreen and back)
   Kill all:  tmux kill-session -t $SESSION
 
-One window, 8 panes. Top row = bare. Bottom row = structured_fresh.
-Columns left-to-right: claude, codex, cursor, opencode.
+One window, 6 panes. Top row = bare. Bottom row = structured_fresh.
+Columns left-to-right: claude, codex, cursor.
 
 Per pane:
   1. Invoke the CLI shown in 'INVOKE'.
   2. Paste the prompt — easiest from another terminal:
        cat $RERUN_DIR/.prompt-<agent>-<condition>.txt | pbcopy
      then Cmd-V into the agent.
-  3. Wait for 6 JSON result files under ../results/<agent>/<condition>/.
+	  3. Wait for 6 JSON result files under ../results/<agent>/<condition>/.
 
 Prompt files for copy-paste:
-  $RERUN_DIR/.prompt-{claude,codex,cursor,opencode}-{bare,structured_fresh}.txt
+  $RERUN_DIR/.prompt-{claude,codex,cursor}-{bare,structured_fresh}.txt
 EOF
