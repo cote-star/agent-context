@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.2.1.4 — 2026-05-04
+
+Deck install-path refresh. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
+
+### What's new
+
+- **Deck demo and first-command slides now lead with skill install.** Slides 7 and 17 of the meetup deck previously showed `~/agent-context/bin/agent-context init …` as the user-facing command. They now show per-agent skill install (Claude Code, Codex, Cursor) followed by the same agent prompt — the skill drives scaffold/fill/verify/hook. The CLI is invoked by the skill, not by the audience.
+
 ## v0.2.1.3 — 2026-05-04
 
 End-to-end audit follow-up patch. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
