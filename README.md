@@ -6,7 +6,7 @@
 
 **Checked-in repo evidence for coding agents.**
 
-Commit one `.agent-context/` directory to your repo. Claude, Codex, Cursor, Gemini, and human reviewers get the same content map, authority contracts, search boundaries, and verification hooks before anyone edits code.
+Commit one `.agent-context/` directory to your repo. Cursor, Claude, Codex, Gemini, OpenCode, and human reviewers get the same content map, authority contracts, search boundaries, and verification hooks before anyone edits code.
 
 ![agent-context impact at a glance](docs/visuals/hero-stat-ribbon.svg)
 
@@ -19,13 +19,13 @@ cd /path/to/your-repo
 ~/agent-context/bin/agent-context init --tier 3 .
 ```
 
-> Or skip the manual fill and let an agent do it: open Claude / Codex / Cursor / Gemini in the repo and ask **"Set up agent context for this repo."** The included [SKILL.md](SKILL.md) drives the rest.
+> Or skip the manual fill and let an agent do it: open Cursor / Claude / Codex / Gemini / OpenCode in the repo and ask **"Set up agent context for this repo."** The included [SKILL.md](SKILL.md) drives the rest.
 
 ## Features
 
 | | Feature | Why it matters | Where in this README |
 |---:|---|---|---|
-| 1 | **Dual-mode routing** | Same artifacts work for trust-and-follow agents (Claude, Gemini) and search-and-verify agents (Codex, Cursor) — opposite reading patterns, one pack | [§Architecture](#architecture) |
+| 1 | **Works across agents** | Cursor, Claude, Codex, Gemini, and OpenCode all read the same `.agent-context/` through routing blocks in `.cursorrules` / `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` — one pack, two reading patterns (trust-and-follow vs search-and-verify) | [§Architecture](#architecture) |
 | 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Results](#results) |
 | 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Tiers](#tiers) |
 | 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the whole pack via the included skill | [SKILL.md](SKILL.md) |
@@ -51,12 +51,12 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
 
-Freshness note: a focused Codex rerun on May 2, 2026 found the current claim is
-narrower for Codex. Structured context reduced self-reported task-local file
-opens on the CLI/library protocol (58 → 30) but did not improve reviewer grade
-in that one-repo rerun (5 yes / 1 partial in both conditions). Cursor Agent
-showed the same shape after CLI setup: fewer self-reported files opened (35 →
-18), but no grade lift (3 yes / 3 partial in both conditions).
+May 2, 2026 focused rerun on the CLI/library protocol (one-repo rerun):
+
+- **Cursor Agent 3.2.11** (`composer-2-fast`): self-reported task-local files opened **35 → 18** with the pack. Reviewer grade unchanged (3 yes / 3 partial in both conditions).
+- **Codex CLI 0.128.0**: self-reported task-local files opened **58 → 30** with the pack. Reviewer grade unchanged (5 yes / 1 partial in both conditions).
+
+The current rerun supports the navigation-efficiency claim for Cursor and Codex, not a fresh correctness lift. Cursor evidence is provisional (one repo, one model, no Chorus-extracted Cursor session telemetry).
 
 | Metric | Bare session | With agent-context | Change |
 |---|---:|---:|---:|
@@ -124,14 +124,14 @@ Edit the `REPLACE` markers manually, or hand the work to an agent:
 The core design is dual routing — **same artifacts, opposite agent loops**. One pack, two reading patterns:
 
 ```text
-Trust-and-follow (Claude, Gemini)
-  routing block  →  required files  →  completeness contract  →  answer
-
-Search-and-verify (Codex, Cursor)
+Search-and-verify (Cursor, Codex, OpenCode w/ local model)
   search_scope   →  scoped grep     →  verification shortcut  →  answer
+
+Trust-and-follow (Claude, Gemini, OpenCode w/ Anthropic backend)
+  routing block  →  required files  →  completeness contract  →  answer
 ```
 
-The same `.agent-context/` content is consumed differently by each agent family. Claude stops when the contract says done. Codex and Cursor bound their grep to scoped directories and cross-check verification shortcuts. agent-context provides scaffolding for both — completeness contracts for trust-and-follow agents, bounded search for search-and-verify agents.
+The same `.agent-context/` content is consumed differently by each agent family. Cursor, Codex, and OpenCode (with a local model backend) bound their grep to scoped directories and cross-check verification shortcuts. Claude, Gemini, and OpenCode (with an Anthropic backend) stop when the completeness contract says done. agent-context provides scaffolding for both — completeness contracts for trust-and-follow agents, bounded search for search-and-verify agents.
 
 ![agent-context artifact system](docs/demos/cold-start-agent-context-hero.svg)
 
@@ -172,7 +172,7 @@ The same `.agent-context/` template has been validated across stacks and across 
 | Repo | Files | Stack | Result |
 |---|---:|---|---|
 | ML pipeline (`stream-models`) | 501 | Python | 50% → 83% correct · 74% fewer tokens · 0 dead ends |
-| Dual CLI (`agent-chorus`) | 155 | Rust + Node.js | Codex hit **6/6** (highest of any condition across all experiments) · 69% fewer tokens |
+| Dual CLI (`agent-chorus`) | 155 | Rust + Node.js | Historical: Codex 6/6 (highest of any condition) · Claude 69% fewer tokens. May 2026 rerun: **Cursor 35 → 18 files** · Codex 58 → 30 files |
 | React frontend (`trust-stream-frontend`) | 1,982 | TypeScript | 50% → 100% correct · 58% fewer tokens · 0 dead ends |
 
 **Repo-agnostic by design.** Principle P1 ([`docs/design-principles.md`](docs/design-principles.md)) is tagged `[all repos]` — the artifact set is built to "apply regardless of repo type, size, or stack."
