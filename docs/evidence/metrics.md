@@ -55,9 +55,9 @@ modifications.
 The May 2026 Codex check reused the CLI/library protocol only. It was a focused
 freshness check, not a full replication of the 78+ result matrix.
 
-For fresh Codex/Cursor reruns, use the isolated bare vs `structured_fresh`
-protocol in [`docs/experiments/codex-cursor-fresh-pack-rerun.md`](../experiments/codex-cursor-fresh-pack-rerun.md).
-Runs where the structured pack fails `verify` or `freshness` should be discarded
+For fresh Codex/Cursor reruns, use the private isolated bare vs
+`structured_fresh` protocol. Runs where the structured pack fails `verify` or
+the strict `.agent-context/tools/check_freshness.sh` gate should be discarded
 from success metrics and treated as maintenance failures.
 
 ## Key Stories

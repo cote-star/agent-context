@@ -1,5 +1,6 @@
 #!/bin/sh
-# sync-from-canonical.sh — copy canonical agent-context files from team_skills
+# sync-from-canonical.sh — copy canonical agent-context files from the private
+# canonical skill source
 # into this public repo's tools/, templates/, and docs/.
 #
 # Usage:
@@ -8,7 +9,7 @@
 # Default canonical path:
 #   Set AGENT_CONTEXT_CANONICAL=/path/to/canonical/agent-context
 #
-# See docs/SYNC.md for the three-way sync policy (team_skills canonical →
+# See docs/SYNC.md for the three-way sync policy (canonical skill source →
 # agent-chorus/skills + agent-context public).
 #
 # Files INTENTIONALLY NOT OVERWRITTEN by this script (public-variant maintained

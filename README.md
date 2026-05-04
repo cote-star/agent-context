@@ -28,7 +28,7 @@ cd /path/to/your-repo
 | 1 | **Works across agents** | Cursor, Claude, Codex, Gemini, and OpenCode all read the same `.agent-context/`. `init` writes the routing block to `.cursorrules`, `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` — modern agents read several of these together as project rules (Cursor, for example, picks up `.cursorrules` + `CLAUDE.md` + `AGENTS.md`), so any one of the four is enough to route any agent. | [§Architecture](#architecture) |
 | 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Results](#results) |
 | 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Tiers](#tiers) |
-| 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the pack, acceptance tests, routing blocks, and hook/CI guidance via the included skill | [SKILL.md](SKILL.md) |
+| 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the pack, acceptance tests, routing blocks, and hook/CI guidance via the included root skill and installable `skills/agent-context/` package | [SKILL.md](SKILL.md) |
 | 5 | **Machine-checkable** | `verify`, `freshness`, `doctor`, and `install-hook` make every artifact auditable locally and in CI | [§How it works](#how-it-works) |
 | 6 | **Zero infra** | Markdown + JSON committed to your repo — no server, vector store, or API key | [§The cold-start tax](#the-cold-start-tax) |
 
@@ -51,7 +51,7 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
 
-**Freshness is the quality gate.** A May 2 2026 one-shot rerun used a stale pack and produced muddled numbers — that result is recategorized as a maintenance failure, not a product result. Fresh-pack reruns use the isolated `bare` vs `structured_fresh` protocol in [`docs/experiments/codex-cursor-fresh-pack-rerun.md`](docs/experiments/codex-cursor-fresh-pack-rerun.md), where every structured run requires `agent-context verify` and `agent-context freshness` to pass before the agent starts.
+**Freshness is the quality gate.** A May 2 2026 one-shot rerun used a stale pack and produced muddled numbers — that result is recategorized as a maintenance failure, not a product result. Fresh-pack evidence uses an isolated `bare` vs `structured_fresh` protocol maintained outside the public repo, where every structured run must pass `agent-context verify` and the strict `.agent-context/tools/check_freshness.sh` gate before the agent starts.
 
 | Metric | Bare session | With agent-context | Change |
 |---|---:|---:|---:|

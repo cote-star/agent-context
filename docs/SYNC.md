@@ -15,16 +15,16 @@ Two derived tracks consume it:
 - **`agent-context/` (this repo)** — the public distribution. Includes the tier 3 authority layer, but no chorus-specific refs. Friendly Python CLI (`bin/agent-context`) replaces chorus CLI invocations.
 
 ```
-                    team_skills (canonical)
-                    /                      \
-                   /                        \
-       agent-chorus/skills                  agent-context (public)
-       (bundled skill)                      (distilled public)
+                    canonical skill
+                    /              \
+                   /                \
+       agent-chorus/skills          agent-context (public)
+       (bundled skill)              (distilled public)
 ```
 
 ## What belongs in each track
 
-| Layer | team_skills | agent-chorus/skills | agent-context (public) |
+| Layer | canonical skill | agent-chorus/skills | agent-context (public) |
 |---|---|---|---|
 | Content markdown (00–40 templates) | yes | yes | yes |
 | Acceptance tests template | yes | yes | yes |
@@ -39,7 +39,7 @@ Two derived tracks consume it:
 
 ## Cadence
 
-- **Immediate (within ~1 day)**: a gap fix a user reports against a derived track. Land in `team_skills` first, sync to the other derived track, then sync to the reporter's home track last.
+- **Immediate (within ~1 day)**: a gap fix a user reports against a derived track. Land in the canonical skill first, sync to the other derived track, then sync to the reporter's home track last.
 - **Batched (weekly / release)**: design principle evolution, template restructures, new invariants. Canonical merges first, soaks in internal use for a few days, then propagates to both derived tracks in a single pass.
 - **Release-coupled**: when `agent-chorus` cuts a version, the skill sync is part of release prep. Same applies to tagged releases of this public repo.
 
@@ -56,11 +56,11 @@ AGENT_CONTEXT_CANONICAL=/path/to/canonical/agent-context \
   scripts/sync-from-canonical.sh
 
 # Pin to a specific canonical clone.
-scripts/sync-from-canonical.sh --canonical-path /path/to/team_skills/skills/agent-context
+scripts/sync-from-canonical.sh --canonical-path /path/to/canonical/agent-context
 
 # Review the changes, then commit.
 git diff
-git commit -m "chore: sync from team_skills@<sha>"
+git commit -m "chore: sync from canonical skill"
 ```
 
 The script is **idempotent** — running it twice yields the same state as once. After copying, it runs a JSON template-marker scan to catch template leaks. It does not commit on your behalf; review the diff first.
@@ -80,7 +80,7 @@ If the canonical versions of those files change in a way that affects the public
 **Default path: PR against the canonical source first.**
 
 1. For templates, scripts, and design docs, open your PR against
-   `team_skills/skills/agent-context/`. It will propagate here on the next sync.
+   the canonical skill source. It will propagate here on the next sync.
 2. If you hit a bug that is specific to the public repo (for example, something about the Python CLI or the worked example), open an issue or PR here.
 3. Public-repo-only changes — the Python CLI (`bin/agent-context`), the sync script, the worked example under `examples/`, the README, the CI workflows — live here and do not sync upstream.
 

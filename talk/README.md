@@ -10,8 +10,9 @@ Files in this folder:
 | [`pre-recorded-fill.md`](pre-recorded-fill.md) | Recording instructions for the slide-7 MP4 (the agent-fills-the-pack clip). |
 | [`audience-presenter-devrel-review.md`](audience-presenter-devrel-review.md) | Narrative review across audience, presenter, and DevRel perspectives. |
 
-For fresh Codex/Cursor evidence before the meetup, use
-[`docs/experiments/codex-cursor-fresh-pack-rerun.md`](../docs/experiments/codex-cursor-fresh-pack-rerun.md).
+Fresh Codex/Cursor evidence is produced with the private isolated rerun harness.
+The public deck is `talk/index.html`; local research harnesses stay untracked
+and ignored.
 
 ## Rendering
 
