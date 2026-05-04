@@ -1,12 +1,21 @@
 # Release Notes
 
+## v0.2.1.2 — 2026-05-04
+
+Public evidence-alignment audit patch. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
+
+### What's new
+
+- **Deck and README evidence now match.** README and evidence docs now separate older Claude-heavy reviewer-graded evidence from the current Codex/Cursor meetup run, using the same per-agent metrics as the deck.
+- **Release-note scrub tightened.** The `v0.2.1.1` note now avoids spelling out retired private repo names while describing the scrub.
+
 ## v0.2.1.1 — 2026-05-04
 
 Public-readiness scrub. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
 
 ### What's new
 
-- **Removed remaining private-repo references.** `CONTRIBUTING.md`, `docs/SYNC.md`, and `talk/README.md` now use the same neutral "canonical skill source maintained outside this public repo" phrasing as the rest of the repo. No more `team_skills` or "internal team skill" mentions in the public tree.
+- **Removed remaining private-repo references.** `CONTRIBUTING.md`, `docs/SYNC.md`, and `talk/README.md` now use the same neutral "canonical skill source maintained outside this public repo" phrasing as the rest of the repo. No private canonical repo names or "internal team skill" mentions remain in the public tree.
 - **Talk README uses repo-relative paths.** `talk/README.md` now documents `open talk/index.html` and `python3 -m http.server 8000` from the repo root instead of a maintainer-specific home directory layout.
 
 ## v0.2.1 — 2026-05-04

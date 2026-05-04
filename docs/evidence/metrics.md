@@ -17,6 +17,17 @@ Historical March/April 2026 aggregate:
 | Dead ends (route-trusting family, 3 repos) | 2-3/repo | **0** |
 | Production risk flags | 7 total | **0** |
 
+Current Codex/Cursor meetup evidence:
+
+| Agent | Metric | Bare | Structured |
+|---|---|---:|---:|
+| Codex | Tokens / 6-task cell | 163K | **130K** |
+| Codex | Risk flags | 12 | **6** |
+| Codex | Files opened / task | 7.7 | **7.1** |
+| Cursor | Dead ends / task | 0.24 | **0.07** |
+| Cursor | Files opened / task | 3.6 | **2.7** |
+| Cursor | Risk flags | 14 | **10** |
+
 Current focused Codex check from May 2, 2026:
 
 | Metric | Bare | Structured |

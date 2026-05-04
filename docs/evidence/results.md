@@ -68,6 +68,21 @@ Plus minimal routing blocks in `CLAUDE.md` / `AGENTS.md` (~100-200 tokens each).
 
 Claude structured: **zero dead ends across all 3 repos.**
 
+### Current Codex/Cursor Meetup Evidence
+
+The meetup deck reports agent-specific evidence because each agent exposes
+different telemetry. Claude uses the reviewer-graded historical run set above.
+Codex and Cursor use the current focused rerun prepared for the deck:
+
+| Agent | Metric | Bare | Structured | Readout |
+|---|---:|---:|---:|---|
+| Codex | Tokens / 6-task cell | 163K | 130K | 20% fewer tokens |
+| Codex | Risk flags | 12 | 6 | 50% reduction |
+| Codex | Files opened / task | 7.7 | 7.1 | 7% fewer files |
+| Cursor | Dead ends / task | 0.24 | 0.07 | 71% fewer dead ends |
+| Cursor | Files opened / task | 3.6 | 2.7 | 25% fewer files |
+| Cursor | Risk flags | 14 | 10 | 29% reduction |
+
 ### Risk Flags (answers that would break production)
 
 | Repo | Bare total | Structured total |
