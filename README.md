@@ -25,7 +25,7 @@ cd /path/to/your-repo
 
 | | Feature | Why it matters | Where in this README |
 |---:|---|---|---|
-| 1 | **Works across agents** | Cursor, Claude, Codex, Gemini, and OpenCode all read the same `.agent-context/` through routing blocks in `.cursorrules` / `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` — one pack, two reading patterns (trust-and-follow vs search-and-verify) | [§Architecture](#architecture) |
+| 1 | **Works across agents** | Cursor, Claude, Codex, Gemini, and OpenCode all read the same `.agent-context/`. `init` writes the routing block to `.cursorrules`, `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` — modern agents read several of these together as project rules (Cursor, for example, picks up `.cursorrules` + `CLAUDE.md` + `AGENTS.md`), so any one of the four is enough to route any agent. | [§Architecture](#architecture) |
 | 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Results](#results) |
 | 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Tiers](#tiers) |
 | 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the whole pack via the included skill | [SKILL.md](SKILL.md) |

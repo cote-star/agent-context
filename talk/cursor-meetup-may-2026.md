@@ -98,16 +98,16 @@ Same shape in **Claude, Codex, Cursor, Gemini, OpenCode**. Compounds across ever
 
 ## One folder, every agent
 
-Commit `.agent-context/` to your repo. Every agent reads it through standard routing files:
+Commit `.agent-context/` to your repo. `init` writes the same routing block into four standard project-rule files. Modern agents read several of these **together** — not 1:1 — so any one is enough to route any agent.
 
-| Routing file | Picked up by |
+| Routing file | Common pick-ups |
 |---|---|
 | `.cursorrules` | Cursor |
-| `CLAUDE.md` | Claude · Claude Code |
-| `AGENTS.md` | Codex · OpenCode |
+| `CLAUDE.md` | Claude · Claude Code · Cursor |
+| `AGENTS.md` | Codex · OpenCode · Cursor |
 | `GEMINI.md` | Gemini |
 
-**One pack. Four routing files. Five agents read the same content.**
+**One pack. Four routing files. Redundant by design — any one routes any agent.**
 
 ---
 

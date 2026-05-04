@@ -196,17 +196,17 @@
   <!-- Slide 3 — One folder, every agent -->
   <section class="slide">
     <h2>One folder, every agent</h2>
-    <p>Commit <code>.agent-context/</code> to your repo. Every agent reads it through standard routing files:</p>
+    <p>Commit <code>.agent-context/</code> to your repo. <code>init</code> writes the same routing block into four standard project-rule files. Modern agents read several of these <strong>together</strong> — not 1:1 — so any one is enough to route any agent.</p>
     <table>
-      <thead><tr><th>Routing file</th><th>Picked up by</th></tr></thead>
+      <thead><tr><th>Routing file</th><th>Common pick-ups</th></tr></thead>
       <tbody>
         <tr><td><code>.cursorrules</code></td><td>Cursor</td></tr>
-        <tr><td><code>CLAUDE.md</code></td><td>Claude · Claude Code</td></tr>
-        <tr><td><code>AGENTS.md</code></td><td>Codex · OpenCode</td></tr>
+        <tr><td><code>CLAUDE.md</code></td><td>Claude · Claude Code · Cursor</td></tr>
+        <tr><td><code>AGENTS.md</code></td><td>Codex · OpenCode · Cursor</td></tr>
         <tr><td><code>GEMINI.md</code></td><td>Gemini</td></tr>
       </tbody>
     </table>
-    <p style="margin-top:1.5em;"><strong>One pack. Four routing files. Five agents read the same content.</strong></p>
+    <p style="margin-top:1.5em;"><strong>One pack. Four routing files. Redundant by design — any one routes any agent.</strong></p>
     <span class="slide-num">3 / 14</span>
   </section>
 
