@@ -128,7 +128,23 @@ fi
 
 git -C "$OUT/structured_fresh" fetch --quiet origin >/dev/null 2>&1 || true
 "$AGENT_CONTEXT_BIN" verify "$OUT/structured_fresh"
-"$AGENT_CONTEXT_BIN" freshness "$OUT/structured_fresh" --base-ref "$BASE_REF"
+
+# Strict freshness gate. The CLI's `agent-context freshness` exits 0 even
+# when drift is detected (advisory by design); for experiment runs we
+# want hard failure on stale, so call tools/check_freshness.sh directly.
+FRESHNESS_SCRIPT="$REPO_ROOT/tools/check_freshness.sh"
+if [[ ! -f "$FRESHNESS_SCRIPT" ]]; then
+  echo "ERROR: check_freshness.sh not found at $FRESHNESS_SCRIPT" >&2
+  exit 1
+fi
+if fresh_out=$(cd "$OUT/structured_fresh" && sh "$FRESHNESS_SCRIPT" --base-ref "$BASE_REF" 2>&1); then
+  echo "OK: structured_fresh passes strict freshness against $BASE_REF"
+else
+  echo "ERROR: strict freshness failed on structured_fresh against $BASE_REF" >&2
+  echo "  output: $fresh_out" >&2
+  echo "  Refusing to scaffold a stale clone." >&2
+  exit 1
+fi
 
 echo "Writing experiment scaffold..."
 mkdir -p \

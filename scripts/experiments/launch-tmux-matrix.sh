@@ -104,7 +104,8 @@ fi
 # --- Prompt builder -------------------------------------------------------
 
 # Write a per-cell prompt file. The pane will `cat` it for the operator
-# to copy/paste into the agent CLI.
+# to copy/paste into the agent CLI. ALIAS is injected literally so the
+# agent writes a concrete `"repo": "<alias>"` value (not a placeholder).
 build_prompt() {
   local agent="$1" capture="$2" condition="$3" outfile="$4"
   cat > "$outfile" <<EOF
@@ -113,19 +114,25 @@ Read ../EXPERIMENT.md and follow it exactly.
 agent           = $agent
 capture_method  = $capture
 condition       = $condition
+repo            = $ALIAS
 
 Write one JSON result file per task (L1, L2, M1, M2, H1, H2) to:
   ../results/$agent/$condition/<task_id>.json
 
-The schema is at ../result.schema.json. Required fields include
-task_id, agent='$agent', capture_method='$capture',
-condition='$condition', repo (the alias), started_at and finished_at
-(ISO 8601 UTC, e.g. 2026-05-04T15:00:00Z), files_opened_count,
-dead_ends, first_correct_file_hop, files_opened_after_first_correct_hop,
-post_hit_dead_ends, tool_calls (object), duration_seconds, answer (your
-text), citations (array of {path, line, note}), correct='ungraded',
-correctness_notes='', grading_method='ungraded', quality_self_score
-(1-10), risk_flag (boolean), risk_flag_explanation.
+The schema is at ../result.schema.json. Required fields include:
+  task_id
+  agent='$agent'
+  capture_method='$capture'
+  condition='$condition'
+  repo='$ALIAS'
+  started_at, finished_at  (ISO 8601 UTC, e.g. 2026-05-04T15:00:00Z)
+  files_opened_count, dead_ends
+  first_correct_file_hop, files_opened_after_first_correct_hop, post_hit_dead_ends
+  tool_calls (object), duration_seconds
+  answer (your text), citations (array of {path, line, note})
+  correct='ungraded', correctness_notes=''
+  grading_method='ungraded'
+  quality_self_score (1-10), risk_flag (boolean), risk_flag_explanation
 
 Set correct='ungraded' — the reviewer grades later.
 For non-cli capture_method (capture_method != 'cli'), tool-level fields
@@ -180,10 +187,10 @@ create_window() {
 
 # --- Build the matrix ----------------------------------------------------
 
-create_window "claude"   "cli"    "claude   (interactive: just run 'claude' and paste the prompt)"
-create_window "codex"    "cli"    "codex    (interactive: just run 'codex' and paste the prompt)"
-create_window "cursor"   "cli"    "cursor-agent --print --output-format json   (or run 'cursor-agent' for interactive)"
-create_window "opencode" "tunnel" "opencode-play   (uses local OSS tunnel at 127.0.0.1:11434)"
+create_window "claude"   "cli"    "claude    (interactive: just run 'claude' and paste the prompt)"
+create_window "codex"    "cli"    "codex     (interactive: just run 'codex' and paste the prompt)"
+create_window "cursor"   "cli"    "cursor-agent   (interactive: just run 'cursor-agent' and paste the prompt — the headless --print mode is for full automation, not the manual-paste flow)"
+create_window "opencode" "tunnel" "OPENCODE_MODEL=ollama/qwen3:4b opencode-play   (interactive against the qwen3:4b OSS model via the local SSH tunnel at 127.0.0.1:11434)"
 
 # Land on the claude window so attach starts there. Use directional
 # pane select so this works regardless of pane-base-index.

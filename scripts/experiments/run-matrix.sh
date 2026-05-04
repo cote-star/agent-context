@@ -79,6 +79,11 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 PREP_SCRIPT="$SCRIPT_DIR/prepare-codex-cursor-rerun.sh"
 SCAFFOLD_SCRIPT="$SCRIPT_DIR/scaffold-tasks.py"
 TASKS_DIR="$REPO_ROOT/docs/experiments/tasks"
+# Strict freshness gate. The agent-context CLI's freshness subcommand
+# returns 0 even when drift is detected (advisory by design); for
+# experiment runs we want hard failure on stale, so we call the
+# underlying shell script directly. Same pattern as preflight-check.sh.
+FRESHNESS_SCRIPT="$REPO_ROOT/tools/check_freshness.sh"
 
 if [[ -z "$AGENT_CONTEXT_BIN" ]]; then
   AGENT_CONTEXT_BIN="$REPO_ROOT/bin/agent-context"
@@ -86,6 +91,10 @@ fi
 
 if [[ ! -x "$AGENT_CONTEXT_BIN" ]]; then
   echo "ERROR: agent-context binary not executable: $AGENT_CONTEXT_BIN" >&2
+  exit 1
+fi
+if [[ ! -f "$FRESHNESS_SCRIPT" ]]; then
+  echo "ERROR: check_freshness.sh not found at $FRESHNESS_SCRIPT" >&2
   exit 1
 fi
 if [[ ! -x "$PREP_SCRIPT" ]]; then
@@ -155,11 +164,19 @@ while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
   fi
 
   # --- Step 2: pack freshness on source ---
+  # Use strict freshness (tools/check_freshness.sh) directly. The CLI's
+  # freshness subcommand swallows non-zero exit codes by design.
   if [[ "$status" == "UNKNOWN" ]]; then
     if ! "$AGENT_CONTEXT_BIN" verify "$SOURCE" >/dev/null 2>&1; then
       status="FAIL"; notes="agent-context verify failed on source pack"
-    elif ! "$AGENT_CONTEXT_BIN" freshness "$SOURCE" --base-ref "$BASE_REF" >/dev/null 2>&1; then
-      status="FAIL"; notes="agent-context freshness failed on source pack (drift detected against $BASE_REF)"
+    else
+      fresh_out=""
+      if fresh_out=$(cd "$SOURCE" && sh "$FRESHNESS_SCRIPT" --base-ref "$BASE_REF" 2>&1); then
+        :
+      else
+        status="FAIL"
+        notes="strict freshness failed on source pack (drift detected against $BASE_REF): $fresh_out"
+      fi
     fi
   fi
 
@@ -222,7 +239,7 @@ done < "$CONFIG"
   elif [[ "$EDIT_COUNT" -gt 0 ]]; then
     echo "**Action: adapt task templates for REQUIRES-EDIT rows, then re-run preflight-check.sh.**"
   else
-    echo "**Action: launch agents per the per-repo prep logs and the protocol in \`docs/experiments/codex-cursor-fresh-pack-rerun.md\`.**"
+    echo "**Action: run \`scripts/experiments/preflight-check.sh\` (with \`--max-pack-age-days 14\`) to gate, then launch each repo via \`scripts/experiments/launch-tmux-matrix.sh <alias>\`. Full protocol: \`docs/experiments/RUNBOOK.md\`.**"
   fi
 } >> "$REPORT"
 
