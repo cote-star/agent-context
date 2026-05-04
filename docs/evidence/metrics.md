@@ -45,9 +45,9 @@ answers.
 
 | Repo Type | Files | Description |
 |---|---|---|
-| ML pipeline (`stream-models`) | 501 | Python ML training/inference pipeline |
+| ML pipeline (`ml-pipeline-reference`) | 501 | Python ML training/inference pipeline |
 | CLI library (`agent-chorus`) | 155 | Dual Rust/Node CLI with conformance-tested parity |
-| React frontend (`trust-stream-frontend`) | 1,982 | TypeScript React app with Zustand + React Query |
+| React frontend (`react-frontend-reference`) | 1,982 | TypeScript React app with Zustand + React Query |
 
 The same general-purpose template was used across all three repos with zero
 modifications.
@@ -68,7 +68,7 @@ parameter through the call chain) in 12 seconds with zero files opened. It
 trusted the completeness contract completely and produced a correct,
 comprehensive answer from context alone.
 
-**Source**: stream-models, structured condition, M2 task.
+**Source**: ml-pipeline-reference, structured condition, M2 task.
 
 ### "Both miss setup.tsx"
 Both agents in the bare condition missed `src/__tests__/setup.tsx` store reset
@@ -77,7 +77,7 @@ in suite -- a silent, hard-to-debug failure. Both agents found it in the
 structured condition because the behavioral invariants checklist explicitly
 names it.
 
-**Source**: trust-stream-frontend, M1 task.
+**Source**: react-frontend-reference, M1 task.
 
 ### "Deprecated pattern prevented"
 The route-trusting family in the bare condition proposed using Apollo Client
@@ -86,7 +86,7 @@ correctly used React Query because the behavioral invariants say "Do not assume
 Apollo GraphQL queries are the current data path -- React Query is the primary
 pattern."
 
-**Source**: trust-stream-frontend, H1 task.
+**Source**: react-frontend-reference, H1 task.
 
 ---
 

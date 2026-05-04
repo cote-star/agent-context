@@ -168,9 +168,9 @@ The same `.agent-context/` template has been validated across stacks and across 
 
 | Repo | Files | Stack | Result |
 |---|---:|---|---|
-| ML pipeline (`stream-models`) | 501 | Python | 50% → 83% correct · 74% fewer tokens · 0 dead ends |
+| ML pipeline (`ml-pipeline-reference`) | 501 | Python | 50% → 83% correct · 74% fewer tokens · 0 dead ends |
 | Dual CLI (`agent-chorus`) | 155 | Rust + Node.js | Codex hit **6/6** (highest of any condition across all experiments) · 69% fewer tokens with Claude |
-| React frontend (`trust-stream-frontend`) | 1,982 | TypeScript | 50% → 100% correct · 58% fewer tokens · 0 dead ends |
+| React frontend (`react-frontend-reference`) | 1,982 | TypeScript | 50% → 100% correct · 58% fewer tokens · 0 dead ends |
 
 **Repo-agnostic by design.** Principle P1 ([`docs/design-principles.md`](docs/design-principles.md)) is tagged `[all repos]` — the artifact set is built to "apply regardless of repo type, size, or stack."
 

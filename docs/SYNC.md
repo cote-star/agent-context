@@ -4,9 +4,10 @@
 
 ## Intro
 
-The canonical source is the internal team skill repository:
+The canonical source is the internal team skill repository. Keep its local path out
+of public docs; pass it with `AGENT_CONTEXT_CANONICAL` or `--canonical-path`.
 
-    ~/sandbox/work/cross-team-repos/team_skills/skills/agent-context/
+    /path/to/canonical/agent-context/
 
 Two derived tracks consume it:
 
@@ -34,7 +35,7 @@ Two derived tracks consume it:
 | Authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) | yes | yes | yes |
 | Python verify/freshness scripts | yes | yes | yes |
 | Chorus CLI invocation in getting-started | yes | yes | **no** (replaced with `bin/agent-context`) |
-| Internal team refs (Edelman-DxI, stream-models, etc.) | yes | no | no |
+| Internal team refs (internal-team, ml-pipeline-reference, etc.) | yes | no | no |
 
 ## Cadence
 
@@ -50,8 +51,9 @@ From the repo root:
 # Preview what would change, without writing anything.
 scripts/sync-from-canonical.sh --dry-run
 
-# Real sync (default canonical path = ~/sandbox/work/...).
-scripts/sync-from-canonical.sh
+# Real sync via environment variable.
+AGENT_CONTEXT_CANONICAL=/path/to/canonical/agent-context \
+  scripts/sync-from-canonical.sh
 
 # Pin to a specific canonical clone.
 scripts/sync-from-canonical.sh --canonical-path /path/to/team_skills/skills/agent-context

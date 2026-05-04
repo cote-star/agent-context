@@ -6,7 +6,7 @@
 #   scripts/sync-from-canonical.sh [--canonical-path PATH] [--dry-run]
 #
 # Default canonical path:
-#   ~/sandbox/work/cross-team-repos/team_skills/skills/agent-context
+#   Set AGENT_CONTEXT_CANONICAL=/path/to/canonical/agent-context
 #
 # See docs/SYNC.md for the three-way sync policy (team_skills canonical →
 # agent-chorus/skills + agent-context public).
@@ -22,7 +22,7 @@
 
 set -eu
 
-CANONICAL="${HOME}/sandbox/work/cross-team-repos/team_skills/skills/agent-context"
+CANONICAL="${AGENT_CONTEXT_CANONICAL:-}"
 DRY_RUN=0
 
 while [ "$#" -gt 0 ]; do
@@ -49,7 +49,8 @@ done
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 if [ ! -d "$CANONICAL" ]; then
-  echo "ERROR: canonical path does not exist: $CANONICAL" >&2
+  echo "ERROR: canonical path does not exist: ${CANONICAL:-<unset>}" >&2
+  echo "Set AGENT_CONTEXT_CANONICAL or pass --canonical-path /path/to/canonical/agent-context." >&2
   exit 1
 fi
 

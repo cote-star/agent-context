@@ -56,7 +56,7 @@
     <text class="label" x="140" y="538">Correctness snapshots</text>
     <text class="mono" x="630" y="538">results.md</text>
 
-    <text x="140" y="616" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">stream-models: 50 -> 83</text>
+    <text x="140" y="616" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#111827">ml-pipeline-reference: 50 -> 83</text>
     <rect x="502" y="586" width="140" height="18" rx="6" fill="#FCA5A5"/>
     <rect x="502" y="614" width="232" height="18" rx="6" fill="#F37021"/>
 
