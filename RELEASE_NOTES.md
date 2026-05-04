@@ -6,11 +6,18 @@ Meetup demo hardening release. The public repo and the included skill now match 
 
 ### What's new
 
+- **Public repo cleanup for the meetup.** Private rerun harnesses and task
+  artifacts now stay local and ignored; the tracked repo focuses on the product
+  surface: CLI, templates, tools, examples, docs, evidence, talk, and skill.
+- **Installable skill package.** The root `SKILL.md` remains the public
+  source-of-truth, and `skills/agent-context/SKILL.md` mirrors it for agent
+  skill registries. `skills/agent-context/agents/openai.yaml` adds Codex/OpenAI
+  metadata so agents can discover the workflow as an installable skill.
 - **Hook setup is now first-class.** `agent-context init --install-hook .` copies `pre-push-hook.sh` into `.agent-context/tools/` and installs an advisory `.git/hooks/pre-push` freshness hook when safe. `agent-context install-hook .` can be run later to install or refresh the hook. Existing unmanaged hooks are preserved and a `pre-push.agent-context.sample` chain block is written for deliberate manual merge.
 - **Skill workflow now completes the demo promise.** `SKILL.md` explicitly drives agents through pack creation, subsystem inventory, acceptance tests, verify, advisory hook setup, and CI/freshness follow-up documentation.
 - **Helper tool set completed.** Fresh packs now carry `verify_agent_context.py`, `check_freshness.sh`, and `pre-push-hook.sh` together, so the repo can verify itself without depending on the original checkout.
 - **Agent-chorus learnings folded back.** The setup workflow now emphasizes hard multi-hop tasks, runtime parity, audit-path completeness, and freshness as a hard gate for evidence runs — lessons surfaced while refreshing the agent-chorus reference pack and redaction/parity tasks.
-- **Team-skills learnings folded back.** The skill keeps the production `enumerate before narrate` pattern, cross-language file-family checklists, negative guidance, and "silent fallback" risk callouts used to catch map/default bugs in a polyglot skills repo.
+- **Polyglot skills-repo learnings folded back.** The skill keeps the production `enumerate before narrate` pattern, cross-language file-family checklists, negative guidance, and "silent fallback" risk callouts used to catch map/default bugs in a polyglot skills repo.
 - **Docs aligned for live demo.** README, getting started, architecture docs, and CI reference now describe the same setup path: `init --tier 3 --install-hook`, fill via the skill, `verify`, `freshness`, and CI adaptation.
 
 ### Compatibility
@@ -24,7 +31,7 @@ Meetup-ready release. The pack is now fully self-contained with all three layers
 
 ### What's new
 
-- **SKILL.md** — 10-step skill definition adapted from the production team-skills version. Agents can now autonomously create, update, and maintain packs by following the skill. Includes the subsystem inventory step (enumerate before narrate), acceptance test framework (4 tests with grep verification), and CI adaptation guidance.
+- **SKILL.md** — 10-step skill definition adapted from a production polyglot skills repository. Agents can now autonomously create, update, and maintain packs by following the skill. Includes the subsystem inventory step (enumerate before narrate), acceptance test framework (4 tests with grep verification), and CI adaptation guidance.
 - **Authority layer templates** — `routes.json`, `completeness_contract.json`, `reporting_rules.json` are now shipped as tier 3 templates. These give trust-and-follow agents (Claude, Gemini) authoritative guidance without needing the chorus CLI.
 - **Tier support** — `agent-context init --tier 1|2|3 .` lets you choose adoption level:
   - Tier 1 (minimal): `20_CODE_MAP.md` + `search_scope.json` (2 files)
@@ -49,7 +56,7 @@ Meetup-ready release. The pack is now fully self-contained with all three layers
 
 Initial public release.
 
-**Canonical source**: this repo is a distilled public view of the internal `team_skills/skills/agent-context/` skill. Updates flow from canonical to this repo via `scripts/sync-from-canonical.sh`. See `docs/SYNC.md`.
+**Canonical source**: this repo is a distilled public view of a production agent-context skill. Updates flow from canonical to this repo via `scripts/sync-from-canonical.sh`. See `docs/SYNC.md`.
 
 ### What's included
 - Content layer: 5 markdown templates (`00_START_HERE`, `10_SYSTEM_OVERVIEW`, `20_CODE_MAP`, `30_BEHAVIORAL_INVARIANTS`, `40_OPERATIONS_AND_RELEASE`) + `acceptance_tests.md`.

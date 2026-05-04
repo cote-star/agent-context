@@ -9,13 +9,12 @@ Agent-context makes AI agents **dramatically better** at navigating large codeba
 - **Risk elimination**: agent-context prevented every "would break production" answer
 - **Template is general-purpose**: ML pipeline, CLI library, React frontend -- zero modifications
 
-These headline numbers are historical March/April 2026 results. The
-[fresh-pack rerun protocol](../experiments/codex-cursor-fresh-pack-rerun.md)
-is the current path for any new Codex or Cursor claim — every structured
-condition must pass `agent-context verify` and `agent-context freshness`
-before the agent runs. The May 2 2026 one-shot below predates that protocol
-and is recategorized as a stale-pack maintenance failure, not a current
-product result.
+These headline numbers are historical March/April 2026 results. The current
+path for any new Codex or Cursor claim is a private fresh-pack rerun protocol:
+every structured condition must pass `agent-context verify` and the strict
+`.agent-context/tools/check_freshness.sh` gate before the agent runs. The May 2
+2026 one-shot below predates that protocol and is recategorized as a stale-pack
+maintenance failure, not a current product result.
 
 ---
 
@@ -89,9 +88,8 @@ Claude structured: **zero dead ends across all 3 repos.**
 > structured condition in this rerun used a pack that had drifted from the
 > repo since the original experiments. `agent-context freshness` was not
 > required to pass before the agent started, and the structured run hit
-> stale-pack dead ends. The protocol fix is in
-> [`docs/experiments/codex-cursor-fresh-pack-rerun.md`](../experiments/codex-cursor-fresh-pack-rerun.md):
-> every structured run begins with `verify` and `freshness` passing on a
+> stale-pack dead ends. The protocol fix is a private isolated fresh-pack rerun:
+> every structured run begins with `verify` and strict freshness passing on a
 > freshly filled pack, on an isolated repo copy. Numbers below are kept for
 > research-history continuity; do not cite them as current Codex or Cursor
 > claims.
@@ -168,9 +166,8 @@ Claude bare proposed using Apollo Client (being deprecated) in its implementatio
 Codex structured scored 6/6 yes on agent-chorus — the highest correctness of any
 agent in any condition across these experiments. The completeness contracts gave
 Codex the information it needed to be thorough without over-exploring. Any
-current Codex/Cursor claim should come from a fresh-pack rerun under
-[`docs/experiments/codex-cursor-fresh-pack-rerun.md`](../experiments/codex-cursor-fresh-pack-rerun.md),
-not from this historical anecdote alone.
+current Codex/Cursor claim should come from a fresh-pack rerun under the
+private isolated protocol, not from this historical anecdote alone.
 
 ---
 
