@@ -5,10 +5,16 @@
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 3 .
+~/agent-context/bin/agent-context init --tier 3 --install-hook .
 ```
 
 This scaffolds `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/`.
+
+For a demo-ready setup that also installs the advisory local freshness hook when safe:
+
+```bash
+~/agent-context/bin/agent-context init --tier 3 --install-hook .
+```
 
 Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for a starter pack without system overview, operations docs, or authority contracts. `--tier 3` (the default) gives you everything.
 
@@ -45,13 +51,15 @@ This is not required for the initial commit, but should be set up before the pac
 A reference CI job is provided in [`references/ci-example.yml`](references/ci-example.yml). It assumes the repo contains:
 - `.agent-context/tools/verify_agent_context.py`
 - `.agent-context/tools/check_freshness.sh`
+- `.agent-context/tools/pre-push-hook.sh`
 
-Those helpers are copied from this repo during `init` and should then be wired into the repo's CI. An advisory pre-push hook is at [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh):
+Those helpers are copied from this repo during `init` and should then be wired into the repo's CI. Install or refresh the advisory pre-push hook with:
 
 ```bash
-cp ~/agent-context/tools/pre-push-hook.sh .git/hooks/pre-push
-chmod +x .git/hooks/pre-push
+~/agent-context/bin/agent-context install-hook .
 ```
+
+If the repo already has an unmanaged pre-push hook, the command preserves it and writes `.git/hooks/pre-push.agent-context.sample` so you can merge the freshness block into the existing hook chain deliberately.
 
 If CI enforcement can't be set up yet, document it as a follow-up in `40_OPERATIONS_AND_RELEASE.md` so the gap is tracked.
 
@@ -63,6 +71,7 @@ Open a PR. The pack should pass the quality bar:
 - `CLAUDE.md` says **"BEFORE starting any task, read these 3 files"**
 - `AGENTS.md` includes **"Search ONLY within scoped directories"**
 - `python3 .agent-context/tools/verify_agent_context.py` passes from the repo root
+- `agent-context install-hook .` has installed, refreshed, or documented the advisory hook follow-up
 - CI verification is either set up or documented as a follow-up with the chosen workflow and `CONTEXT_RELEVANT_PATHS`
 
 ## 7. After merge — it just works

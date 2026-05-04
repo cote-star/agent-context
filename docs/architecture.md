@@ -24,7 +24,7 @@
 
 Claude trusts these as authoritative. Result: answers from pure context, zero files opened.
 
-> **v0.2.0 note.** The public `agent-context` repo now ships the authority layer as part of tier 3. Earlier public builds documented this layer but left it to `agent-chorus`; tier 3 now includes it directly so a repo can carry the full contract without depending on the chorus CLI.
+> **v0.2+ note.** The public `agent-context` repo now ships the authority layer as part of tier 3. Earlier public builds documented this layer but left it to `agent-chorus`; tier 3 now includes it directly so a repo can carry the full contract without depending on the chorus CLI.
 
 ## Layer 3 — Navigation (JSON)
 
@@ -38,14 +38,15 @@ Codex uses these to focus exploration. Does NOT stop Codex from reading — boun
 
 ## Helper Tools
 
-The repo ships two helper tools that should be copied into `.agent-context/tools/` when a pack is created:
+The repo ships three helper tools that should be copied into `.agent-context/tools/` when a pack is created:
 
 | File | Purpose |
 |---|---|
 | `verify_agent_context.py` | Machine-checkable integrity validation for the pack |
 | `check_freshness.sh` | Freshness check for "code changed but pack not updated" |
+| `pre-push-hook.sh` | Advisory local hook that calls the freshness check before push |
 
-These scripts are the canonical implementation behind the reference CI and pre-push examples. Teams should adapt how they are invoked, not rewrite their logic from scratch. The Python CLI (`bin/agent-context`) wraps both for a friendlier surface: `bin/agent-context verify` and `bin/agent-context freshness`.
+These scripts are the canonical implementation behind the reference CI and pre-push examples. Teams should adapt how they are invoked, not rewrite their logic from scratch. The Python CLI (`bin/agent-context`) wraps them for a friendlier surface: `bin/agent-context verify`, `bin/agent-context freshness`, and `bin/agent-context install-hook`.
 
 ## Two Agent Architectures
 
@@ -107,7 +108,7 @@ The target enforcement model for `agent-context` CI verification combines integr
 
 Teams should set up a verification check in their CI pipeline to run on PRs against main. At minimum, the check should run the machine-checkable structural and semantic validation by invoking the copied helper tools in `.agent-context/tools/`.
 
-A reference CI job is provided in [`references/ci-example.yml`](references/ci-example.yml), repo adaptation guidance in [`ci-adaptation.md`](ci-adaptation.md), and an advisory pre-push hook in [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh). Teams should adapt these to their existing CI pipeline. Manifest checksum sealing is a future enhancement — the current manifest is informational.
+A reference CI job is provided in [`references/ci-example.yml`](references/ci-example.yml), repo adaptation guidance in [`ci-adaptation.md`](ci-adaptation.md), and an advisory pre-push hook in [`../tools/pre-push-hook.sh`](../tools/pre-push-hook.sh). `agent-context install-hook` installs the advisory hook when no unmanaged hook is present, updates an existing managed hook, or writes a sample chain block when a repo already has its own pre-push hook. Teams should adapt these to their existing CI pipeline. Manifest checksum sealing is a future enhancement — the current manifest is informational.
 
 ## Maintenance
 

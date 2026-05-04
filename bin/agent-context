@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """agent-context - author, verify, and maintain agent-context artifacts.
 
-Stdlib-only Python 3.8+. Single-file dispatcher for the v0.2.0 subcommands:
+Stdlib-only Python 3.8+. Single-file dispatcher for the v0.2.1 subcommands:
 
-    agent-context init [path] [--force] [--tier 1|2|3]
+    agent-context init [path] [--force] [--tier 1|2|3] [--install-hook]
     agent-context verify [path]
     agent-context doctor
     agent-context freshness [path] [--base-ref origin/main]
+    agent-context install-hook [path]
     agent-context --version
     agent-context --help
 
@@ -28,9 +29,10 @@ import pathlib
 import shutil
 import subprocess
 import sys
+from typing import Optional, Tuple
 
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 
 # ---------------------------------------------------------------------------
@@ -66,6 +68,8 @@ TIER_MAP = {1: TIER_1_TEMPLATES, 2: TIER_2_TEMPLATES, 3: TIER_3_TEMPLATES}
 
 SENTINEL_BEGIN = "<!-- agent-context:begin -->"
 SENTINEL_END = "<!-- agent-context:end -->"
+HOOK_SENTINEL_BEGIN = "# agent-context:pre-push:begin"
+HOOK_SENTINEL_END = "# agent-context:pre-push:end"
 
 CLAUDE_ROUTING = """\
 BEFORE starting any task, read these 3 files in order:
@@ -136,6 +140,25 @@ def _git_head(cwd: pathlib.Path) -> str:
     return ""
 
 
+def _git_path(cwd: pathlib.Path, rel_path: str) -> Optional[pathlib.Path]:
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--git-path", rel_path],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if out.returncode == 0 and out.stdout.strip():
+            path = pathlib.Path(out.stdout.strip())
+            if not path.is_absolute():
+                path = cwd / path
+            return path.resolve()
+    except FileNotFoundError:
+        pass
+    return None
+
+
 def _utc_now_iso() -> str:
     try:
         return _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -176,6 +199,52 @@ def _upsert_routing_block(file_path: pathlib.Path, content: str) -> bool:
     else:
         file_path.write_text(block)
         return True
+
+
+def _install_pre_push_hook(target_root: pathlib.Path) -> Tuple[str, str]:
+    """Install the advisory agent-context pre-push hook.
+
+    Returns (status, message). Existing non-managed hooks are never overwritten;
+    callers can still proceed after surfacing the message to the operator.
+    """
+    hook_path = _git_path(target_root, "hooks/pre-push")
+    if hook_path is None:
+        return ("error", "git repository not found; skipping pre-push hook install")
+
+    hook_path.parent.mkdir(parents=True, exist_ok=True)
+    block = f"""\
+{HOOK_SENTINEL_BEGIN}
+# Advisory only: warn when context-relevant files changed without .agent-context updates.
+if [ -f ".agent-context/tools/pre-push-hook.sh" ]; then
+  sh .agent-context/tools/pre-push-hook.sh "$@"
+fi
+{HOOK_SENTINEL_END}
+"""
+
+    if hook_path.exists():
+        text = hook_path.read_text()
+        if HOOK_SENTINEL_BEGIN in text and HOOK_SENTINEL_END in text:
+            import re
+            pattern = re.compile(
+                re.escape(HOOK_SENTINEL_BEGIN) + r".*?" + re.escape(HOOK_SENTINEL_END),
+                re.DOTALL,
+            )
+            new_text = pattern.sub(block.rstrip(), text)
+            hook_path.write_text(new_text)
+            hook_path.chmod(hook_path.stat().st_mode | 0o111)
+            return ("updated", f"Updated managed agent-context block in {hook_path}")
+
+        sample_path = hook_path.with_name("pre-push.agent-context.sample")
+        sample_path.write_text(block)
+        sample_path.chmod(0o755)
+        return (
+            "skipped",
+            f"Existing pre-push hook preserved at {hook_path}; wrote sample chain block to {sample_path}",
+        )
+
+    hook_path.write_text("#!/bin/sh\n" + block)
+    hook_path.chmod(0o755)
+    return ("installed", f"Installed advisory pre-push hook at {hook_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -234,7 +303,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     tools_dest = target_root / ".agent-context" / "tools"
     tools_dest.mkdir(parents=True, exist_ok=True)
     tools_copied = 0
-    for tool_name in ["verify_agent_context.py", "check_freshness.sh"]:
+    for tool_name in ["verify_agent_context.py", "check_freshness.sh", "pre-push-hook.sh"]:
         src = _tools_dir() / tool_name
         if src.is_file():
             shutil.copy2(src, tools_dest / tool_name)
@@ -265,7 +334,32 @@ def cmd_init(args: argparse.Namespace) -> int:
         if _upsert_routing_block(path, content):
             print(f"  Wrote routing block in {filename}")
 
+    if args.install_hook:
+        status, message = _install_pre_push_hook(target_root)
+        label = "Hook"
+        print(f"{label}: {message}")
+
     print("Next: fill the REPLACE markers in each template, then run `agent-context verify`.")
+    return 0
+
+
+def cmd_install_hook(args: argparse.Namespace) -> int:
+    target_root = pathlib.Path(args.path or ".").resolve()
+    tools_dest = target_root / ".agent-context" / "tools"
+    tools_dest.mkdir(parents=True, exist_ok=True)
+
+    src = _tools_dir() / "pre-push-hook.sh"
+    if src.is_file():
+        shutil.copy2(src, tools_dest / "pre-push-hook.sh")
+        print("Copied pre-push-hook.sh to .agent-context/tools/")
+    else:
+        print(f"ERROR: pre-push hook template not found at {src}", file=sys.stderr)
+        return 1
+
+    status, message = _install_pre_push_hook(target_root)
+    print(message)
+    if status == "error":
+        return 1
     return 0
 
 
@@ -339,6 +433,21 @@ def cmd_doctor(args: argparse.Namespace) -> int:
             has_block = SENTINEL_BEGIN in text
             print(f"  {name:18s} {'routing block present' if has_block else 'exists but no routing block'}")
 
+    hook_path = _git_path(root, "hooks/pre-push")
+    if hook_path:
+        if hook_path.exists():
+            hook_text = hook_path.read_text()
+            if HOOK_SENTINEL_BEGIN in hook_text and HOOK_SENTINEL_END in hook_text:
+                print(f"  pre-push hook:    agent-context managed ({hook_path})")
+            else:
+                sample = hook_path.with_name("pre-push.agent-context.sample")
+                if sample.exists():
+                    print(f"  pre-push hook:    unmanaged hook preserved; agent-context sample present ({sample})")
+                else:
+                    print(f"  pre-push hook:    unmanaged hook present ({hook_path})")
+        else:
+            print("  pre-push hook:    not installed (run `agent-context install-hook`)")
+
     return 0
 
 
@@ -379,6 +488,8 @@ def _build_parser() -> argparse.ArgumentParser:
                         help="Overwrite an existing .agent-context/current/ directory")
     p_init.add_argument("--tier", type=int, choices=[1, 2, 3], default=3,
                         help="Adoption tier: 1=minimal (2 files), 2=standard (6 files), 3=full (11 files, default)")
+    p_init.add_argument("--install-hook", action="store_true",
+                        help="Install an advisory .git/hooks/pre-push freshness hook when no unmanaged hook is present")
     p_init.set_defaults(func=cmd_init)
 
     p_verify = subparsers.add_parser(
@@ -401,6 +512,13 @@ def _build_parser() -> argparse.ArgumentParser:
     p_freshness.add_argument("path", nargs="?", default=None)
     p_freshness.add_argument("--base-ref", default="origin/main")
     p_freshness.set_defaults(func=cmd_freshness)
+
+    p_hook = subparsers.add_parser(
+        "install-hook",
+        help="Copy and install the advisory pre-push freshness hook.",
+    )
+    p_hook.add_argument("path", nargs="?", default=None)
+    p_hook.set_defaults(func=cmd_install_hook)
 
     return parser
 
