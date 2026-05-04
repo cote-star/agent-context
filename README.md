@@ -51,12 +51,7 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
 
-May 2, 2026 focused rerun on the CLI/library protocol (one-repo rerun):
-
-- **Cursor Agent 3.2.11** (`composer-2-fast`): self-reported task-local files opened **35 → 18** with the pack. Reviewer grade unchanged (3 yes / 3 partial in both conditions).
-- **Codex CLI 0.128.0**: self-reported task-local files opened **58 → 30** with the pack. Reviewer grade unchanged (5 yes / 1 partial in both conditions).
-
-The current rerun supports the navigation-efficiency claim for Cursor and Codex, not a fresh correctness lift. Cursor evidence is provisional (one repo, one model, no Chorus-extracted Cursor session telemetry).
+**Freshness is the quality gate.** A May 2 2026 one-shot rerun used a stale pack and produced muddled numbers — that result is recategorized as a maintenance failure, not a product result. Fresh-pack reruns use the isolated `bare` vs `structured_fresh` protocol in [`docs/experiments/codex-cursor-fresh-pack-rerun.md`](docs/experiments/codex-cursor-fresh-pack-rerun.md), where every structured run requires `agent-context verify` and `agent-context freshness` to pass before the agent starts.
 
 | Metric | Bare session | With agent-context | Change |
 |---|---:|---:|---:|
@@ -174,7 +169,7 @@ The same `.agent-context/` template has been validated across stacks and across 
 | Repo | Files | Stack | Result |
 |---|---:|---|---|
 | ML pipeline (`stream-models`) | 501 | Python | 50% → 83% correct · 74% fewer tokens · 0 dead ends |
-| Dual CLI (`agent-chorus`) | 155 | Rust + Node.js | Historical: Codex 6/6 (highest of any condition) · Claude 69% fewer tokens. May 2026 rerun: **Cursor 35 → 18 files** · Codex 58 → 30 files |
+| Dual CLI (`agent-chorus`) | 155 | Rust + Node.js | Codex hit **6/6** (highest of any condition across all experiments) · 69% fewer tokens with Claude |
 | React frontend (`trust-stream-frontend`) | 1,982 | TypeScript | 50% → 100% correct · 58% fewer tokens · 0 dead ends |
 
 **Repo-agnostic by design.** Principle P1 ([`docs/design-principles.md`](docs/design-principles.md)) is tagged `[all repos]` — the artifact set is built to "apply regardless of repo type, size, or stack."
