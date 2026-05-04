@@ -74,7 +74,7 @@
 
     <rect x="968" y="282" width="180" height="132" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
     <text class="body" x="988" y="320">Token use</text>
-    <text x="988" y="368" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900" fill="#111827">58-74% less</text>
+    <text x="988" y="368" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900" fill="#111827">~66% less</text>
     <rect x="988" y="386" width="130" height="12" rx="6" fill="#F37021"/>
 
     <rect x="754" y="452" width="180" height="132" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>

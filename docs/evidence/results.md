@@ -5,7 +5,7 @@
 Agent-context makes AI agents **dramatically better** at navigating large codebases. Across 3 repo types and 6 experiment runs:
 
 - **Answer quality**: 50% to 88% correct (bare to structured)
-- **Efficiency**: 58-74% fewer tokens, zero dead ends
+- **Efficiency**: ~66% fewer tokens for Claude (3-repo avg, 38.6K → 13.1K), zero dead ends
 - **Risk elimination**: agent-context prevented every "would break production" answer
 - **Template is general-purpose**: ML pipeline, CLI library, React frontend -- zero modifications
 
