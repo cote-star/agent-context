@@ -133,6 +133,8 @@ Trust-and-follow (Claude, Gemini, OpenCode w/ Anthropic backend)
 
 The same `.agent-context/` content is consumed differently by each agent family. Cursor, Codex, and OpenCode (with a local model backend) bound their grep to scoped directories and cross-check verification shortcuts. Claude, Gemini, and OpenCode (with an Anthropic backend) stop when the completeness contract says done. agent-context provides scaffolding for both — completeness contracts for trust-and-follow agents, bounded search for search-and-verify agents.
 
+**Model-agnostic by construction.** The pack is markdown and JSON; routing blocks are plain text. Operator-verified with OpenCode running locally on a Mac and pointing at an OSS model (Devstral Small 2 or Qwen 4B) via SSH tunnel to a separate inference host — the pack reads identically regardless of where the model runs or which vendor ships it.
+
 ![agent-context artifact system](docs/demos/cold-start-agent-context-hero.svg)
 
 | Layer | Files | Job |
