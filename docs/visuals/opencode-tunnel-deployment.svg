@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="360" viewBox="0 0 1400 360" role="img" aria-labelledby="rt rd">
+  <title id="rt">Model-agnostic deployment via OpenCode and SSH tunnel</title>
+  <desc id="rd">Diagram of the operator-verified deployment. OpenCode running on a Mac points at a local OpenAI-compatible endpoint at 127.0.0.1:11434/v1; an SSH tunnel forwards traffic to a remote EC2 host running Ollama; Ollama serves the Devstral Small 2 OSS model. The agent-context pack reads identically over this path. No commercial-frontier dependency.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#F37021"/>
+    </marker>
+    <style>
+      .h1 { font: 800 28px Inter, Arial, sans-serif; fill: #111827; }
+      .label { font: 800 20px Inter, Arial, sans-serif; fill: #111827; }
+      .labelL { font: 800 20px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .small { font: 14px Inter, Arial, sans-serif; fill: #64748B; }
+      .smallL { font: 14px Inter, Arial, sans-serif; fill: #CBD5E1; }
+      .mono { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #475569; }
+      .monoL { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #CBD5E1; }
+      .footer { font: italic 16px Inter, Arial, sans-serif; fill: #475569; }
+    </style>
+  </defs>
+  <rect width="1400" height="360" fill="#FDFCF8"/>
+  <rect x="58" y="30" width="1284" height="300" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+  <text class="h1" x="700" y="80" text-anchor="middle">Model-agnostic by construction</text>
+
+  <g filter="url(#shadow)">
+    <rect x="120" y="130" width="230" height="120" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="235" y="178" text-anchor="middle">OpenCode</text>
+    <text class="small" x="235" y="208" text-anchor="middle">on Mac</text>
+    <text class="mono" x="235" y="232" text-anchor="middle">opencode-play</text>
+  </g>
+
+  <path d="M360 190 L420 190" stroke="#F37021" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="430" y="130" width="230" height="120" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="label" x="545" y="178" text-anchor="middle">SSH tunnel</text>
+    <text class="small" x="545" y="208" text-anchor="middle">local OpenAI-compatible</text>
+    <text class="mono" x="545" y="232" text-anchor="middle">127.0.0.1:11434/v1</text>
+  </g>
+
+  <path d="M670 190 L730 190" stroke="#F37021" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="740" y="130" width="230" height="120" rx="8" fill="#111827"/>
+    <text class="labelL" x="855" y="178" text-anchor="middle">EC2 / Ollama</text>
+    <text class="smallL" x="855" y="208" text-anchor="middle">remote inference host</text>
+    <text class="monoL" x="855" y="232" text-anchor="middle">oss-agent-lab</text>
+  </g>
+
+  <path d="M980 190 L1040 190" stroke="#F37021" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="1050" y="130" width="230" height="120" rx="8" fill="#111827"/>
+    <text class="labelL" x="1165" y="178" text-anchor="middle">OSS model</text>
+    <text class="smallL" x="1165" y="208" text-anchor="middle">open weights, no vendor</text>
+    <text class="monoL" x="1165" y="232" text-anchor="middle">devstral-small-2</text>
+  </g>
+
+  <text class="footer" x="700" y="305" text-anchor="middle">Operator-verified. Same .agent-context/ reads identically over SSH — no commercial-frontier dependency.</text>
+</svg>
