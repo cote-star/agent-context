@@ -47,25 +47,25 @@ Plus minimal routing blocks in `CLAUDE.md` / `AGENTS.md` (~100-200 tokens each).
 
 | Repo | Files | Claude bare | Claude structured | Codex bare | Codex structured |
 |------|-------|------------|-------------------|------------|------------------|
-| internal-project (ML pipeline) | 501 | 3/6 (50%) | 5/6 (83%) | 3/6 (50%) | 5/6 (83%) |
+| ml-pipeline-reference (ML pipeline) | 501 | 3/6 (50%) | 5/6 (83%) | 3/6 (50%) | 5/6 (83%) |
 | agent-chorus (CLI/library) | 155 | 5/6 (83%) | 5/6 (83%) | -- | 6/6 (100%) |
-| demo-project-frontend (React/TS) | 1,982 | 2/4 (50%) | 4/4 (100%) | 2/4 (50%) | 3/4 (75%) |
+| react-frontend-reference (React/TS) | 1,982 | 2/4 (50%) | 4/4 (100%) | 2/4 (50%) | 3/4 (75%) |
 
 ### Efficiency (Claude only -- most dramatic improvement)
 
 | Repo | Bare avg files | Structured avg files | Reduction | Bare avg tokens | Structured avg tokens | Token reduction |
 |------|---------------|---------------------|-----------|----------------|----------------------|----------------|
-| internal-project | 7.5 | 2.2 | **71%** | 49K | 12.5K | **74%** |
+| ml-pipeline-reference | 7.5 | 2.2 | **71%** | 49K | 12.5K | **74%** |
 | agent-chorus | 1.5 | 0.83 | **45%** | 13.5K | 4.25K | **69%** |
-| demo-project-frontend | 10.0 | 2.75 | **73%** | 53K | 22.5K | **58%** |
+| react-frontend-reference | 10.0 | 2.75 | **73%** | 53K | 22.5K | **58%** |
 
 ### Dead Ends (wasted file reads)
 
 | Repo | Claude bare | Claude structured | Codex bare | Codex structured |
 |------|------------|-------------------|------------|------------------|
-| internal-project | 2 | **0** | 7 | 11 |
+| ml-pipeline-reference | 2 | **0** | 7 | 11 |
 | agent-chorus | 0 | **0** | 1 | 1 |
-| demo-project-frontend | 3 | **0** | 6 | 2 |
+| react-frontend-reference | 3 | **0** | 6 | 2 |
 
 Claude structured: **zero dead ends across all 3 repos.**
 
@@ -73,9 +73,9 @@ Claude structured: **zero dead ends across all 3 repos.**
 
 | Repo | Bare total | Structured total |
 |------|-----------|-----------------|
-| internal-project | 3 | 0 |
+| ml-pipeline-reference | 3 | 0 |
 | agent-chorus | 0 | 0 |
-| demo-project-frontend | 4 | 0* |
+| react-frontend-reference | 4 | 0* |
 
 \* Structured risk flags were protocol breaches (grep matched ground truth), not production risks.
 
@@ -155,13 +155,13 @@ Interpretation:
 
 ## Best Stories
 
-### "Zero files, 12 seconds" (internal-project, Claude structured, M2)
+### "Zero files, 12 seconds" (ml-pipeline-reference, Claude structured, M2)
 Claude answered a complex impact analysis question (new client parameter through the call chain) in 12 seconds with zero files opened. It trusted the completeness contract completely and produced a correct, comprehensive answer from context alone.
 
-### "Both agents miss the same silent failure" (demo-project-frontend, M1)
+### "Both agents miss the same silent failure" (react-frontend-reference, M1)
 Both Claude and Codex in bare condition missed `src/__tests__/setup.tsx` store reset when adding a new Zustand store. This causes tests to pass individually but fail in suite -- a silent, hard-to-debug failure. Both agents found it in structured because the behavioral invariants checklist explicitly names it.
 
-### "Negative guidance prevents deprecated pattern" (demo-project-frontend, H1)
+### "Negative guidance prevents deprecated pattern" (react-frontend-reference, H1)
 Claude bare proposed using Apollo Client (being deprecated) in its implementation plan. Claude structured correctly used React Query because the behavioral invariants say "Do not assume Apollo GraphQL queries are the current data path -- React Query is the primary pattern."
 
 ### "Codex achieves 6/6" (agent-chorus, Run 5)
@@ -200,7 +200,7 @@ The experiments revealed that agents fall into two categories:
 |---|---|---|
 | 1-3 | Foundation + learning runs | Done |
 | 4 | Template improvements (v0.8.3) | Done |
-| 5 | Apply to internal-project | Done |
+| 5 | Apply to ml-pipeline-reference | Done |
 | 6 | Validation run -- all 5 SC passed | Done |
 | 6b | Structured JSON layer experiment | Done |
 | 7 | Integration + release (v0.9.0) | Done |
