@@ -74,7 +74,7 @@ These scripts are the canonical implementation behind the reference CI and pre-p
 
 **What hurts:** Stop rules (Codex doesn't stop). Read-order prescriptions (Codex reads in grep-result order). Verify budgets (Codex's budget is "until I'm satisfied").
 
-**Freshness gate.** Any current claim about Codex or Cursor against this pattern requires a fresh-pack rerun under the protocol in [`docs/experiments/codex-cursor-fresh-pack-rerun.md`](experiments/codex-cursor-fresh-pack-rerun.md). Stale-pack runs (e.g., the May 2 2026 one-shot) are treated as maintenance failures, not product evidence — `agent-context verify` and `agent-context freshness` must pass on the structured condition before the agent starts.
+**Freshness gate.** Any current claim about Codex or Cursor against this pattern requires a fresh-pack rerun under the private isolated `bare` vs `structured_fresh` protocol. Stale-pack runs (e.g., the May 2 2026 one-shot) are treated as maintenance failures, not product evidence — `agent-context verify` and the strict `.agent-context/tools/check_freshness.sh` gate must pass on the structured condition before the agent starts.
 
 ## Agent Routing Blocks
 

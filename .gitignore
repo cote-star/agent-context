@@ -29,3 +29,12 @@ node_modules/
 
 # dotfiles like .env.example should still be tracked for the example
 !examples/hello-service/.env.example
+
+# Private/local experiment harnesses and browser artifacts. These files may
+# exist on a maintainer machine for ongoing research, but they are not part of
+# the public product repo.
+docs/experiments/
+scripts/experiments/
+experiments/
+.playwright-mcp/
+agent-context-rethink-title.png
