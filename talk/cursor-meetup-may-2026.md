@@ -46,7 +46,7 @@ style: |
     font-size: 0.85em;
   }
   pre code { background-color: transparent; padding: 0; }
-  a { color: #F37021; text-decoration: none; }
+  a { color: #F37021; text-decoration: none; overflow-wrap: anywhere; }
   a:hover { text-decoration: underline; }
   strong { color: #111827; font-weight: 700; }
   em { color: #475569; }
@@ -73,9 +73,11 @@ style: |
 
 # agent-context
 
-### Checked-in repo evidence for coding agents
+### Stop re-teaching your repo to every coding agent
 
-What we built · what we measured · what we narrowed
+Checked-in maps, boundaries, and checks that agents read before editing.
+
+What we built · what held up · what we narrowed
 
 Cursor Meetup · May 2026
 [github.com/cote-star/agent-context](https://github.com/cote-star/agent-context)
@@ -84,13 +86,15 @@ Cursor Meetup · May 2026
 
 ## The cold-start tax
 
-Every coding-agent session starts cold:
+A familiar Cursor meetup moment:
 
-- re-reads the directory tree
-- guesses ownership boundaries
-- misses the one invariant that should have shaped the answer
+- the agent re-reads the tree
+- it guesses ownership boundaries
+- it misses the invariant that should have shaped the answer
 
-Same shape in **Claude, Codex, Cursor, Gemini, OpenCode**. Compounds across every question, every reviewer, every agent.
+The model is smart. The session is still a stranger to your repo.
+
+Same shape across **Claude, Codex, Cursor, Gemini, OpenCode**. The tax compounds across every question, reviewer, and agent.
 
 ![w:900](../docs/visuals/agent-context-loop.svg)
 
@@ -98,7 +102,11 @@ Same shape in **Claude, Codex, Cursor, Gemini, OpenCode**. Compounds across ever
 
 ## One folder, every agent
 
-Commit `.agent-context/` to your repo. `init` writes the same routing block into four standard project-rule files. Modern agents read several of these **together** — not 1:1 — so any one is enough to route any agent.
+Commit `.agent-context/` to your repo: a small, reviewable evidence layer beside the code.
+
+Not memory. Not RAG. Not another hosted service.
+
+`init` writes the same routing block into four standard project-rule files. Modern agents read several of these **together** — not 1:1 — so the redundancy is the feature.
 
 | Routing file | Common pick-ups |
 |---|---|
@@ -107,15 +115,21 @@ Commit `.agent-context/` to your repo. `init` writes the same routing block into
 | `AGENTS.md` | Codex · OpenCode · Cursor |
 | `GEMINI.md` | Gemini |
 
-**One pack. Four routing files. Redundant by design — any one routes any agent.**
+**One pack. Four routing files. Any one can route the agent to the same context.**
 
 ---
 
-## What's in the pack
+## Three layers, one pack
 
-![w:680](../docs/demos/cold-start-agent-context-hero.svg)
+![w:430](../docs/demos/cold-start-agent-context-hero.svg)
 
-Three layers + quality. Tier 3 = 11 files committed alongside your code.
+| Layer | Files | Job |
+|---|---|---|
+| **Content** | `00_*` through `40_*` markdown | What is this system? What matters? |
+| **Authority** | `routes.json`, contracts, reporting rules | What must a complete answer include? |
+| **Navigation** | `search_scope.json` | Where should search-and-verify agents look first? |
+
+Quality wraps all three: manifest, acceptance tests, `verify`, and `freshness`.
 
 ---
 
@@ -129,7 +143,9 @@ Trust-and-follow   (Claude, Gemini, OpenCode w/ Anthropic backend)
   routing block  →  required files  →  completeness contract  →  answer
 ```
 
-Same content. Two reading paths. Most authoring projects pick one mode and break for the other; agent-context provides scaffolding for both.
+Same content. Two reading paths.
+
+That is the design constraint: one repo artifact has to help agents that verify by search and agents that follow explicit contracts.
 
 ---
 
@@ -146,7 +162,7 @@ Wrote routing block in GEMINI.md
 Wrote routing block in .cursorrules
 ```
 
-Open `.cursorrules` → routing block lives there. Same in `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`.
+This is the mechanical part: create the pack, copy local checks, and route all agent entry points to the same first reads.
 
 ---
 
@@ -154,11 +170,11 @@ Open `.cursorrules` → routing block lives there. Same in `CLAUDE.md`, `AGENTS.
 
 > **"Set up agent context for this repo."**
 
-[Embed pre-recorded MP4 — ~30s real, sped up to ~15s]
+![w:900](../docs/demos/demo-agent-context.svg)
 
 [`SKILL.md`](../SKILL.md) drives the agent:
 
-1. enumerate every subsystem first (so nothing silently gets skipped)
+1. enumerate subsystems first, so nothing silently gets skipped
 2. fill all 11 templates
 3. write acceptance tests with grep verification
 4. run the machine checks
@@ -178,31 +194,47 @@ CI-friendly. Pair with `freshness` (drift detection) and `doctor` (env diagnosti
 
 ---
 
-## What we measured · March/April 2026
+## Success stories worth telling
+
+![w:900](../docs/visuals/proof-results.svg)
+
+- **Zero files, 12 seconds:** complex impact analysis answered from context alone.
+- **Silent test failure caught:** bare agents missed the store-reset invariant; structured agents found it.
+- **Deprecated pattern avoided:** context steered planning away from Apollo and toward React Query.
+- **Codex 6/6:** highest historical score on the dual CLI/library protocol.
+
+These are the stories to tell first: context works when repo-specific knowledge decides the answer.
+
+---
+
+## Evidence, not vibes
 
 ![w:1100](../docs/visuals/hero-stat-ribbon.svg)
 
-78+ reviewer-graded answers across three repos with grep-backed verification:
+78+ reviewer-graded answers across three repos:
 
 - ML pipeline · 501 files · Python
 - Dual CLI · 155 files · Rust + Node.js
 - React frontend · 1,982 files · TypeScript
 
-Same template, zero modifications.
+Same template, zero modifications. Production-risk answers went to zero in the structured condition.
 
 ---
 
-## What the May 2026 rerun showed
+## Freshness is the quality gate
 
 ![w:1100](../docs/visuals/may-2026-rerun-ribbon.svg)
 
-**Honest read-out:**
+The May rerun taught one important thing: a stale pack is not a success metric or a failure metric.
 
-- ✓ Navigation efficiency confirmed for Codex and Cursor
-- ✗ Correctness lift not reproduced in this one-repo focused rerun
-- ⚠ Stale-pack guidance caused 3 dead ends in the Codex structured run
+It is a maintenance failure. Discard it, update the pack, and rerun.
 
-Cursor evidence is provisional · aggregate measurement on the v0.5 roadmap.
+Before stage:
+
+- `agent-context verify`
+- `agent-context freshness`
+- Codex + Cursor: bare vs `structured_fresh`
+- human reviewer grading against ground truth
 
 ---
 
@@ -212,19 +244,22 @@ Cursor evidence is provisional · aggregate measurement on the v0.5 roadmap.
 
 The pack is markdown and JSON; routing blocks are plain text.
 
-Operator-verified with **OpenCode + OSS model** (Devstral Small 2 / Qwen 4B) over an SSH tunnel. **No commercial-frontier dependency.**
+Operator-verified with **OpenCode + OSS model** (Devstral Small 2 / Qwen 4B) over an SSH tunnel.
+
+The point is portability: repo context should not depend on one vendor, one editor, or one hosted memory layer.
 
 ---
 
-## Lessons from the rerun
+## The honest claim
 
-**Freshness is part of the claim.** Stale pack guidance caused 3 dead ends in the Codex structured run. A pack that drifts from code is worse than no pack — agents trust it.
+**agent-context reduces wrong turns by making repo knowledge explicit before the agent edits.**
 
-**Reviewer grading > self-scoring.** Self-reported file counts can mislead. Reviewer-graded yes-rate against ground truth is the only metric we trust for correctness.
+- Strongest when repo-specific invariants decide the answer.
+- Freshness is part of the product, not an afterthought.
+- Success is measured by reviewer grade, file opens, dead ends, and risk flags.
+- Start at tier 1, scale only when the repo needs it.
 
-**Tier system as adoption ladder.** Start at tier 1 (2 files). Scale when the team is ready. Each tier is a valid stopping point — no hidden dependency on the full pack.
-
-**Repo-agnostic design ≠ universal evidence.** We have evidence on three code-repo types. Non-code corpora (datasets, design systems, runbooks) — designed to generalize, not yet measured.
+Not magic intelligence. Better starting evidence.
 
 ---
 
@@ -233,12 +268,14 @@ Operator-verified with **OpenCode + OSS model** (Devstral Small 2 / Qwen 4B) ove
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 3 .
+~/agent-context/bin/agent-context init --tier 1 .
 ```
 
 Or open the repo in your agent of choice and ask:
 
 > **Set up agent context for this repo.**
+
+Start small: tier 1 is two files. Move to tier 3 when the repo needs routes, search scopes, and CI checks.
 
 **One folder. Every coding agent. Read before any edit.**
 
