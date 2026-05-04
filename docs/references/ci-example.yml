@@ -4,8 +4,7 @@
 # See references/ci-adaptation.md for workflow-selection guidance.
 #
 # Prerequisite:
-#   copy scripts/verify_agent_context.py -> .agent-context/tools/verify_agent_context.py
-#   copy scripts/check_freshness.sh -> .agent-context/tools/check_freshness.sh
+#   run `agent-context init` so helper tools are copied into .agent-context/tools/
 #
 # What it checks automatically:
 #   - Machine-checkable integrity via .agent-context/tools/verify_agent_context.py

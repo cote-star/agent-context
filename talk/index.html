@@ -405,13 +405,14 @@ agent-context freshness . --base-ref origin/main</code></pre>
   <section class="slide">
     <h2>Demo: from empty repo to first-read contract</h2>
     <pre><code>$ cd examples/hello-service
-$ ~/agent-context/bin/agent-context init --tier 3 .
+$ ~/agent-context/bin/agent-context init --tier 3 --install-hook .
 Initialized .agent-context/current/ with 11 files (tier 3)
 Copied helper tools to .agent-context/tools/
 Wrote routing block in CLAUDE.md
 Wrote routing block in AGENTS.md
 Wrote routing block in GEMINI.md
-Wrote routing block in .cursorrules</code></pre>
+Wrote routing block in .cursorrules
+Installed advisory pre-push freshness hook</code></pre>
     <p>Then ask the agent:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
     <p>The agent fills the templates, writes acceptance tests, runs verify, and leaves a diff the team can review.</p>
@@ -616,7 +617,7 @@ Wrote routing block in .cursorrules</code></pre>
     <h2>The first command</h2>
     <pre><code>git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 1 .</code></pre>
+~/agent-context/bin/agent-context init --tier 1 --install-hook .</code></pre>
     <p>Or open the repo in your agent of choice and ask:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
     <p>Start small. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.</p>

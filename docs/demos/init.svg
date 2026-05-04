@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="789" height="450" viewBox="0 0 789 450" role="img" aria-labelledby="title desc">
   <title id="title">agent-context init demo</title>
-  <desc id="desc">A warm paper terminal-style screenshot showing agent-context init creating files and copied tools.</desc>
+  <desc id="desc">A warm paper terminal-style screenshot showing agent-context init creating files, copied tools, routing blocks, and an advisory freshness hook.</desc>
   <rect width="789" height="450" fill="#FDFCF8"/>
   <rect x="28" y="28" width="733" height="394" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
   <rect x="58" y="70" width="673" height="292" rx="8" fill="#111827"/>
   <circle cx="86" cy="96" r="7" fill="#FCA5A5"/>
   <circle cx="110" cy="96" r="7" fill="#FDE68A"/>
   <circle cx="134" cy="96" r="7" fill="#86EFAC"/>
-  <text x="70" y="142" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">$ agent-context init --tier 3 .</text>
+  <text x="70" y="142" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">$ agent-context init --tier 3 --install-hook .</text>
   <text x="70" y="194" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Initialized .agent-context/current/ with 11 files</text>
   <text x="70" y="234" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Copied helper tools to .agent-context/tools/</text>
-  <text x="70" y="274" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Wrote routing blocks for agents</text>
+  <text x="70" y="274" fill="#FDFCF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Wrote routing blocks + freshness hook</text>
   <text x="70" y="326" fill="#F37021" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">Next: fill templates, then verify.</text>
 </svg>
