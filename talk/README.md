@@ -19,9 +19,10 @@ and ignored.
 The HTML deck is **already rendered and committed** at `index.html` — no build step required. Open it locally with any browser:
 
 ```bash
-open ~/sandbox/play/agent-context/talk/index.html
-# or
-python3 -m http.server -d ~/sandbox/play/agent-context 8000
+# from the repo root
+open talk/index.html
+# or, to serve over http (recommended — relative SVG asset paths)
+python3 -m http.server 8000
 # then visit http://localhost:8000/talk/
 ```
 

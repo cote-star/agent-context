@@ -4,8 +4,8 @@
 
 ## Intro
 
-The canonical source is the internal team skill repository. Keep its local path out
-of public docs; pass it with `AGENT_CONTEXT_CANONICAL` or `--canonical-path`.
+The canonical source is a private skill repository maintained outside this public repo.
+Keep its local path out of public docs; pass it with `AGENT_CONTEXT_CANONICAL` or `--canonical-path`.
 
     /path/to/canonical/agent-context/
 
