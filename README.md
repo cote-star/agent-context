@@ -63,6 +63,20 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 ![agent-context proof summary](docs/visuals/proof-results.svg)
 
+**Current Codex/Cursor evidence for the meetup.** The talk separates evidence
+by agent because telemetry differs by tool. Claude uses the older
+reviewer-graded run set above; Codex and Cursor use the current focused rerun
+available for the meetup deck:
+
+| Agent | Metric | Bare | With agent-context | Change |
+|---|---|---:|---:|---:|
+| Codex | Tokens / 6-task cell | 163K | 130K | **20% fewer** |
+| Codex | Risk flags | 12 | 6 | **50% reduction** |
+| Codex | Files opened / task | 7.7 | 7.1 | **7% fewer** |
+| Cursor | Dead ends / task | 0.24 | 0.07 | **71% fewer** |
+| Cursor | Files opened / task | 3.6 | 2.7 | **25% fewer** |
+| Cursor | Risk flags | 14 | 10 | **29% reduction** |
+
 → [Full results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
 
 ### Definitions
