@@ -147,6 +147,13 @@ For non-cli capture_method (capture_method != 'cli'), tool-level fields
 (tool_calls, first_correct_file_hop, files_opened_after_first_correct_hop,
 post_hit_dead_ends) may be null.
 
+Optional fields (leave null if your CLI doesn't expose them — the harness
+will extract post-hoc from session telemetry):
+  tokens_input, tokens_output, tokens_total, tokens_cached, cost_usd
+  model_id (the exact model identifier you ran)
+  permission_prompts_count (how many times you paused for approval)
+  interrupted (true if you hit a turn/context cap, false otherwise)
+
 Do NOT read GROUND_TRUTH.md. Cite exact files and line numbers for
 factual claims. Track files opened, dead ends, durations honestly.
 EOF

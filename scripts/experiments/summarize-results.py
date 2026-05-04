@@ -54,6 +54,33 @@ OPTIONAL = {
     "pack_manifest_sha",
     "task_template_hash",
     "agent_context_cli_version",
+    # Token + cost telemetry. Self-reported by the agent if its CLI exposes
+    # per-task usage; otherwise stamped post-hoc by extract-tokens-from-chorus.py.
+    "tokens_input",
+    "tokens_output",
+    "tokens_total",
+    "tokens_cached",
+    "cost_usd",
+    # Run identity and operational signals.
+    "model_id",
+    "permission_prompts_count",
+    "interrupted",
+}
+
+# Optional fields with their type (for validate)
+OPTIONAL_TYPES = {
+    "source_repo_sha": "string",
+    "pack_manifest_sha": "string",
+    "task_template_hash": "string",
+    "agent_context_cli_version": "string",
+    "model_id": "string",
+    "tokens_input": "non_negative_int",
+    "tokens_output": "non_negative_int",
+    "tokens_total": "non_negative_int",
+    "tokens_cached": "non_negative_int",
+    "permission_prompts_count": "non_negative_int",
+    "cost_usd": "non_negative_number",
+    "interrupted": "bool",
 }
 
 AGENTS = {"claude", "codex", "cursor", "opencode"}
@@ -87,9 +114,22 @@ def validate(path: pathlib.Path, data: dict[str, Any]) -> None:
         raise ValueError(f"{path}: missing required fields: {', '.join(missing)}")
     if extra:
         raise ValueError(f"{path}: unexpected fields: {', '.join(extra)}")
-    for field in OPTIONAL:
-        if field in data and data[field] is not None and not isinstance(data[field], str):
-            raise ValueError(f"{path}: optional field {field} must be a string or null")
+    for field, expected_type in OPTIONAL_TYPES.items():
+        if field not in data or data[field] is None:
+            continue
+        v = data[field]
+        if expected_type == "string":
+            if not isinstance(v, str):
+                raise ValueError(f"{path}: optional field {field} must be a string or null")
+        elif expected_type == "non_negative_int":
+            if not isinstance(v, int) or isinstance(v, bool) or v < 0:
+                raise ValueError(f"{path}: optional field {field} must be a non-negative integer or null")
+        elif expected_type == "non_negative_number":
+            if not isinstance(v, (int, float)) or isinstance(v, bool) or v < 0:
+                raise ValueError(f"{path}: optional field {field} must be a non-negative number or null")
+        elif expected_type == "bool":
+            if not isinstance(v, bool):
+                raise ValueError(f"{path}: optional field {field} must be a boolean or null")
     if data["agent"] not in AGENTS:
         raise ValueError(f"{path}: agent must be one of {sorted(AGENTS)}")
     if data["capture_method"] not in CAPTURE_METHODS:
@@ -180,8 +220,8 @@ def summarize(results: list[dict[str, Any]], public_only: bool = False) -> str:
     # Aggregate by (agent, capture_method, condition)
     lines.append("## Aggregate")
     lines.append("")
-    lines.append("| Agent | Capture | Condition | Tasks | Yes | Partial | No | Ungraded | Avg files | Avg dead ends | Avg first hit | Risk flags |")
-    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+    lines.append("| Agent | Capture | Condition | Tasks | Yes | Partial | No | Ungraded | Avg files | Avg dead ends | Avg first hit | Risk | Avg tokens | Avg cost |")
+    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
     for agent in sorted(AGENTS):
         for capture in sorted(CAPTURE_METHODS):
             for condition in ("bare", "structured_fresh"):
@@ -189,8 +229,19 @@ def summarize(results: list[dict[str, Any]], public_only: bool = False) -> str:
                 if not items:
                     continue
                 counts = {name: sum(1 for x in items if x["correct"] == name) for name in CORRECT}
+                # Tokens: prefer tokens_total; fall back to input+output if total missing
+                token_vals = []
+                for x in items:
+                    t = x.get("tokens_total")
+                    if t is None:
+                        ti, to = x.get("tokens_input"), x.get("tokens_output")
+                        if ti is not None and to is not None:
+                            t = ti + to
+                    if t is not None:
+                        token_vals.append(t)
+                cost_vals = [x.get("cost_usd") for x in items if x.get("cost_usd") is not None]
                 lines.append(
-                    "| {agent} | {capture} | {condition} | {tasks} | {yes} | {partial} | {no} | {ungraded} | {files} | {dead} | {hop} | {risk} |".format(
+                    "| {agent} | {capture} | {condition} | {tasks} | {yes} | {partial} | {no} | {ungraded} | {files} | {dead} | {hop} | {risk} | {tok} | {cost} |".format(
                         agent=agent,
                         capture=capture,
                         condition=condition,
@@ -203,11 +254,13 @@ def summarize(results: list[dict[str, Any]], public_only: bool = False) -> str:
                         dead=fmt_avg([x["dead_ends"] for x in items]),
                         hop=fmt_avg([x["first_correct_file_hop"] for x in items]),
                         risk=sum(1 for x in items if x["risk_flag"]),
+                        tok=(f"{statistics.mean(token_vals):,.0f}" if token_vals else "n/a"),
+                        cost=(f"${statistics.mean(cost_vals):.3f}" if cost_vals else "n/a"),
                     )
                 )
 
     lines.append("")
-    lines.append("> `n/a` indicates the metric is not captured for that capture_method (typically IDE captures lack tool-level telemetry).")
+    lines.append("> `n/a` indicates the metric is not captured for that capture_method (typically IDE captures lack tool-level telemetry, and tokens are only available where the agent's CLI exposes per-task usage or where extract-tokens-from-chorus.py has stamped post-hoc).")
 
     # Per-task detail
     lines.append("")
