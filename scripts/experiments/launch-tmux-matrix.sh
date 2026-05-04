@@ -190,7 +190,7 @@ create_window() {
 create_window "claude"   "cli"    "claude    (interactive: just run 'claude' and paste the prompt)"
 create_window "codex"    "cli"    "codex     (interactive: just run 'codex' and paste the prompt)"
 create_window "cursor"   "cli"    "cursor-agent   (interactive: just run 'cursor-agent' and paste the prompt — the headless --print mode is for full automation, not the manual-paste flow)"
-create_window "opencode" "tunnel" "OPENCODE_MODEL=ollama/qwen3:4b opencode-play   (interactive against the qwen3:4b OSS model via the local SSH tunnel at 127.0.0.1:11434)"
+create_window "opencode" "tunnel" "OPENCODE_MODEL=ollama/devstral-small-2 opencode-play   (interactive against the warmed Devstral model on the OSS lab via the local SSH tunnel at 127.0.0.1:11434; fallback model is ollama/qwen3:4b if needed)"
 
 # Land on the claude window so attach starts there. Use directional
 # pane select so this works regardless of pane-base-index.
