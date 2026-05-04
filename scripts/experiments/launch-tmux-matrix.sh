@@ -6,13 +6,21 @@
 #
 #   RERUN_ROOT=/custom/path scripts/experiments/launch-tmux-matrix.sh <alias>
 #
-# Creates session "rerun-<alias>" with 4 windows (claude, codex, cursor,
-# opencode), each with 2 panes (top=bare, bottom=structured_fresh). Each
-# pane:
-#   - cd's into the right working directory
-#   - shows the agent + condition identity
-#   - shows the invoke hint (which CLI to run)
-#   - cats the exact prompt to copy/paste
+# Creates session "rerun-<alias>" with ONE window ("cells") containing
+# 8 panes in a 4×2 grid (4 agents across, 2 conditions stacked):
+#
+#   +------------+-----------+------------+--------------+
+#   | claude     | codex     | cursor     | opencode     |
+#   |   bare     |   bare    |   bare     |   bare       |
+#   +------------+-----------+------------+--------------+
+#   | claude     | codex     | cursor     | opencode     |
+#   |  s_fresh   |  s_fresh  |  s_fresh   |  s_fresh     |
+#   +------------+-----------+------------+--------------+
+#
+# All 8 cells visible at once so permission prompts can't hide on a
+# different window. Each pane shows its title (agent / condition) on
+# the pane border, the working dir, the invoke hint, and a
+# `cat <prompt-file> | pbcopy` line to copy that cell's prompt.
 #
 # The script does NOT auto-execute agent CLIs — the operator pastes the
 # prompt into each pane after invoking the appropriate CLI. This keeps
@@ -146,56 +154,90 @@ EOF
 
 # --- Pane setup ----------------------------------------------------------
 
-# Send keys to whatever pane is currently active in the named window.
-# Avoids hard-coding pane indices, which depend on tmux's pane-base-index.
-setup_active_pane() {
-  local window="$1" condition="$2" agent="$3" capture="$4" invoke_hint="$5"
+# Send keys to a specific pane addressed by tmux pane ID (#{pane_id}).
+# Stable across layout changes — preferred over indexed addressing.
+setup_pane_by_id() {
+  local pane_id="$1" condition="$2" agent="$3" capture="$4" invoke_hint="$5"
   local promptfile="$RERUN_DIR/.prompt-${agent}-${condition}.txt"
   build_prompt "$agent" "$capture" "$condition" "$promptfile"
 
-  tmux send-keys -t "$window" "cd '$RERUN_DIR/$condition'" Enter
-  tmux send-keys -t "$window" "clear" Enter
-  tmux send-keys -t "$window" "echo '====== $agent / $condition (capture=$capture) ======'" Enter
-  tmux send-keys -t "$window" "echo 'Working dir: \$(pwd)'" Enter
-  tmux send-keys -t "$window" "echo 'EXPERIMENT.md: ../EXPERIMENT.md (do NOT read GROUND_TRUTH.md)'" Enter
-  tmux send-keys -t "$window" "echo 'Results out:   ../results/$agent/$condition/<task_id>.json'" Enter
-  tmux send-keys -t "$window" "echo ''" Enter
-  tmux send-keys -t "$window" "echo 'INVOKE: $invoke_hint'" Enter
-  tmux send-keys -t "$window" "echo 'Then paste the prompt below into the agent.'" Enter
-  tmux send-keys -t "$window" "echo ''" Enter
-  tmux send-keys -t "$window" "echo '----- PROMPT (copy this) -----'" Enter
-  tmux send-keys -t "$window" "cat '$promptfile'" Enter
-  tmux send-keys -t "$window" "echo '------------------------------'" Enter
-  tmux send-keys -t "$window" "echo ''" Enter
+  # Pane title shows up in the pane border (pane-border-status top).
+  tmux select-pane -t "$pane_id" -T "$agent / $condition"
+
+  tmux send-keys -t "$pane_id" "cd '$RERUN_DIR/$condition'" Enter
+  tmux send-keys -t "$pane_id" "clear" Enter
+  tmux send-keys -t "$pane_id" "echo '== $agent / $condition (capture=$capture) =='" Enter
+  tmux send-keys -t "$pane_id" "echo 'Out: ../results/$agent/$condition/<task>.json'" Enter
+  tmux send-keys -t "$pane_id" "echo ''" Enter
+  tmux send-keys -t "$pane_id" "echo 'INVOKE: $invoke_hint'" Enter
+  tmux send-keys -t "$pane_id" "echo ''" Enter
+  tmux send-keys -t "$pane_id" "echo 'Prompt file:'" Enter
+  tmux send-keys -t "$pane_id" "echo '  $promptfile'" Enter
+  tmux send-keys -t "$pane_id" "echo ''" Enter
+  tmux send-keys -t "$pane_id" "echo 'Copy with:  cat $promptfile | pbcopy'" Enter
+  tmux send-keys -t "$pane_id" "echo ''" Enter
 }
 
-create_window() {
-  local agent="$1" capture="$2" invoke_hint="$3"
-  local win="$SESSION:$agent"
+# --- Build the matrix: ONE window, 8 panes in 4×2 grid ------------------
+# Layout target:
+#   +-------------+-------------+-------------+-------------+
+#   | claude/bare | codex/bare  | cursor/bare | opencode/   |
+#   |             |             |             |   bare      |
+#   +-------------+-------------+-------------+-------------+
+#   | claude/sf   | codex/sf    | cursor/sf   | opencode/sf |
+#   +-------------+-------------+-------------+-------------+
+# 4 agents left-to-right (same order on both rows). Top row = bare,
+# bottom row = structured_fresh. All 8 cells visible at once so you
+# never miss a permission prompt.
 
-  if [[ "$agent" == "claude" ]]; then
-    tmux new-session -d -s "$SESSION" -n "$agent"
-  else
-    tmux new-window -t "$SESSION" -n "$agent"
-  fi
-  # On window creation the single pane is active — set up bare first.
-  setup_active_pane "$win" "bare" "$agent" "$capture" "$invoke_hint"
-  # Split horizontally; the newly-created bottom pane becomes active.
-  tmux split-window -v -t "$win"
-  setup_active_pane "$win" "structured_fresh" "$agent" "$capture" "$invoke_hint"
-}
+# Step 1: create session. The -x/-y flags set the headless canvas
+# large enough to accommodate 8 panes; tmux refits to the actual
+# terminal size on attach. Without this, splits fail with "no space
+# for new pane" because the default 80x24 canvas can't hold 4 columns.
+tmux new-session -d -s "$SESSION" -n cells -x 240 -y 60
 
-# --- Build the matrix ----------------------------------------------------
+# Step 2: build 4 columns by splitting horizontally with explicit
+# pane-ID targeting (so each split goes to the rightmost column, not
+# the recursively shrinking active pane).
+P_TL_1=$(tmux list-panes -t "$SESSION:cells" -F '#{pane_id}' | head -1)
+P_TL_2=$(tmux split-window -h -t "$P_TL_1" -P -F '#{pane_id}')
+P_TL_3=$(tmux split-window -h -t "$P_TL_2" -P -F '#{pane_id}')
+P_TL_4=$(tmux split-window -h -t "$P_TL_3" -P -F '#{pane_id}')
+tmux select-layout -t "$SESSION:cells" even-horizontal
 
-create_window "claude"   "cli"    "claude    (interactive: just run 'claude' and paste the prompt)"
-create_window "codex"    "cli"    "codex     (interactive: just run 'codex' and paste the prompt)"
-create_window "cursor"   "cli"    "cursor-agent   (interactive: just run 'cursor-agent' and paste the prompt — the headless --print mode is for full automation, not the manual-paste flow)"
-create_window "opencode" "tunnel" "OPENCODE_MODEL=ollama/devstral-small-2 opencode-play   (interactive against the warmed Devstral model on the OSS lab via the local SSH tunnel at 127.0.0.1:11434; fallback model is ollama/qwen3:4b if needed)"
+# Step 3: split each column vertically to add the bottom row. Default
+# split is 50/50 per column, so the result is a clean 4-column × 2-row
+# grid. (We deliberately do NOT call `select-layout tiled` afterwards
+# because tmux's tiled algorithm picks based on aspect ratio and on a
+# narrow canvas would scramble our 4×2 into a 3×3-ish layout.)
+P_BL_1=$(tmux split-window -v -t "$P_TL_1" -P -F '#{pane_id}')
+P_BL_2=$(tmux split-window -v -t "$P_TL_2" -P -F '#{pane_id}')
+P_BL_3=$(tmux split-window -v -t "$P_TL_3" -P -F '#{pane_id}')
+P_BL_4=$(tmux split-window -v -t "$P_TL_4" -P -F '#{pane_id}')
 
-# Land on the claude window so attach starts there. Use directional
-# pane select so this works regardless of pane-base-index.
-tmux select-window -t "$SESSION:claude"
-tmux select-pane -t "$SESSION:claude" -U 2>/dev/null || true
+# Step 4: even-vertical evens out the row heights within each column.
+# (No 4×2 grid built-in — but the column splits + this row-evening get
+# us where we want without the tiled scramble.)
+
+# Step 5: per-pane title border so each cell is labeled.
+tmux setw -t "$SESSION:cells" pane-border-status top
+tmux setw -t "$SESSION:cells" pane-border-format ' #T '
+
+# Step 6: assign cells to known pane IDs.
+#   Top row    = bare condition for each agent
+#   Bottom row = structured_fresh for each agent
+#   Columns left-to-right: claude, codex, cursor, opencode
+setup_pane_by_id "$P_TL_1" "bare"             "claude"   "cli"    "claude    (interactive: run 'claude' and paste the prompt)"
+setup_pane_by_id "$P_TL_2" "bare"             "codex"    "cli"    "codex     (interactive: run 'codex' and paste the prompt)"
+setup_pane_by_id "$P_TL_3" "bare"             "cursor"   "cli"    "cursor-agent   (interactive: 'cursor-agent' then paste the prompt)"
+setup_pane_by_id "$P_TL_4" "bare"             "opencode" "tunnel" "OPENCODE_MODEL=ollama/devstral-small-2 opencode-play"
+setup_pane_by_id "$P_BL_1" "structured_fresh" "claude"   "cli"    "claude    (interactive)"
+setup_pane_by_id "$P_BL_2" "structured_fresh" "codex"    "cli"    "codex     (interactive)"
+setup_pane_by_id "$P_BL_3" "structured_fresh" "cursor"   "cli"    "cursor-agent   (interactive)"
+setup_pane_by_id "$P_BL_4" "structured_fresh" "opencode" "tunnel" "OPENCODE_MODEL=ollama/devstral-small-2 opencode-play"
+
+# Step 7: land focus on the top-left (claude/bare).
+tmux select-pane -t "$P_TL_1"
 
 cat <<EOF
 
@@ -203,16 +245,20 @@ Tmux session ready.
 
   Attach:    tmux attach -t $SESSION
   Detach:    Ctrl-b d
-  Switch:    Ctrl-b n  (next window) / Ctrl-b p  (previous)
-  Pane:      Ctrl-b o  (next pane in window)
+  Pane:      Ctrl-b o (next pane) | Ctrl-b arrows (directional)
+  Zoom one:  Ctrl-b z (toggle a pane to fullscreen and back)
   Kill all:  tmux kill-session -t $SESSION
 
-Eight cells (4 agents × 2 conditions). Per cell:
-  1. Invoke the CLI shown in 'INVOKE'.
-  2. Paste the prompt printed in the pane.
-  3. Wait for the agent to write 6 JSON result files under
-     $RERUN_DIR/results/<agent>/<condition>/.
+One window, 8 panes. Top row = bare. Bottom row = structured_fresh.
+Columns left-to-right: claude, codex, cursor, opencode.
 
-Prompt files (also written here for reference):
+Per pane:
+  1. Invoke the CLI shown in 'INVOKE'.
+  2. Paste the prompt — easiest from another terminal:
+       cat $RERUN_DIR/.prompt-<agent>-<condition>.txt | pbcopy
+     then Cmd-V into the agent.
+  3. Wait for 6 JSON result files under ../results/<agent>/<condition>/.
+
+Prompt files for copy-paste:
   $RERUN_DIR/.prompt-{claude,codex,cursor,opencode}-{bare,structured_fresh}.txt
 EOF
