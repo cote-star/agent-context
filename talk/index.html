@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>agent-context — Cursor Meetup, May 2026</title>
+  <meta name="description" content="Checked-in repo evidence for coding agents. What we built, what we measured, what we narrowed.">
+  <style>
+    /* Warm-paper palette matches the README and SVGs exactly */
+    :root {
+      --paper: #FDFCF8;
+      --cream: #FFF7E8;
+      --cream-stroke: #E8D9BE;
+      --ink: #111827;
+      --ink-on-dark: #FDFCF8;
+      --slate: #475569;
+      --slate-mid: #64748B;
+      --slate-light: #CBD5E1;
+      --orange: #F37021;
+      --orange-deep: #9A3412;
+      --yellow: #FDE68A;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font: 400 18px/1.55 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    code, pre, .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Slide chrome — one slide per scroll snap point, full viewport */
+    .deck {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+    .slide {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      min-height: 100vh;
+      width: 100vw;
+      padding: 5vh 6vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      position: relative;
+    }
+    .slide.lead {
+      justify-content: center;
+      text-align: center;
+    }
+    .slide-num {
+      position: absolute;
+      bottom: 2vh;
+      right: 3vw;
+      color: var(--slate-mid);
+      font-size: 0.75em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Typography */
+    h1 { font-size: 2.6em; font-weight: 800; margin: 0 0 0.4em; line-height: 1.1; letter-spacing: -0.01em; }
+    h2 {
+      font-size: 1.9em; font-weight: 800; margin: 0 0 0.7em; line-height: 1.15;
+      border-bottom: 3px solid var(--orange); padding-bottom: 0.25em;
+      letter-spacing: -0.005em;
+    }
+    h3 { font-size: 1.15em; font-weight: 600; color: var(--slate); margin: 0 0 0.6em; }
+    p { margin: 0 0 0.8em; max-width: 60em; font-size: 1.1em; }
+    ul, ol { padding-left: 1.4em; margin: 0 0 0.8em; max-width: 60em; }
+    ul li, ol li { margin-bottom: 0.35em; font-size: 1.05em; }
+    ul li::marker, ol li::marker { color: var(--orange); }
+    strong { color: var(--ink); font-weight: 700; }
+    em { color: var(--slate); }
+    a { color: var(--orange); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    blockquote {
+      border-left: 4px solid var(--orange);
+      padding: 0.4em 0 0.4em 1em;
+      margin: 0.8em 0;
+      color: var(--slate);
+      font-style: italic;
+      font-size: 1.15em;
+    }
+
+    code {
+      background: var(--cream);
+      color: var(--ink);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.92em;
+    }
+    pre {
+      background: var(--cream);
+      border: 1px solid var(--cream-stroke);
+      border-radius: 8px;
+      padding: 1em 1.2em;
+      font-size: 0.92em;
+      line-height: 1.5;
+      max-width: 70em;
+      overflow-x: auto;
+    }
+    pre code { background: transparent; padding: 0; }
+
+    table {
+      border-collapse: collapse;
+      max-width: 70em;
+      font-size: 1.0em;
+      margin: 0 0 0.8em;
+    }
+    th, td {
+      padding: 0.45em 0.9em;
+      border-bottom: 1px solid var(--cream-stroke);
+      text-align: left;
+    }
+    th {
+      background: var(--cream);
+      font-weight: 700;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      max-height: 65vh;
+      margin: 0.3em auto;
+    }
+
+    /* Helpers */
+    .meta {
+      color: var(--slate);
+      font-size: 1.1em;
+    }
+    .footer-note {
+      color: var(--slate-mid);
+      font-size: 0.95em;
+      font-style: italic;
+      margin-top: auto;
+    }
+    .checks li { list-style: none; padding-left: 0; }
+    .checks li::before {
+      display: inline-block;
+      width: 1.6em;
+      font-weight: 800;
+    }
+    .checks li.ok::before { content: "✓"; color: #15803D; }
+    .checks li.no::before { content: "✗"; color: #B91C1C; }
+    .checks li.warn::before { content: "⚠"; color: var(--orange-deep); }
+
+    /* Print / PDF — one slide per page, drop the snap behavior */
+    @media print {
+      .deck { height: auto; overflow: visible; scroll-snap-type: none; }
+      .slide { page-break-after: always; height: auto; min-height: auto; padding: 4em 5em; }
+      .slide-num { display: none; }
+    }
+
+    /* Smaller laptop screens — modest scale-down */
+    @media (max-width: 1280px) {
+      h1 { font-size: 2.2em; }
+      h2 { font-size: 1.65em; }
+      body { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+<main class="deck" id="deck" tabindex="0">
+
+  <!-- Slide 1 — Title -->
+  <section class="slide lead">
+    <h1>agent-context</h1>
+    <h3 style="font-size:1.4em;color:var(--slate);margin-bottom:1.5em;">Checked-in repo evidence for coding agents</h3>
+    <p class="meta">What we built · what we measured · what we narrowed</p>
+    <p class="meta" style="margin-top:2em;">Cursor Meetup · May 2026</p>
+    <p class="meta"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
+    <span class="slide-num">1 / 14</span>
+  </section>
+
+  <!-- Slide 2 — Cold-start tax -->
+  <section class="slide">
+    <h2>The cold-start tax</h2>
+    <p>Every coding-agent session starts cold:</p>
+    <ul>
+      <li>re-reads the directory tree</li>
+      <li>guesses ownership boundaries</li>
+      <li>misses the one invariant that should have shaped the answer</li>
+    </ul>
+    <p>Same shape in <strong>Claude, Codex, Cursor, Gemini, OpenCode</strong>. Compounds across every question, every reviewer, every agent.</p>
+    <img src="../docs/visuals/agent-context-loop.svg" alt="agent-context loop diagram" style="max-height:50vh;">
+    <span class="slide-num">2 / 14</span>
+  </section>
+
+  <!-- Slide 3 — One folder, every agent -->
+  <section class="slide">
+    <h2>One folder, every agent</h2>
+    <p>Commit <code>.agent-context/</code> to your repo. Every agent reads it through standard routing files:</p>
+    <table>
+      <thead><tr><th>Routing file</th><th>Picked up by</th></tr></thead>
+      <tbody>
+        <tr><td><code>.cursorrules</code></td><td>Cursor</td></tr>
+        <tr><td><code>CLAUDE.md</code></td><td>Claude · Claude Code</td></tr>
+        <tr><td><code>AGENTS.md</code></td><td>Codex · OpenCode</td></tr>
+        <tr><td><code>GEMINI.md</code></td><td>Gemini</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1.5em;"><strong>One pack. Four routing files. Five agents read the same content.</strong></p>
+    <span class="slide-num">3 / 14</span>
+  </section>
+
+  <!-- Slide 4 — What's in the pack -->
+  <section class="slide">
+    <h2>What's in the pack</h2>
+    <img src="../docs/demos/cold-start-agent-context-hero.svg" alt="agent-context artifact map" style="max-height:60vh;">
+    <p style="text-align:center;margin-top:0.5em;">Three layers + quality. Tier 3 = 11 files committed alongside your code.</p>
+    <span class="slide-num">4 / 14</span>
+  </section>
+
+  <!-- Slide 5 — Two reading patterns -->
+  <section class="slide">
+    <h2>Two reading patterns, one pack</h2>
+    <pre><code>Search-and-verify  (Codex, Cursor, OpenCode w/ local model)
+  search_scope   →  scoped grep   →  verification shortcut  →  answer
+
+Trust-and-follow   (Claude, Gemini, OpenCode w/ Anthropic backend)
+  routing block  →  required files  →  completeness contract  →  answer</code></pre>
+    <p>Same content. Two reading paths. Most authoring projects pick one mode and break for the other; agent-context provides scaffolding for both.</p>
+    <span class="slide-num">5 / 14</span>
+  </section>
+
+  <!-- Slide 6 — Live demo: init -->
+  <section class="slide">
+    <h2>Live demo · init</h2>
+    <pre><code>$ cd examples/hello-service
+$ ~/agent-context/bin/agent-context init --tier 3 .
+Initialized .agent-context/current/ with 11 files (tier 3)
+Copied helper tools to .agent-context/tools/
+Wrote routing block in CLAUDE.md
+Wrote routing block in AGENTS.md
+Wrote routing block in GEMINI.md
+Wrote routing block in .cursorrules</code></pre>
+    <p>Open <code>.cursorrules</code> → routing block lives there. Same in <code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>GEMINI.md</code>.</p>
+    <span class="slide-num">6 / 14</span>
+  </section>
+
+  <!-- Slide 7 — Live demo: agent fills the pack -->
+  <section class="slide">
+    <h2>Live demo · agent fills the pack</h2>
+    <blockquote>Set up agent context for this repo.</blockquote>
+    <p style="text-align:center;color:var(--slate-mid);font-style:italic;margin:1.5em 0;">[ Pre-recorded MP4 — ~30s real, sped up to ~15s ]</p>
+    <p><a href="../SKILL.md"><code>SKILL.md</code></a> drives the agent:</p>
+    <ol>
+      <li>enumerate every subsystem first (so nothing silently gets skipped)</li>
+      <li>fill all 11 templates</li>
+      <li>write acceptance tests with grep verification</li>
+      <li>run the machine checks</li>
+    </ol>
+    <span class="slide-num">7 / 14</span>
+  </section>
+
+  <!-- Slide 8 — Live demo: verify -->
+  <section class="slide">
+    <h2>Live demo · verify</h2>
+    <pre><code>$ ~/agent-context/bin/agent-context verify .
+OK: agent-context passed machine-checkable validation (tier 3)</code></pre>
+    <p>Checks: structure · JSON schema · real glob matches · template-marker elimination.</p>
+    <p>CI-friendly. Pair with <code>freshness</code> (drift detection) and <code>doctor</code> (env diagnostics).</p>
+    <span class="slide-num">8 / 14</span>
+  </section>
+
+  <!-- Slide 9 — Historical aggregate -->
+  <section class="slide">
+    <h2>What we measured · March / April 2026</h2>
+    <img src="../docs/visuals/hero-stat-ribbon.svg" alt="historical aggregate stat ribbon" style="max-height:42vh;">
+    <p>78+ reviewer-graded answers across three repos with grep-backed verification:</p>
+    <ul>
+      <li>ML pipeline · 501 files · Python</li>
+      <li>Dual CLI · 155 files · Rust + Node.js</li>
+      <li>React frontend · 1,982 files · TypeScript</li>
+    </ul>
+    <p>Same template, zero modifications.</p>
+    <span class="slide-num">9 / 14</span>
+  </section>
+
+  <!-- Slide 10 — May 2026 focused rerun -->
+  <section class="slide">
+    <h2>What the May 2026 rerun showed</h2>
+    <img src="../docs/visuals/may-2026-rerun-ribbon.svg" alt="May 2026 focused rerun: Codex 58 to 30, Cursor 35 to 18" style="max-height:42vh;">
+    <p><strong>Honest read-out:</strong></p>
+    <ul class="checks">
+      <li class="ok">Navigation efficiency confirmed for Codex and Cursor</li>
+      <li class="no">Correctness lift not reproduced in this one-repo focused rerun</li>
+      <li class="warn">Stale-pack guidance caused 3 dead ends in the Codex structured run</li>
+    </ul>
+    <p class="footer-note">Cursor evidence is provisional · aggregate measurement on the v0.5 roadmap.</p>
+    <span class="slide-num">10 / 14</span>
+  </section>
+
+  <!-- Slide 11 — Model-agnostic -->
+  <section class="slide">
+    <h2>Model-agnostic by construction</h2>
+    <img src="../docs/visuals/opencode-tunnel-deployment.svg" alt="OpenCode + SSH tunnel deployment diagram" style="max-height:48vh;">
+    <p>The pack is markdown and JSON; routing blocks are plain text.</p>
+    <p>Operator-verified with <strong>OpenCode + OSS model</strong> (Devstral Small 2 / Qwen 4B) over an SSH tunnel. <strong>No commercial-frontier dependency.</strong></p>
+    <span class="slide-num">11 / 14</span>
+  </section>
+
+  <!-- Slide 12 — Lessons learned -->
+  <section class="slide">
+    <h2>Lessons from the rerun</h2>
+    <p><strong>Freshness is part of the claim.</strong> Stale pack guidance caused 3 dead ends in the Codex structured run. A pack that drifts from code is worse than no pack — agents trust it.</p>
+    <p><strong>Reviewer grading &gt; self-scoring.</strong> Self-reported file counts can mislead. Reviewer-graded yes-rate against ground truth is the only metric we trust for correctness.</p>
+    <p><strong>Tier system as adoption ladder.</strong> Start at tier 1 (2 files). Scale when the team is ready. Each tier is a valid stopping point — no hidden dependency on the full pack.</p>
+    <p><strong>Repo-agnostic design ≠ universal evidence.</strong> Three code-repo types measured. Non-code corpora (datasets, design systems, runbooks) — designed to generalize, not yet measured.</p>
+    <span class="slide-num">12 / 14</span>
+  </section>
+
+  <!-- Slide 13 — Try it tonight -->
+  <section class="slide">
+    <h2>Try it tonight</h2>
+    <pre><code>git clone https://github.com/cote-star/agent-context.git ~/agent-context
+cd /path/to/your-repo
+~/agent-context/bin/agent-context init --tier 3 .</code></pre>
+    <p>Or open the repo in your agent of choice and ask:</p>
+    <blockquote>Set up agent context for this repo.</blockquote>
+    <p style="font-size:1.3em;margin-top:1.2em;"><strong>One folder. Every coding agent. Read before any edit.</strong></p>
+    <p><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
+    <span class="slide-num">13 / 14</span>
+  </section>
+
+  <!-- Slide 14 — Q&A -->
+  <section class="slide lead">
+    <h1>Questions</h1>
+    <p class="meta" style="margin-top:1em;font-size:1.3em;"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
+    <p class="meta" style="margin-top:1.5em;"><code>agent-context init</code> · <code>verify</code> · <code>freshness</code> · <code>doctor</code></p>
+    <p class="meta" style="margin-top:2.5em;">Thank you.</p>
+    <span class="slide-num">14 / 14</span>
+  </section>
+
+</main>
+
+<script>
+  // Minimal keyboard navigation: arrow keys / page up/down / space / Home / End
+  (function () {
+    var deck = document.getElementById('deck');
+    var slides = deck.querySelectorAll('.slide');
+    deck.focus();
+
+    function currentIdx() {
+      var top = deck.scrollTop, h = deck.clientHeight;
+      var idx = Math.round(top / h);
+      return Math.max(0, Math.min(slides.length - 1, idx));
+    }
+    function go(idx) {
+      idx = Math.max(0, Math.min(slides.length - 1, idx));
+      slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.addEventListener('keydown', function (e) {
+      var i = currentIdx();
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case 'PageDown':
+        case ' ':
+          go(i + 1); e.preventDefault(); break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+        case 'PageUp':
+          go(i - 1); e.preventDefault(); break;
+        case 'Home': go(0); e.preventDefault(); break;
+        case 'End': go(slides.length - 1); e.preventDefault(); break;
+      }
+    });
+  })();
+</script>
+</body>
+</html>
