@@ -132,12 +132,45 @@ git -C "$OUT/structured_fresh" fetch --quiet origin >/dev/null 2>&1 || true
 
 echo "Writing experiment scaffold..."
 mkdir -p \
+  "$OUT/results/claude/bare" \
+  "$OUT/results/claude/structured_fresh" \
   "$OUT/results/codex/bare" \
   "$OUT/results/codex/structured_fresh" \
   "$OUT/results/cursor/bare" \
-  "$OUT/results/cursor/structured_fresh"
+  "$OUT/results/cursor/structured_fresh" \
+  "$OUT/results/opencode/bare" \
+  "$OUT/results/opencode/structured_fresh"
 
 cp "$REPO_ROOT/docs/experiments/result.schema.json" "$OUT/result.schema.json"
+
+# Reproducibility provenance — read by apply-provenance.py post-run to stamp
+# anchor fields into each result JSON. See docs/experiments/q2-2026-rerun/METHODOLOGY.md.
+SOURCE_SHA="$(git -C "$SOURCE" rev-parse HEAD)"
+MANIFEST_PATH="$OUT/structured_fresh/.agent-context/current/manifest.json"
+if [[ -f "$MANIFEST_PATH" ]]; then
+  PACK_MANIFEST_SHA="$(shasum -a 256 "$MANIFEST_PATH" | awk '{print $1}')"
+else
+  PACK_MANIFEST_SHA=""
+fi
+CLI_VERSION="$("$AGENT_CONTEXT_BIN" --version 2>/dev/null | awk '{print $2}')"
+PREPARED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+python3 - "$OUT/_provenance.json" "$SOURCE" "$SOURCE_SHA" "$PACK_MANIFEST_SHA" "$CLI_VERSION" "$BASE_REF" "$PREPARED_AT" <<'PY'
+import json, sys
+out, source, sha, pack_sha, cli_v, base_ref, ts = sys.argv[1:8]
+data = {
+    "source_repo_path": source,
+    "source_repo_sha": sha,
+    "pack_manifest_sha": pack_sha or None,
+    "agent_context_cli_version": cli_v or None,
+    "base_ref": base_ref,
+    "prepared_at": ts,
+}
+with open(out, "w") as f:
+    json.dump(data, f, indent=2)
+    f.write("\n")
+PY
+echo "Wrote provenance: $OUT/_provenance.json"
 
 cat > "$OUT/EXPERIMENT.md" <<'EOF'
 # Agent-Context Fresh-Pack Rerun
