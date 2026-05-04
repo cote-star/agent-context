@@ -1,5 +1,15 @@
 # Release Notes
 
+## v0.2.1.3 — 2026-05-04
+
+End-to-end audit follow-up patch. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
+
+### What's new
+
+- **Final scrub of self-referential leak.** The `v0.2.1.1` entry no longer quotes the retired internal-source phrasing while describing what was removed.
+- **README headline metrics align with deck averages.** README §Results now reports the Claude files-opened and tokens metrics as cross-repo averages (matching the meetup deck) instead of a 2-of-3-repo range that silently excluded the smaller `agent-chorus` repo.
+- **SKILL.md drift guard.** New `tests/test_skill_sync.py` fails CI if the root `SKILL.md` and `skills/agent-context/SKILL.md` diverge, so the installable skill cannot quietly drift from the public source-of-truth.
+
 ## v0.2.1.2 — 2026-05-04
 
 Public evidence-alignment audit patch. Doc-only patch — no CLI or template changes; CLI still self-reports `0.2.1`.
@@ -15,7 +25,7 @@ Public-readiness scrub. Doc-only patch — no CLI or template changes; CLI still
 
 ### What's new
 
-- **Removed remaining private-repo references.** `CONTRIBUTING.md`, `docs/SYNC.md`, and `talk/README.md` now use the same neutral "canonical skill source maintained outside this public repo" phrasing as the rest of the repo. No private canonical repo names or "internal team skill" mentions remain in the public tree.
+- **Removed remaining private-repo references.** `CONTRIBUTING.md`, `docs/SYNC.md`, and `talk/README.md` now use the same neutral "canonical skill source maintained outside this public repo" phrasing as the rest of the repo. No retired internal-source names remain in the public tree.
 - **Talk README uses repo-relative paths.** `talk/README.md` now documents `open talk/index.html` and `python3 -m http.server 8000` from the repo root instead of a maintainer-specific home directory layout.
 
 ## v0.2.1 — 2026-05-04
