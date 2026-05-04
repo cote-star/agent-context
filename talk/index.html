@@ -36,6 +36,7 @@
     .deck {
       scroll-snap-type: y mandatory;
       overflow-y: scroll;
+      overflow-x: hidden;
       height: 100vh;
     }
     .slide {
@@ -48,6 +49,7 @@
       flex-direction: column;
       justify-content: flex-start;
       position: relative;
+      overflow-x: hidden;
     }
     .slide.lead {
       justify-content: center;
@@ -76,7 +78,7 @@
     ul li::marker, ol li::marker { color: var(--orange); }
     strong { color: var(--ink); font-weight: 700; }
     em { color: var(--slate); }
-    a { color: var(--orange); text-decoration: none; }
+    a { color: var(--orange); text-decoration: none; overflow-wrap: anywhere; }
     a:hover { text-decoration: underline; }
 
     blockquote {
@@ -134,6 +136,13 @@
     .meta {
       color: var(--slate);
       font-size: 1.1em;
+      overflow-wrap: anywhere;
+    }
+    .lead p,
+    .lead h3 {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 88vw;
     }
     .footer-note {
       color: var(--slate-mid);
@@ -164,6 +173,20 @@
       h2 { font-size: 1.65em; }
       body { font-size: 16px; }
     }
+
+    @media (max-width: 640px) {
+      body { font-size: 14px; }
+      .slide { padding: 4vh 5vw; }
+      h1 { font-size: 1.75em; overflow-wrap: anywhere; }
+      h2 { font-size: 1.35em; }
+      h3 { font-size: 1.05em !important; }
+      p, ul, ol { max-width: 100%; }
+      pre { font-size: 0.72em; padding: 0.8em; }
+      table { font-size: 0.82em; }
+      th, td { padding: 0.35em 0.45em; }
+      img { max-height: 42vh !important; }
+      .slide-num { bottom: 1vh; right: 4vw; }
+    }
   </style>
 </head>
 <body>
@@ -172,31 +195,35 @@
   <!-- Slide 1 — Title -->
   <section class="slide lead">
     <h1>agent-context</h1>
-    <h3 style="font-size:1.4em;color:var(--slate);margin-bottom:1.5em;">Checked-in repo evidence for coding agents</h3>
-    <p class="meta">What we built · what we measured · what we narrowed</p>
+    <h3 style="font-size:1.4em;color:var(--slate);margin-bottom:1.0em;">Stop re-teaching your repo to every coding agent</h3>
+    <p class="meta">Checked-in maps, boundaries, and checks that agents read before editing.</p>
+    <p class="meta">What we built · what held up · what we narrowed</p>
     <p class="meta" style="margin-top:2em;">Cursor Meetup · May 2026</p>
     <p class="meta"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
-    <span class="slide-num">1 / 14</span>
+    <span class="slide-num">1 / 15</span>
   </section>
 
   <!-- Slide 2 — Cold-start tax -->
   <section class="slide">
     <h2>The cold-start tax</h2>
-    <p>Every coding-agent session starts cold:</p>
+    <p>A familiar Cursor meetup moment:</p>
     <ul>
-      <li>re-reads the directory tree</li>
-      <li>guesses ownership boundaries</li>
-      <li>misses the one invariant that should have shaped the answer</li>
+      <li>the agent re-reads the tree</li>
+      <li>it guesses ownership boundaries</li>
+      <li>it misses the invariant that should have shaped the answer</li>
     </ul>
-    <p>Same shape in <strong>Claude, Codex, Cursor, Gemini, OpenCode</strong>. Compounds across every question, every reviewer, every agent.</p>
+    <p>The model is smart. The session is still a stranger to your repo.</p>
+    <p>Same shape across <strong>Claude, Codex, Cursor, Gemini, OpenCode</strong>. The tax compounds across every question, reviewer, and agent.</p>
     <img src="../docs/visuals/agent-context-loop.svg" alt="agent-context loop diagram" style="max-height:50vh;">
-    <span class="slide-num">2 / 14</span>
+    <span class="slide-num">2 / 15</span>
   </section>
 
   <!-- Slide 3 — One folder, every agent -->
   <section class="slide">
     <h2>One folder, every agent</h2>
-    <p>Commit <code>.agent-context/</code> to your repo. <code>init</code> writes the same routing block into four standard project-rule files. Modern agents read several of these <strong>together</strong> — not 1:1 — so any one is enough to route any agent.</p>
+    <p>Commit <code>.agent-context/</code> to your repo: a small, reviewable evidence layer beside the code.</p>
+    <p>Not memory. Not RAG. Not another hosted service.</p>
+    <p><code>init</code> writes the same routing block into four standard project-rule files. Modern agents read several of these <strong>together</strong> — not 1:1 — so the redundancy is the feature.</p>
     <table>
       <thead><tr><th>Routing file</th><th>Common pick-ups</th></tr></thead>
       <tbody>
@@ -206,16 +233,24 @@
         <tr><td><code>GEMINI.md</code></td><td>Gemini</td></tr>
       </tbody>
     </table>
-    <p style="margin-top:1.5em;"><strong>One pack. Four routing files. Redundant by design — any one routes any agent.</strong></p>
-    <span class="slide-num">3 / 14</span>
+    <p style="margin-top:1.5em;"><strong>One pack. Four routing files. Any one can route the agent to the same context.</strong></p>
+    <span class="slide-num">3 / 15</span>
   </section>
 
-  <!-- Slide 4 — What's in the pack -->
+  <!-- Slide 4 — Three-layer design -->
   <section class="slide">
-    <h2>What's in the pack</h2>
-    <img src="../docs/demos/cold-start-agent-context-hero.svg" alt="agent-context artifact map" style="max-height:60vh;">
-    <p style="text-align:center;margin-top:0.5em;">Three layers + quality. Tier 3 = 11 files committed alongside your code.</p>
-    <span class="slide-num">4 / 14</span>
+    <h2>Three layers, one pack</h2>
+    <img src="../docs/demos/cold-start-agent-context-hero.svg" alt="agent-context artifact map" style="max-height:34vh;">
+    <table>
+      <thead><tr><th>Layer</th><th>Files</th><th>Job</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Content</strong></td><td><code>00_*</code> through <code>40_*</code> markdown</td><td>What is this system? What matters?</td></tr>
+        <tr><td><strong>Authority</strong></td><td><code>routes.json</code>, contracts, reporting rules</td><td>What must a complete answer include?</td></tr>
+        <tr><td><strong>Navigation</strong></td><td><code>search_scope.json</code></td><td>Where should search-and-verify agents look first?</td></tr>
+      </tbody>
+    </table>
+    <p>Quality wraps all three: manifest, acceptance tests, <code>verify</code>, and <code>freshness</code>.</p>
+    <span class="slide-num">4 / 15</span>
   </section>
 
   <!-- Slide 5 — Two reading patterns -->
@@ -226,8 +261,9 @@
 
 Trust-and-follow   (Claude, Gemini, OpenCode w/ Anthropic backend)
   routing block  →  required files  →  completeness contract  →  answer</code></pre>
-    <p>Same content. Two reading paths. Most authoring projects pick one mode and break for the other; agent-context provides scaffolding for both.</p>
-    <span class="slide-num">5 / 14</span>
+    <p>Same content. Two reading paths.</p>
+    <p>That is the design constraint: one repo artifact has to help agents that verify by search and agents that follow explicit contracts.</p>
+    <span class="slide-num">5 / 15</span>
   </section>
 
   <!-- Slide 6 — Live demo: init -->
@@ -241,23 +277,23 @@ Wrote routing block in CLAUDE.md
 Wrote routing block in AGENTS.md
 Wrote routing block in GEMINI.md
 Wrote routing block in .cursorrules</code></pre>
-    <p>Open <code>.cursorrules</code> → routing block lives there. Same in <code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>GEMINI.md</code>.</p>
-    <span class="slide-num">6 / 14</span>
+    <p>This is the mechanical part: create the pack, copy local checks, and route all agent entry points to the same first reads.</p>
+    <span class="slide-num">6 / 15</span>
   </section>
 
   <!-- Slide 7 — Live demo: agent fills the pack -->
   <section class="slide">
     <h2>Live demo · agent fills the pack</h2>
     <blockquote>Set up agent context for this repo.</blockquote>
-    <p style="text-align:center;color:var(--slate-mid);font-style:italic;margin:1.5em 0;">[ Pre-recorded MP4 — ~30s real, sped up to ~15s ]</p>
+    <img src="../docs/demos/demo-agent-context.svg" alt="agent filling agent-context files" style="max-height:36vh;">
     <p><a href="../SKILL.md"><code>SKILL.md</code></a> drives the agent:</p>
     <ol>
-      <li>enumerate every subsystem first (so nothing silently gets skipped)</li>
+      <li>enumerate subsystems first, so nothing silently gets skipped</li>
       <li>fill all 11 templates</li>
       <li>write acceptance tests with grep verification</li>
       <li>run the machine checks</li>
     </ol>
-    <span class="slide-num">7 / 14</span>
+    <span class="slide-num">7 / 15</span>
   </section>
 
   <!-- Slide 8 — Live demo: verify -->
@@ -267,76 +303,98 @@ Wrote routing block in .cursorrules</code></pre>
 OK: agent-context passed machine-checkable validation (tier 3)</code></pre>
     <p>Checks: structure · JSON schema · real glob matches · template-marker elimination.</p>
     <p>CI-friendly. Pair with <code>freshness</code> (drift detection) and <code>doctor</code> (env diagnostics).</p>
-    <span class="slide-num">8 / 14</span>
+    <span class="slide-num">8 / 15</span>
   </section>
 
-  <!-- Slide 9 — Historical aggregate -->
+  <!-- Slide 9 — Success stories -->
   <section class="slide">
-    <h2>What we measured · March / April 2026</h2>
+    <h2>Success stories worth telling</h2>
+    <img src="../docs/visuals/proof-results.svg" alt="agent-context proof summary" style="max-height:34vh;">
+    <ul>
+      <li><strong>Zero files, 12 seconds:</strong> complex impact analysis answered from context alone.</li>
+      <li><strong>Silent test failure caught:</strong> bare agents missed the store-reset invariant; structured agents found it.</li>
+      <li><strong>Deprecated pattern avoided:</strong> context steered planning away from Apollo and toward React Query.</li>
+      <li><strong>Codex 6/6:</strong> highest historical score on the dual CLI/library protocol.</li>
+    </ul>
+    <p>These are the stories to tell first: context works when repo-specific knowledge decides the answer.</p>
+    <span class="slide-num">9 / 15</span>
+  </section>
+
+  <!-- Slide 10 — Evidence -->
+  <section class="slide">
+    <h2>Evidence, not vibes</h2>
     <img src="../docs/visuals/hero-stat-ribbon.svg" alt="historical aggregate stat ribbon" style="max-height:42vh;">
-    <p>78+ reviewer-graded answers across three repos with grep-backed verification:</p>
+    <p>78+ reviewer-graded answers across three repos:</p>
     <ul>
       <li>ML pipeline · 501 files · Python</li>
       <li>Dual CLI · 155 files · Rust + Node.js</li>
       <li>React frontend · 1,982 files · TypeScript</li>
     </ul>
-    <p>Same template, zero modifications.</p>
-    <span class="slide-num">9 / 14</span>
+    <p>Same template, zero modifications. Production-risk answers went to zero in the structured condition.</p>
+    <span class="slide-num">10 / 15</span>
   </section>
 
-  <!-- Slide 10 — May 2026 focused rerun -->
+  <!-- Slide 11 — Freshness gate -->
   <section class="slide">
-    <h2>What the May 2026 rerun showed</h2>
-    <img src="../docs/visuals/may-2026-rerun-ribbon.svg" alt="May 2026 focused rerun: Codex 58 to 30, Cursor 35 to 18" style="max-height:42vh;">
-    <p><strong>Honest read-out:</strong></p>
-    <ul class="checks">
-      <li class="ok">Navigation efficiency confirmed for Codex and Cursor</li>
-      <li class="no">Correctness lift not reproduced in this one-repo focused rerun</li>
-      <li class="warn">Stale-pack guidance caused 3 dead ends in the Codex structured run</li>
+    <h2>Freshness is the quality gate</h2>
+    <img src="../docs/visuals/may-2026-rerun-ribbon.svg" alt="May 2026 focused rerun: Codex 58 to 30, Cursor 35 to 18" style="max-height:34vh;">
+    <p>The May rerun taught one important thing: a stale pack is not a success metric or a failure metric.</p>
+    <p>It is a maintenance failure. Discard it, update the pack, and rerun.</p>
+    <p><strong>Before stage:</strong></p>
+    <ul>
+      <li><code>agent-context verify</code></li>
+      <li><code>agent-context freshness</code></li>
+      <li>Codex + Cursor: bare vs <code>structured_fresh</code></li>
+      <li>human reviewer grading against ground truth</li>
     </ul>
-    <p class="footer-note">Cursor evidence is provisional · aggregate measurement on the v0.5 roadmap.</p>
-    <span class="slide-num">10 / 14</span>
+    <span class="slide-num">11 / 15</span>
   </section>
 
-  <!-- Slide 11 — Model-agnostic -->
+  <!-- Slide 12 — Model-agnostic -->
   <section class="slide">
     <h2>Model-agnostic by construction</h2>
     <img src="../docs/visuals/opencode-tunnel-deployment.svg" alt="OpenCode + SSH tunnel deployment diagram" style="max-height:48vh;">
     <p>The pack is markdown and JSON; routing blocks are plain text.</p>
-    <p>Operator-verified with <strong>OpenCode + OSS model</strong> (Devstral Small 2 / Qwen 4B) over an SSH tunnel. <strong>No commercial-frontier dependency.</strong></p>
-    <span class="slide-num">11 / 14</span>
+    <p>Operator-verified with <strong>OpenCode + OSS model</strong> (Devstral Small 2 / Qwen 4B) over an SSH tunnel.</p>
+    <p>The point is portability: repo context should not depend on one vendor, one editor, or one hosted memory layer.</p>
+    <span class="slide-num">12 / 15</span>
   </section>
 
-  <!-- Slide 12 — Lessons learned -->
+  <!-- Slide 13 — Honest claim -->
   <section class="slide">
-    <h2>Lessons from the rerun</h2>
-    <p><strong>Freshness is part of the claim.</strong> Stale pack guidance caused 3 dead ends in the Codex structured run. A pack that drifts from code is worse than no pack — agents trust it.</p>
-    <p><strong>Reviewer grading &gt; self-scoring.</strong> Self-reported file counts can mislead. Reviewer-graded yes-rate against ground truth is the only metric we trust for correctness.</p>
-    <p><strong>Tier system as adoption ladder.</strong> Start at tier 1 (2 files). Scale when the team is ready. Each tier is a valid stopping point — no hidden dependency on the full pack.</p>
-    <p><strong>Repo-agnostic design ≠ universal evidence.</strong> Three code-repo types measured. Non-code corpora (datasets, design systems, runbooks) — designed to generalize, not yet measured.</p>
-    <span class="slide-num">12 / 14</span>
+    <h2>The honest claim</h2>
+    <p><strong>agent-context reduces wrong turns by making repo knowledge explicit before the agent edits.</strong></p>
+    <ul>
+      <li>Strongest when repo-specific invariants decide the answer.</li>
+      <li>Freshness is part of the product, not an afterthought.</li>
+      <li>Success is measured by reviewer grade, file opens, dead ends, and risk flags.</li>
+      <li>Start at tier 1, scale only when the repo needs it.</li>
+    </ul>
+    <p>Not magic intelligence. Better starting evidence.</p>
+    <span class="slide-num">13 / 15</span>
   </section>
 
-  <!-- Slide 13 — Try it tonight -->
+  <!-- Slide 14 — Try it tonight -->
   <section class="slide">
     <h2>Try it tonight</h2>
     <pre><code>git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 3 .</code></pre>
+~/agent-context/bin/agent-context init --tier 1 .</code></pre>
     <p>Or open the repo in your agent of choice and ask:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
+    <p>Start small: tier 1 is two files. Move to tier 3 when the repo needs routes, search scopes, and CI checks.</p>
     <p style="font-size:1.3em;margin-top:1.2em;"><strong>One folder. Every coding agent. Read before any edit.</strong></p>
     <p><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
-    <span class="slide-num">13 / 14</span>
+    <span class="slide-num">14 / 15</span>
   </section>
 
-  <!-- Slide 14 — Q&A -->
+  <!-- Slide 15 — Q&A -->
   <section class="slide lead">
     <h1>Questions</h1>
     <p class="meta" style="margin-top:1em;font-size:1.3em;"><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
     <p class="meta" style="margin-top:1.5em;"><code>agent-context init</code> · <code>verify</code> · <code>freshness</code> · <code>doctor</code></p>
     <p class="meta" style="margin-top:2.5em;">Thank you.</p>
-    <span class="slide-num">14 / 14</span>
+    <span class="slide-num">15 / 15</span>
   </section>
 
 </main>
