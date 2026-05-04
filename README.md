@@ -131,11 +131,7 @@ Search-and-verify (Codex, Cursor)
   search_scope   →  scoped grep     →  verification shortcut  →  answer
 ```
 
-![Same navigation design, opposite behavior](docs/evidence/figures/asymmetry-contrast-minimal.svg)
-
-*Historical snapshot — March/April 2026. The Codex panel reflects one early run that went into "verify everything" mode after reading the pack. The May 2026 focused rerun went the opposite direction for both Codex and Cursor: fewer files opened with the pack (Codex 58 → 30, Cursor 35 → 18). See [§Results](#results) for current numbers.*
-
-The same `.agent-context/` content is consumed differently by each agent family. Claude stops when the contract says done. Codex and Cursor bound their grep to scoped directories and cross-check verification shortcuts. Most authoring projects pick one mode and break for the other; agent-context provides scaffolding for both — completeness contracts for trust-and-follow agents, bounded search for search-and-verify agents. Current evidence supports the navigation-efficiency claim across both families; the correctness lift remains a historical claim that the May 2026 focused rerun did not reproduce for Codex or Cursor.
+The same `.agent-context/` content is consumed differently by each agent family. Claude stops when the contract says done. Codex and Cursor bound their grep to scoped directories and cross-check verification shortcuts. agent-context provides scaffolding for both — completeness contracts for trust-and-follow agents, bounded search for search-and-verify agents.
 
 ![agent-context artifact system](docs/demos/cold-start-agent-context-hero.svg)
 

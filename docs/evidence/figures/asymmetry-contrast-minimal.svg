@@ -12,6 +12,10 @@
       .metric { font: 900 74px Inter, Arial, sans-serif; fill: #111827; }
       .small { font: 17px Inter, Arial, sans-serif; fill: #64748B; }
       .mono { font: 17px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #475569; }
+      .labelL { font: 800 28px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .metricL { font: 900 74px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .smallL { font: 17px Inter, Arial, sans-serif; fill: #CBD5E1; }
+      .monoL { font: 17px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #CBD5E1; }
     </style>
   </defs>
   <rect width="1200" height="620" fill="#FDFCF8"/>
@@ -32,13 +36,13 @@
 
   <g filter="url(#shadow)">
     <rect x="626" y="174" width="488" height="314" rx="8" fill="#111827"/>
-    <text class="label" x="870" y="226" text-anchor="middle" fill="#FDFCF8">Codex</text>
-    <text class="small" x="870" y="260" text-anchor="middle" fill="#CBD5E1">Atlas Models / parameter-threading plan</text>
-    <text class="metric" x="870" y="346" text-anchor="middle" fill="#FDFCF8">3 → 12</text>
-    <text class="mono" x="870" y="390" text-anchor="middle" fill="#CBD5E1">files opened</text>
+    <text class="labelL" x="870" y="226" text-anchor="middle">Codex</text>
+    <text class="smallL" x="870" y="260" text-anchor="middle">Atlas Models / parameter-threading plan</text>
+    <text class="metricL" x="870" y="346" text-anchor="middle">3 → 12</text>
+    <text class="monoL" x="870" y="390" text-anchor="middle">files opened</text>
     <line x1="666" y1="416" x2="1074" y2="416" stroke="#334155" stroke-width="2"/>
-    <text class="small" x="870" y="450" text-anchor="middle" fill="#CBD5E1">Effect in this run</text>
-    <text class="label" x="870" y="482" text-anchor="middle" font-size="24" fill="#FDFCF8">expanded proof burden</text>
+    <text class="smallL" x="870" y="450" text-anchor="middle">Effect in this run</text>
+    <text class="labelL" x="870" y="482" text-anchor="middle" font-size="24">expanded proof burden</text>
   </g>
 
 </svg>
