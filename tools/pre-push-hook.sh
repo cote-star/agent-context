@@ -7,8 +7,12 @@
 # This hook warns (never blocks) when context-relevant code was modified
 # but agent-context artifacts were not updated in the commits being pushed.
 #
+# Installed by:
+#   agent-context init --install-hook .
+#   agent-context install-hook .
+#
 # Prerequisite:
-#   copy scripts/check_freshness.sh -> .agent-context/tools/check_freshness.sh
+#   .agent-context/tools/check_freshness.sh exists (copied by init)
 #
 # Customize CONTEXT_RELEVANT_PATHS to match your repo structure.
 

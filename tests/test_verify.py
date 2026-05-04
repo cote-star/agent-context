@@ -59,6 +59,8 @@ class InitThenVerifyTests(unittest.TestCase):
             self.assertTrue(pack_dir.is_dir())
             tools_dir = pathlib.Path(tmpdir) / ".agent-context" / "tools"
             self.assertTrue((tools_dir / "verify_agent_context.py").is_file())
+            self.assertTrue((tools_dir / "check_freshness.sh").is_file())
+            self.assertTrue((tools_dir / "pre-push-hook.sh").is_file())
             old_verifier_name = "verify_" + "context" + "_pack.py"
             self.assertFalse((tools_dir / old_verifier_name).exists())
 
@@ -85,6 +87,43 @@ class InitThenVerifyTests(unittest.TestCase):
             result_verify = _run(["verify", tmpdir])
             self.assertNotEqual(result_verify.returncode, 0,
                                 msg="verify unexpectedly passed with partial fill")
+
+
+class HookInstallTests(unittest.TestCase):
+    """The CLI can install the advisory pre-push freshness hook."""
+
+    def test_install_hook_in_git_repo(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(["git", "init"], cwd=tmpdir, check=True,
+                           capture_output=True, text=True)
+            subprocess.run(["git", "config", "core.hooksPath", ".git/hooks"],
+                           cwd=tmpdir, check=True, capture_output=True, text=True)
+            result_init = _run(["init", "--install-hook", tmpdir])
+            self.assertEqual(result_init.returncode, 0, msg=result_init.stderr)
+
+            hook_path = pathlib.Path(tmpdir) / ".git" / "hooks" / "pre-push"
+            self.assertTrue(hook_path.is_file())
+            hook_text = hook_path.read_text()
+            self.assertIn("agent-context:pre-push:begin", hook_text)
+            self.assertIn(".agent-context/tools/pre-push-hook.sh", hook_text)
+
+    def test_install_hook_preserves_existing_unmanaged_hook(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            subprocess.run(["git", "init"], cwd=tmpdir, check=True,
+                           capture_output=True, text=True)
+            subprocess.run(["git", "config", "core.hooksPath", ".git/hooks"],
+                           cwd=tmpdir, check=True, capture_output=True, text=True)
+            hooks_dir = pathlib.Path(tmpdir) / ".git" / "hooks"
+            hook_path = hooks_dir / "pre-push"
+            hook_path.write_text("#!/bin/sh\necho existing\n")
+            hook_path.chmod(0o755)
+
+            result = _run(["init", "--install-hook", tmpdir])
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertEqual("#!/bin/sh\necho existing\n", hook_path.read_text())
+            sample = hooks_dir / "pre-push.agent-context.sample"
+            self.assertTrue(sample.is_file())
+            self.assertIn("agent-context:pre-push:begin", sample.read_text())
 
 
 if __name__ == "__main__":

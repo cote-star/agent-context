@@ -159,13 +159,14 @@ That is the meetup takeaway: not a library trick, a repeatable operating loop.
 
 ```bash
 $ cd examples/hello-service
-$ ~/agent-context/bin/agent-context init --tier 3 .
+$ ~/agent-context/bin/agent-context init --tier 3 --install-hook .
 Initialized .agent-context/current/ with 11 files (tier 3)
 Copied helper tools to .agent-context/tools/
 Wrote routing block in CLAUDE.md
 Wrote routing block in AGENTS.md
 Wrote routing block in GEMINI.md
 Wrote routing block in .cursorrules
+Installed advisory pre-push freshness hook
 ```
 
 Then ask the agent:
@@ -302,7 +303,7 @@ That is enough to decide whether the repo needs the full tier 3 pack.
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 1 .
+~/agent-context/bin/agent-context init --tier 1 --install-hook .
 ```
 
 Or open the repo in your agent of choice and ask:

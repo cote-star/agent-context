@@ -6,7 +6,7 @@ description: >-
   higher-quality decisions. Use when setting up agent context for a new repo,
   updating context after agent work, or catching up context after human work.
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Agent Context
@@ -37,13 +37,13 @@ Not every repo needs the full pack. Choose a tier based on complexity:
 | **Tier 2** (standard) | + `00_START_HERE.md`, `30_BEHAVIORAL_INVARIANTS.md`, `manifest.json`, `acceptance_tests.md` | Most repos, 100-500 files |
 | **Tier 3** (full) | + all 5 markdown + authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) | Complex repos, 500+ files, multi-agent workflows |
 
-If using the CLI: `agent-context init --tier 1|2|3 .` (default: tier 3).
+If using the CLI: `agent-context init --tier 1|2|3 . --install-hook` (default: tier 3).
 
 ### First time setup
 
 You ask an agent: **"set up agent context for this repo"**
 
-The agent reads the entire repo, fills the pack files describing the architecture, key paths, change patterns, and search boundaries, copies the helper tools, validates everything, runs acceptance tests with grep verification, and commits. Takes ~15-20 minutes for a large repo.
+The agent reads the entire repo, fills the pack files describing the architecture, key paths, change patterns, and search boundaries, copies the helper tools, installs the advisory freshness hook when safe, validates everything, runs acceptance tests with grep verification, and commits. Takes ~15-20 minutes for a large repo.
 
 After merge, **every agent that opens a session in the repo** automatically reads the routing block and follows the pack. No per-developer setup. No configuration. It just works.
 
@@ -74,7 +74,7 @@ In practice, most teams have a mix:
 |---|---|
 | `.agent-context/` (pack files + helper tools) | Source code (no modifications without approval) |
 | `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules` (routing blocks only) | Human-authored PRs (agent stays silent) |
-| `.git/hooks/pre-push` (freshness check) | Secrets or credentials |
+| `.git/hooks/pre-push` (advisory freshness check, when no unmanaged hook blocks safe install) | Secrets or credentials |
 
 ### When to use it — and when not to
 
@@ -132,7 +132,13 @@ ls .agent-context/current/ 2>/dev/null
 
 ### Step 2 — Scaffold
 
-Create the directory structure:
+Prefer the CLI because it copies helper tools, writes routing blocks, and can install the advisory freshness hook:
+
+```bash
+agent-context init --tier 3 --install-hook .
+```
+
+If the CLI is unavailable, create the directory structure manually:
 
 ```bash
 mkdir -p .agent-context/current .agent-context/tools
@@ -143,7 +149,7 @@ Create these files:
 - **JSON artifacts** in `.agent-context/current/` — start from the starter templates in `templates/` (routes.json, completeness_contract.json, reporting_rules.json, search_scope.json). For tier 1-2, only copy `search_scope.json`. The templates include inline `_rules` that define the format contract for each file. Remove `_rules` and `_EXAMPLE` entries after filling.
 - **Manifest** in `.agent-context/current/manifest.json` — use the template in `templates/manifest.json`. Fill `repo`, `git_revision` (from `git rev-parse HEAD`), and `generated_at` (ISO 8601 UTC).
 - **Acceptance tests** in `.agent-context/current/acceptance_tests.md` — use the template from `templates/acceptance_tests.md`. Fill during Step 7.
-- **Helper tools** in `.agent-context/tools/` — copy `tools/verify_agent_context.py` and `tools/check_freshness.sh`. These are the canonical machine-checkable validator and freshness checker used by the reference CI and hook examples.
+- **Helper tools** in `.agent-context/tools/` — copy `tools/verify_agent_context.py`, `tools/check_freshness.sh`, and `tools/pre-push-hook.sh`. These are the canonical machine-checkable validator, freshness checker, and advisory local hook used by the reference CI and hook examples.
 - **Routing blocks** in `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursorrules` (~90 tokens each). Use these canonical templates:
 
 **CLAUDE.md / GEMINI.md** (trust-and-follow agents — read invariants first, then code map):
@@ -250,7 +256,7 @@ Validate the pack before committing. Run **all** of these checks:
 - All markdown files present and non-empty (no unfilled template markers)
 - All structured artifact file references resolve on disk
 - Grouped families don't point to generated files as authoritative edit targets
-- `.agent-context/tools/verify_agent_context.py` and `.agent-context/tools/check_freshness.sh` exist if you copied the helper tools
+- `.agent-context/tools/verify_agent_context.py`, `.agent-context/tools/check_freshness.sh`, and `.agent-context/tools/pre-push-hook.sh` exist if you copied the helper tools
 
 **Semantic checks:**
 - Every `required_file_families` glob pattern matches >=1 real file (run each glob and verify)
@@ -337,6 +343,23 @@ See `docs/ci-adaptation.md` for repo-adaptation heuristics and examples.
 
 ### Step 9 — Set up CI enforcement
 
+Set up both local advisory freshness and CI verification before treating the pack as production-ready.
+
+**Local advisory hook:**
+
+```bash
+agent-context install-hook .
+```
+
+Expected outcomes:
+- If there is no existing hook, `.git/hooks/pre-push` is installed and calls `.agent-context/tools/pre-push-hook.sh`.
+- If a managed agent-context hook already exists, it is updated in place.
+- If an unmanaged pre-push hook already exists, it is preserved and a `pre-push.agent-context.sample` chain block is written. Document the follow-up in `40_OPERATIONS_AND_RELEASE.md` or manually merge the block into the repo's hook chain.
+
+The hook is advisory only: it warns when context-relevant paths changed without `.agent-context/` changes, but never blocks a push.
+
+**CI enforcement:**
+
 Add an `agent-context` verification check to your PR workflow. This is **not required for the initial pack commit**, but should be set up before the pack is treated as production-ready.
 
 The CI check should:
@@ -344,7 +367,7 @@ The CI check should:
 - fail when context-relevant code changes without a corresponding pack update
 - run on pull requests against your main branch
 
-A reference CI job is provided in `docs/references/ci-example.yml`. An advisory pre-push hook is provided in `tools/pre-push-hook.sh`.
+A reference CI job is provided in `docs/references/ci-example.yml`. The advisory pre-push hook is provided in `tools/pre-push-hook.sh` and copied into `.agent-context/tools/` by `init`.
 
 If CI enforcement cannot be set up immediately, document it as a follow-up in `40_OPERATIONS_AND_RELEASE.md` so the gap is visible.
 
@@ -415,6 +438,7 @@ Agent context is ready when:
 - Every significant subsystem from the Step 3 inventory is referenced in at least one pack file, or listed in "Not covered in detail" in `00_START_HERE.md`
 - CODE_MAP has at least one path per major subsystem in the inventory
 - CI enforcement is either set up or documented as a follow-up in `40_OPERATIONS_AND_RELEASE.md`
+- The advisory pre-push hook is installed, updated, or explicitly documented as a follow-up when an existing unmanaged hook prevents safe automatic installation
 
 ## What NOT to Do
 

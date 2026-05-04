@@ -1,5 +1,23 @@
 # Release Notes
 
+## v0.2.1 — 2026-05-04
+
+Meetup demo hardening release. The public repo and the included skill now match the workflow shown in the talk: an agent can scaffold a repo, fill the pack, verify it, set up local freshness warnings, and document or wire CI enforcement.
+
+### What's new
+
+- **Hook setup is now first-class.** `agent-context init --install-hook .` copies `pre-push-hook.sh` into `.agent-context/tools/` and installs an advisory `.git/hooks/pre-push` freshness hook when safe. `agent-context install-hook .` can be run later to install or refresh the hook. Existing unmanaged hooks are preserved and a `pre-push.agent-context.sample` chain block is written for deliberate manual merge.
+- **Skill workflow now completes the demo promise.** `SKILL.md` explicitly drives agents through pack creation, subsystem inventory, acceptance tests, verify, advisory hook setup, and CI/freshness follow-up documentation.
+- **Helper tool set completed.** Fresh packs now carry `verify_agent_context.py`, `check_freshness.sh`, and `pre-push-hook.sh` together, so the repo can verify itself without depending on the original checkout.
+- **Agent-chorus learnings folded back.** The setup workflow now emphasizes hard multi-hop tasks, runtime parity, audit-path completeness, and freshness as a hard gate for evidence runs — lessons surfaced while refreshing the agent-chorus reference pack and redaction/parity tasks.
+- **Team-skills learnings folded back.** The skill keeps the production `enumerate before narrate` pattern, cross-language file-family checklists, negative guidance, and "silent fallback" risk callouts used to catch map/default bugs in a polyglot skills repo.
+- **Docs aligned for live demo.** README, getting started, architecture docs, and CI reference now describe the same setup path: `init --tier 3 --install-hook`, fill via the skill, `verify`, `freshness`, and CI adaptation.
+
+### Compatibility
+
+- Existing v0.2.0 packs remain valid. Re-run `agent-context init --force` only if you intentionally want to refresh templates; otherwise copy or install the hook with `agent-context install-hook .`.
+- `agent-context freshness` remains advisory and exits zero by design. CI and experiment harnesses that need hard failure should call `.agent-context/tools/check_freshness.sh` directly, as documented in the rerun methodology.
+
 ## v0.2.0 — 2026-05-01
 
 Meetup-ready release. The pack is now fully self-contained with all three layers, a skill definition for agent-driven pack creation, and evidence materials from 78+ graded experiments.
