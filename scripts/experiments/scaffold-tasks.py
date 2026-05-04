@@ -34,6 +34,13 @@ END_FENCE_RE = re.compile(r"^```\s*$")
 def extract_block(text: str, header_re: re.Pattern[str]) -> str:
     """Extract the first fenced ```markdown block following a matching header.
 
+    Inside a template's outer ```markdown fence, nested ```bash (or other
+    language) fences are written as ``\\```bash`` to keep them from prematurely
+    closing the outer block. The extracted output is a standalone markdown
+    file, so those backslash-escapes must be un-escaped on extraction —
+    otherwise downstream tools (preflight grep-block detection, agent
+    rendering) will not see the inner fences as real code blocks.
+
     Raises ValueError if the header or the block is missing.
     """
     lines = text.splitlines()
@@ -57,7 +64,12 @@ def extract_block(text: str, header_re: re.Pattern[str]) -> str:
             continue
         if in_block:
             if END_FENCE_RE.match(line):
-                return "\n".join(block) + "\n"
+                # Un-escape inner fences that were backslash-escaped in the
+                # template to survive the outer markdown fence. After this
+                # the extracted block is standalone-valid markdown.
+                content = "\n".join(block) + "\n"
+                content = content.replace("\\```", "```")
+                return content
             block.append(line)
 
     if not in_section:

@@ -220,8 +220,13 @@ PY
           *) continue ;;
         esac
         grep_total=$((grep_total + 1))
-        # Run with bare as cwd so paths resolve to source repo files
-        if ! ( cd "$dir/bare" && eval "$line" ) >/dev/null 2>&1; then
+        # Run from structured_fresh — the canonical "complete" condition
+        # that has both code and the .agent-context/ pack. GROUND_TRUTH
+        # grep verifications commonly cite both pack files (which only
+        # exist in structured_fresh) and code files (which exist in both).
+        # Running from bare would falsely fail any grep that references
+        # the pack.
+        if ! ( cd "$dir/structured_fresh" && eval "$line" ) >/dev/null 2>&1; then
           grep_empty=$((grep_empty + 1))
           echo "FAIL: ground-truth check returned empty/error: $line"
         fi
