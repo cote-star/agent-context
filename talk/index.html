@@ -404,18 +404,18 @@ agent-context freshness . --base-ref origin/main</code></pre>
   <!-- Slide 7 — Live demo -->
   <section class="slide">
     <h2>Demo: from empty repo to first-read contract</h2>
-    <pre><code>$ cd examples/hello-service
-$ ~/agent-context/bin/agent-context init --tier 3 --install-hook .
-Initialized .agent-context/current/ with 11 files (tier 3)
-Copied helper tools to .agent-context/tools/
-Wrote routing block in CLAUDE.md
-Wrote routing block in AGENTS.md
-Wrote routing block in GEMINI.md
-Wrote routing block in .cursorrules
-Installed advisory pre-push freshness hook</code></pre>
-    <p>Then ask the agent:</p>
+    <p>Install the skill into your agent of choice (one-time):</p>
+    <table>
+      <thead><tr><th>Agent</th><th>Install</th></tr></thead>
+      <tbody>
+        <tr><td>Claude Code</td><td>clone the repo, copy <code>skills/agent-context/</code> into <code>~/.claude/skills/</code></td></tr>
+        <tr><td>Codex</td><td>use <code>skills/agent-context/agents/openai.yaml</code> in your Codex skill registry</td></tr>
+        <tr><td>Cursor</td><td>reads <code>.cursorrules</code> from the repo natively — no extra install</td></tr>
+      </tbody>
+    </table>
+    <p>Open the target repo and ask:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
-    <p>The agent fills the templates, writes acceptance tests, runs verify, and leaves a diff the team can review.</p>
+    <p>The skill drives scaffold → fill from the subsystem inventory → acceptance tests with grep verification → <code>verify</code> → advisory pre-push freshness hook. Output is a reviewable diff in one PR.</p>
     <span class="slide-num">7 / 19</span>
   </section>
 
@@ -615,12 +615,18 @@ Installed advisory pre-push freshness hook</code></pre>
   <!-- Slide 17 — Command -->
   <section class="slide">
     <h2>The first command</h2>
-    <pre><code>git clone https://github.com/cote-star/agent-context.git ~/agent-context
-cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 1 --install-hook .</code></pre>
-    <p>Or open the repo in your agent of choice and ask:</p>
+    <p>Install the skill into your agent of choice (one-time):</p>
+    <table>
+      <thead><tr><th>Agent</th><th>Install</th></tr></thead>
+      <tbody>
+        <tr><td>Claude Code</td><td><code>git clone https://github.com/cote-star/agent-context.git &amp;&amp; cp -r agent-context/skills/agent-context ~/.claude/skills/</code></td></tr>
+        <tr><td>Codex</td><td>register <code>skills/agent-context/agents/openai.yaml</code> with your Codex skill registry</td></tr>
+        <tr><td>Cursor</td><td>reads <code>.cursorrules</code> natively — open the target repo, no extra install</td></tr>
+      </tbody>
+    </table>
+    <p>Then in any repo, ask your agent:</p>
     <blockquote>Set up agent context for this repo.</blockquote>
-    <p>Start small. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.</p>
+    <p>Start small with tier 1. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.</p>
     <p style="font-size:1.3em;margin-top:1.2em;"><strong>Make repo knowledge explicit before asking agents to change it.</strong></p>
     <p><a href="https://github.com/cote-star/agent-context">github.com/cote-star/agent-context</a></p>
     <span class="slide-num">17 / 19</span>

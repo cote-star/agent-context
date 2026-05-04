@@ -157,23 +157,19 @@ That is the meetup takeaway: not a library trick, a repeatable operating loop.
 
 ## Demo: from empty repo to first-read contract
 
-```bash
-$ cd examples/hello-service
-$ ~/agent-context/bin/agent-context init --tier 3 --install-hook .
-Initialized .agent-context/current/ with 11 files (tier 3)
-Copied helper tools to .agent-context/tools/
-Wrote routing block in CLAUDE.md
-Wrote routing block in AGENTS.md
-Wrote routing block in GEMINI.md
-Wrote routing block in .cursorrules
-Installed advisory pre-push freshness hook
-```
+Install the skill into your agent of choice (one-time):
 
-Then ask the agent:
+| Agent       | Install |
+|-------------|---------|
+| Claude Code | clone the repo, copy `skills/agent-context/` into `~/.claude/skills/` |
+| Codex       | use `skills/agent-context/agents/openai.yaml` in your Codex skill registry |
+| Cursor      | reads `.cursorrules` from the repo natively — no extra install |
+
+Open the target repo and ask:
 
 > **Set up agent context for this repo.**
 
-The agent fills the templates, writes acceptance tests, runs verify, and leaves a diff the team can review.
+The skill drives scaffold → fill from the subsystem inventory → acceptance tests with grep verification → `verify` → advisory pre-push freshness hook. Output is a reviewable diff in one PR.
 
 ---
 
@@ -300,17 +296,19 @@ That is enough to decide whether the repo needs the full tier 3 pack.
 
 ## The first command
 
-```bash
-git clone https://github.com/cote-star/agent-context.git ~/agent-context
-cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 1 --install-hook .
-```
+Install the skill into your agent of choice (one-time):
 
-Or open the repo in your agent of choice and ask:
+| Agent       | Install |
+|-------------|---------|
+| Claude Code | `git clone https://github.com/cote-star/agent-context.git && cp -r agent-context/skills/agent-context ~/.claude/skills/` |
+| Codex       | register `skills/agent-context/agents/openai.yaml` with your Codex skill registry |
+| Cursor      | reads `.cursorrules` natively — open the target repo, no extra install |
+
+Then in any repo, ask your agent:
 
 > **Set up agent context for this repo.**
 
-Start small. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.
+Start small with tier 1. Promote to tier 3 when the repo has cross-cutting invariants, duplicated architecture, or production-risk workflows.
 
 **Make repo knowledge explicit before asking agents to change it.**
 
