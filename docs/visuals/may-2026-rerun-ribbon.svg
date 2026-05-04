@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="340" viewBox="0 0 1400 340" role="img" aria-labelledby="rt rd">
+  <title id="rt">May 2026 focused rerun results — Codex and Cursor</title>
+  <desc id="rd">Two-card stat ribbon showing the May 2 2026 one-repo focused rerun. Codex CLI 0.128.0 reduced files opened from 58 to 30; reviewer grade unchanged at 5 yes / 1 partial. Cursor Agent 3.2.11 with composer-2-fast reduced files opened from 35 to 18; reviewer grade unchanged at 3 yes / 3 partial. Navigation efficiency confirmed for both; correctness lift not reproduced in this one-repo focused rerun. Cursor evidence is provisional.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#111827" flood-opacity="0.14"/>
+    </filter>
+    <style>
+      .eyebrow { font: 800 16px Inter, Arial, sans-serif; fill: #9A3412; }
+      .eyebrowL { font: 800 16px Inter, Arial, sans-serif; fill: #FDE68A; }
+      .metric { font: 900 58px Inter, Arial, sans-serif; fill: #111827; }
+      .metricL { font: 900 58px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .label { font: 800 22px Inter, Arial, sans-serif; fill: #111827; }
+      .labelL { font: 800 22px Inter, Arial, sans-serif; fill: #FDFCF8; }
+      .small { font: 16px Inter, Arial, sans-serif; fill: #64748B; }
+      .smallL { font: 16px Inter, Arial, sans-serif; fill: #CBD5E1; }
+      .footer { font: italic 16px Inter, Arial, sans-serif; fill: #475569; }
+    </style>
+  </defs>
+  <rect width="1400" height="340" fill="#FDFCF8"/>
+  <rect x="58" y="30" width="1284" height="280" rx="8" fill="#FFF7E8" stroke="#E8D9BE"/>
+
+  <g filter="url(#shadow)">
+    <rect x="108" y="60" width="580" height="200" rx="8" fill="#111827"/>
+    <text class="eyebrowL" x="140" y="100">CODEX CLI 0.128.0</text>
+    <text class="metricL" x="140" y="180">58 → 30</text>
+    <text class="labelL" x="140" y="216">files opened</text>
+    <text class="smallL" x="140" y="244">grade unchanged: 5 yes / 1 partial</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="712" y="60" width="580" height="200" rx="8" fill="#FFFFFF" stroke="#E8D9BE"/>
+    <text class="eyebrow" x="744" y="100">CURSOR AGENT 3.2.11 · composer-2-fast</text>
+    <text class="metric" x="744" y="180">35 → 18</text>
+    <text class="label" x="744" y="216">files opened</text>
+    <text class="small" x="744" y="244">grade unchanged: 3 yes / 3 partial</text>
+  </g>
+
+  <text class="footer" x="700" y="295" text-anchor="middle">Navigation efficiency confirmed for both. Correctness lift not reproduced in this one-repo focused rerun. Cursor evidence is provisional.</text>
+</svg>
