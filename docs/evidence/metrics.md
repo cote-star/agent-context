@@ -113,4 +113,4 @@ The full experiment visualization with per-repo breakdowns is available at:
 
 - **Full result breakdown**: [results.md](./results.md) in this repo
 - **Experiment data and figures**: [cote-star/agent-recall](https://github.com/cote-star/agent-recall) -- SVG/PNG figures, evidence map, interactive dashboard
-- **Reference implementation and experiment protocol**: [cote-star/agent-chorus](https://github.com/cote-star/agent-chorus) -- `docs/agent-context-results.md`, research artifacts, and the `chorus agent-context` CLI that creates and maintains packs
+- **Experiment protocol and reference data**: [cote-star/agent-chorus](https://github.com/cote-star/agent-chorus) -- `docs/agent-context-results.md` and research artifacts. Pack creation and maintenance use this repo's `bin/agent-context` CLI.

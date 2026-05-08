@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """agent-context - author, verify, and maintain agent-context artifacts.
 
-Stdlib-only Python 3.8+. Single-file dispatcher for the v0.2.1 subcommands:
+Stdlib-only Python 3.8+. Single-file dispatcher for the v0.3.1 subcommands:
 
     agent-context init [path] [--force] [--tier 1|2|3] [--install-hook]
     agent-context verify [path]
@@ -32,7 +32,7 @@ import sys
 from typing import Optional, Tuple
 
 
-__version__ = "0.2.1"
+__version__ = "0.3.1"
 
 
 # ---------------------------------------------------------------------------
@@ -274,6 +274,13 @@ def cmd_init(args: argparse.Namespace) -> int:
     # --- Copy templates ---------------------------------------------------
     current.mkdir(parents=True, exist_ok=True)
 
+    # When re-initialising with --force, drop files from a higher tier that
+    # aren't part of the requested tier so the pack on disk matches --tier.
+    if args.force:
+        for existing in current.iterdir():
+            if existing.is_file() and existing.name not in allowed:
+                existing.unlink()
+
     copied = 0
     for src in sorted(templates.iterdir()):
         if not src.is_file():
@@ -287,9 +294,7 @@ def cmd_init(args: argparse.Namespace) -> int:
             manifest["repo"] = target_root.name
             manifest["agent_context_version"] = __version__
             manifest["tier"] = tier
-            head = _git_head(target_root)
-            if head:
-                manifest["git_revision"] = head
+            manifest["git_revision"] = _git_head(target_root)
             (current / src.name).write_text(
                 json.dumps(manifest, indent=2) + "\n"
             )
