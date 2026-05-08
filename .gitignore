@@ -20,6 +20,9 @@ node_modules/
 *.swp
 *.swo
 
+# Cross-agent coordination runtime (chorus-written, not part of the project)
+.agent-chorus/
+
 # Local pack state in host repos that vendor agent-context — do not track
 # if someone clones this repo into another repo. The worked example's pack
 # under examples/hello-service/.agent-context/ is intentionally tracked.
