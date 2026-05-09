@@ -71,6 +71,7 @@ PACK_CURRENT_PREFIX = ".agent-context/current/"
 
 _ARCHIVE_NAME_FRAGMENTS = ("-before-", "-archive", "-stray", "-pre-")
 _SKIP_PREFIX = "_"
+_SKIP_MARKER = ".skipped"
 
 
 def _is_active_repo(repo_dir_name: str) -> bool:
@@ -79,6 +80,16 @@ def _is_active_repo(repo_dir_name: str) -> bool:
         return False
     lower = repo_dir_name.lower()
     return not any(frag in lower for frag in _ARCHIVE_NAME_FRAGMENTS)
+
+
+def _is_skipped(results_dir: pathlib.Path, repo_name: str) -> bool:
+    """Honor an explicit `<repo>/.skipped` marker file (operator-controlled).
+
+    Use case: a repo's experiment setup is broken (prompt, pack content, etc.)
+    and its results should be excluded from headline metrics until fixed.
+    Removing the marker re-includes the repo; no code change needed.
+    """
+    return (results_dir / repo_name / _SKIP_MARKER).is_file()
 
 
 def discover_results(results_dir: pathlib.Path) -> list[pathlib.Path]:
@@ -114,6 +125,8 @@ def discover_results(results_dir: pathlib.Path) -> list[pathlib.Path]:
                 continue
             repo_name = p.parts[results_idx - 1]
             if not _is_active_repo(repo_name):
+                continue
+            if _is_skipped(results_dir, repo_name):
                 continue
             if p in seen:
                 continue

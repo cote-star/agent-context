@@ -59,7 +59,11 @@ AGENT=""
 CONDITION=""
 MODEL=""
 RERUN_ROOT="$HOME/agent-context-reruns/q2-2026-private"
-ALIASES_CSV="agent-chorus,ml-pipeline-reference,react-frontend-reference,backend-service-reference,polyglot-monorepo-reference,org-second-brain,daemon-reference"
+# org-second-brain dropped from default 2026-05-10 — interactive claude
+# session ran in circles without writing results; pack/EXPERIMENT setup
+# needs review before re-including. Other agents' results for that repo
+# are also held back (see <rerun>/org-second-brain/.skipped).
+ALIASES_CSV="agent-chorus,ml-pipeline-reference,react-frontend-reference,backend-service-reference,polyglot-monorepo-reference,daemon-reference"
 FORCE=0
 DRY_RUN=0
 
