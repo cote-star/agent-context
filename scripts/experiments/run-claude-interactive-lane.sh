@@ -43,7 +43,8 @@ warn() { echo "WARN: $*" >&2; }
 
 CONDITION=""
 RERUN_ROOT="$HOME/agent-context-reruns/q2-2026-private"
-ALIASES_CSV="agent-chorus,ml-pipeline-reference,react-frontend-reference,backend-service-reference,polyglot-monorepo-reference,org-second-brain,daemon-reference"
+# org-second-brain dropped from default 2026-05-10 — see anomalies log.
+ALIASES_CSV="agent-chorus,ml-pipeline-reference,react-frontend-reference,backend-service-reference,polyglot-monorepo-reference,daemon-reference"
 FORCE=0
 
 while [[ $# -gt 0 ]]; do

@@ -353,6 +353,21 @@ class DiscoveryGlobLayoutTests(unittest.TestCase):
             names = sorted(p.name for p in paths)
             self.assertEqual(names, ["L1.json", "M1.json"])
 
+    def test_discover_honours_skipped_marker(self):
+        """A repo with .skipped is excluded from discovery so metrics ignore it."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / "good" / "results" / "claude" / "bare").mkdir(parents=True)
+            (root / "good" / "results" / "claude" / "bare" / "L1.json").write_text("{}")
+            (root / "broken" / "results" / "claude" / "bare").mkdir(parents=True)
+            (root / "broken" / "results" / "claude" / "bare" / "L1.json").write_text("{}")
+            (root / "broken" / ".skipped").write_text("setup needs review\n")
+
+            paths = dm.discover_results(root)
+            self.assertEqual(len(paths), 1)
+            self.assertIn("good", str(paths[0]))
+            self.assertNotIn("broken", str(paths[0]))
+
 
 class OutputQualityTests(unittest.TestCase):
     def test_citations_count_and_required_recall(self):
