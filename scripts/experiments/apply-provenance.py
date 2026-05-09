@@ -44,6 +44,39 @@ def task_template_hash(rerun: pathlib.Path) -> str:
     return h.hexdigest()
 
 
+def _load_verification_shortcut_paths(cell_cwd: pathlib.Path) -> list[str] | None:
+    """Pull verification-shortcut file paths from the cell's search_scope.json.
+
+    Mirrors extract-events-from-chorus.py's loader so all agents end up with
+    the same shortcut field stamped. Returns None when the pack isn't present
+    (bare condition, or pre-init repo). Returns [] when present but empty.
+    """
+    scope_path = cell_cwd / ".agent-context" / "current" / "search_scope.json"
+    if not scope_path.is_file():
+        return None
+    try:
+        data = json.loads(scope_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return None
+    families = data.get("task_families")
+    if not isinstance(families, dict):
+        return []
+    seen: set = set()
+    out: list[str] = []
+    for fam in families.values():
+        if not isinstance(fam, dict):
+            continue
+        for sc in fam.get("verification_shortcuts") or []:
+            if not isinstance(sc, dict):
+                continue
+            p = sc.get("file")
+            if not isinstance(p, str) or not p or p in seen:
+                continue
+            seen.add(p)
+            out.append(p)
+    return out
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--rerun", required=True, help="Rerun directory containing _provenance.json and results/")
@@ -77,9 +110,18 @@ def main(argv: list[str]) -> int:
         ),
         "validator_cli_version": prov.get("validator_cli_version"),
     }
+    # Verification shortcut paths come from the structured pack's search_scope.json
+    # (one set per cell). Stamping uniformly here means every agent gets it,
+    # without needing per-extractor logic for cursor/codex/claude.
+    shortcuts = _load_verification_shortcut_paths(rerun / "structured_fresh")
+
     anchors_for_condition = {
-        "bare": {**base, "pack_manifest_sha": None},  # bare has no pack
-        "structured_fresh": {**base, "pack_manifest_sha": prov.get("pack_manifest_sha")},
+        "bare": {**base, "pack_manifest_sha": None, "verification_shortcut_paths": None},
+        "structured_fresh": {
+            **base,
+            "pack_manifest_sha": prov.get("pack_manifest_sha"),
+            "verification_shortcut_paths": shortcuts,
+        },
     }
 
     results_root = rerun / "results"

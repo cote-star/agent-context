@@ -293,6 +293,28 @@ class NavigationTests(unittest.TestCase):
         # Mean of (1.0, 1/3, 0.0) = ~0.444
         self.assertAlmostEqual(m["verification_shortcut_hit_rate"], (1.0 + 1/3 + 0.0) / 3)
 
+    def test_verification_shortcut_hit_rate_falls_back_to_citations(self):
+        """Cursor doesn't emit source_read_events. A cited shortcut still counts."""
+        rows = _make_six()
+        shortcuts = ["src/server.py", "src/config.py", "src/handler.py"]
+        # Row 0: no reads, but cites 2/3 shortcut paths → hit-rate 2/3.
+        rows[0]["verification_shortcut_paths"] = shortcuts
+        rows[0]["source_read_events"] = None
+        rows[0]["citations"] = [{"path": "src/server.py"}, {"path": "src/config.py"}]
+        # Row 1: cites a non-shortcut path → hit-rate 0.
+        rows[1]["verification_shortcut_paths"] = shortcuts
+        rows[1]["source_read_events"] = None
+        rows[1]["citations"] = [{"path": "unrelated.py"}]
+        # Row 2: read AND cite, dedup → still 1/3.
+        rows[2]["verification_shortcut_paths"] = shortcuts
+        rows[2]["source_read_events"] = [{"path": "src/server.py"}]
+        rows[2]["citations"] = [{"path": "src/server.py"}]
+        # Rows 3-5: no shortcuts.
+
+        m = dm.compute_cell_metrics(rows)
+        # Mean of (2/3, 0.0, 1/3) ≈ 0.333
+        self.assertAlmostEqual(m["verification_shortcut_hit_rate"], (2/3 + 0.0 + 1/3) / 3)
+
 
 class DiscoveryGlobLayoutTests(unittest.TestCase):
     """discover_results must find both the model-aware and legacy result layouts."""
