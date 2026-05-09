@@ -82,6 +82,31 @@ count_results() {
     | wc -l | tr -d ' '
 }
 
+# Print "done_csv|remaining_csv" for the cell's outdir. CSVs use ", " separators.
+# A 5h-session-limit interruption mid-cell leaves some task JSONs written and
+# others missing. We resume by editing the prompt to ask claude for ONLY the
+# remaining task ids — saves a re-do of already-finished tasks.
+task_split() {
+  local outdir="$1"
+  local done_csv="" remaining_csv=""
+  for t in L1 L2 M1 M2 H1 H2; do
+    if [[ -f "$outdir/$t.json" ]]; then
+      [[ -n "$done_csv" ]] && done_csv+=", "
+      done_csv+="$t"
+    else
+      [[ -n "$remaining_csv" ]] && remaining_csv+=", "
+      remaining_csv+="$t"
+    fi
+  done
+  printf '%s|%s\n' "$done_csv" "$remaining_csv"
+}
+
+_cleanup_resume_prompt() {
+  if [[ -n "${tmp_prompt:-}" && -f "$tmp_prompt" ]]; then
+    rm -f "$tmp_prompt"
+  fi
+}
+
 run_cell() {
   local alias="$1"
   local rerun="$RERUN_ROOT/$alias"
@@ -104,25 +129,49 @@ run_cell() {
     return 0
   fi
 
+  # Build the effective prompt. If 1-5 tasks already exist (e.g., the
+  # previous session hit Claude Code's 5h limit mid-cell), substitute the
+  # task list with only the remaining task ids and prepend a RESUME header
+  # so the agent doesn't redo finished tasks.
+  local effective_prompt="$prompt"
+  local tmp_prompt=""
+  trap _cleanup_resume_prompt RETURN
+  local done_csv="" remaining_csv=""
+  if [[ "$existing" -gt 0 && "$FORCE" -ne 1 ]]; then
+    IFS='|' read -r done_csv remaining_csv < <(task_split "$outdir")
+    if [[ -n "$remaining_csv" ]]; then
+      tmp_prompt="$(mktemp -t agent-context-claude-prompt-XXXXXX)"
+      {
+        echo "RESUME: a prior claude session in this cell already wrote result JSONs for: $done_csv."
+        echo "ONLY do the remaining tasks: $remaining_csv. Do NOT redo the already-completed tasks."
+        echo
+      } > "$tmp_prompt"
+      sed "s/(L1, L2, M1, M2, H1, H2)/($remaining_csv)/g" "$prompt" >> "$tmp_prompt"
+      effective_prompt="$tmp_prompt"
+    fi
+  fi
+
   cat <<BANNER
 
 =================================================================
 [$alias][claude/$CONDITION]   ($existing/6 existing, target 6)
 cwd:    $cwd
 prompt: $prompt
+$([[ -n "$tmp_prompt" ]] && echo "resume: $tmp_prompt (only $remaining_csv)")
 out:    $outdir
 log:    $logdir/$started.log
 =================================================================
 BANNER
 
   if [[ -n "$CLIP" ]]; then
-    if eval "$CLIP" < "$prompt"; then
-      echo "✓ Prompt copied to clipboard ($(wc -c <"$prompt" | tr -d ' ') bytes). Paste with cmd-V into claude."
+    if eval "$CLIP" < "$effective_prompt"; then
+      echo "✓ Prompt copied to clipboard ($(wc -c <"$effective_prompt" | tr -d ' ') bytes). Paste with cmd-V into claude."
+      [[ -n "$tmp_prompt" ]] && echo "  (RESUME prompt — only $remaining_csv; previously: $done_csv)"
     else
-      echo "(clipboard copy failed — cat the prompt manually:  cat '$prompt')"
+      echo "(clipboard copy failed — cat the prompt manually:  cat '$effective_prompt')"
     fi
   else
-    echo "(no clipboard tool found — cat the prompt manually:  cat '$prompt')"
+    echo "(no clipboard tool found — cat the prompt manually:  cat '$effective_prompt')"
   fi
 
   cat <<'GUIDE'
