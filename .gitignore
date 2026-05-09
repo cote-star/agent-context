@@ -33,11 +33,15 @@ node_modules/
 # dotfiles like .env.example should still be tracked for the example
 !examples/hello-service/.env.example
 
-# Private/local experiment harnesses and browser artifacts. These files may
-# exist on a maintainer machine for ongoing research, but they are not part of
-# the public product repo.
+# Private/local artifacts (per-machine research, browser captures, etc.) — not
+# part of the public product repo.
 docs/experiments/
-scripts/experiments/
-experiments/
+/experiments/
 .playwright-mcp/
 agent-context-rethink-title.png
+
+# scripts/experiments/ is intentionally TRACKED — it holds the public,
+# reproducible methodology (schema, extractors, lane runners, judges).
+# Local-only artifacts inside it stay ignored:
+scripts/experiments/__pycache__/
+scripts/experiments/*.pyc
