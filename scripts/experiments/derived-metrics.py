@@ -69,6 +69,18 @@ PACK_CURRENT_PREFIX = ".agent-context/current/"
 # Result discovery
 # ---------------------------------------------------------------------------
 
+_ARCHIVE_NAME_FRAGMENTS = ("-before-", "-archive", "-stray", "-pre-")
+_SKIP_PREFIX = "_"
+
+
+def _is_active_repo(repo_dir_name: str) -> bool:
+    """True when a repo-like subdir is a live rerun (vs. archive/quarantine)."""
+    if repo_dir_name.startswith(_SKIP_PREFIX):
+        return False
+    lower = repo_dir_name.lower()
+    return not any(frag in lower for frag in _ARCHIVE_NAME_FRAGMENTS)
+
+
 def discover_results(results_dir: pathlib.Path) -> list[pathlib.Path]:
     """Glob result JSONs in the canonical rerun layout, skipping judge sidecars.
 
@@ -81,6 +93,10 @@ def discover_results(results_dir: pathlib.Path) -> list[pathlib.Path]:
     no-model layout. Grouping by (agent, model_id, condition, repo) handles
     both — model_id comes from the per-result JSON's `model_id` field, not
     the path.
+
+    Archive/quarantine sibling directories (e.g., `_quarantine`,
+    `agent-chorus-before-pack-fix-20260504T155205Z`) are skipped via a
+    repo-name allowlist so historical results don't contaminate metrics.
     """
     paths: list[pathlib.Path] = []
     seen: set[pathlib.Path] = set()
@@ -89,6 +105,15 @@ def discover_results(results_dir: pathlib.Path) -> list[pathlib.Path]:
     for pattern in ("*/results/*/*/*.json", "*/results/*/*/*/*.json"):
         for p in results_dir.glob(pattern):
             if p.name.endswith(".judge.json"):
+                continue
+            # Reject archives by walking up to the repo dir (the path component
+            # immediately before "results").
+            try:
+                results_idx = p.parts.index("results")
+            except ValueError:
+                continue
+            repo_name = p.parts[results_idx - 1]
+            if not _is_active_repo(repo_name):
                 continue
             if p in seen:
                 continue
@@ -306,24 +331,30 @@ def _ground_truth_required_recall(row: dict[str, Any]) -> float | None:
 
 
 def _verification_shortcut_hit_rate(row: dict[str, Any]) -> float | None:
-    """Fraction of the cell's verification-shortcut paths the agent actually read.
+    """Fraction of the cell's verification-shortcut paths the agent visited.
 
     The pack's `search_scope.json` lists path-targeted verification shortcuts
-    per task family (e.g., "look at src/server.py for HelloHandler"). The
-    extractor stamps that list onto each result as `verification_shortcut_paths`.
-    Hit rate = how many of those the agent's source-read events actually
-    touched. Null when the field is missing/empty (bare condition, or pre-v3).
+    per task family. "Visiting" = either reading (when source_read_events is
+    populated) OR citing (when the agent self-reports citations). Citations
+    matter because cursor-agent doesn't expose ordered events but does
+    self-report citation paths, and a cited shortcut path is unambiguous
+    evidence the agent consulted it.
     """
     shortcuts = row.get("verification_shortcut_paths")
     if not shortcuts:
         return None
-    read_paths: set[str] = set()
+    visited: set[str] = set()
     for ev in row.get("source_read_events") or []:
         if isinstance(ev, dict):
             p = ev.get("path")
             if isinstance(p, str):
-                read_paths.add(p)
-    hits = sum(1 for p in shortcuts if p in read_paths)
+                visited.add(p)
+    for c in row.get("citations") or []:
+        if isinstance(c, dict):
+            p = c.get("path")
+            if isinstance(p, str):
+                visited.add(p)
+    hits = sum(1 for p in shortcuts if p in visited)
     return hits / len(shortcuts)
 
 
