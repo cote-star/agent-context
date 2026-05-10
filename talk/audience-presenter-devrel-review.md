@@ -1,5 +1,7 @@
 # Deck review: Cursor Meetup, May 2026
 
+> **Historical document — superseded.** This review captured the audit that drove the *previous* deck rewrite. The current 21-slide deck is governed by the **2026-05-10 audit** in `talk/deck-audit-2026-05-10.md`, which adds per-agent deep-dive slides, a methodology slide, and a comparison-to-prior-art slide. Keep this doc as a back-reference for the earlier framing decisions.
+
 ## Audience perspective
 
 The original deck had strong ingredients but opened with project vocabulary before audience pain. A meetup audience needs to know, in the first minute, why this matters to their Cursor workflow.
