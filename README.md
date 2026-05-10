@@ -68,13 +68,32 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 
 ## Results
 
-### Quantified evidence (78-graded run set)
+### Q2 2026 multi-agent rerun — current evidence
 
-78+ reviewer-graded runs across three real repos — an ML pipeline (501 files), a dual Rust/Node.js CLI (155 files), and a React frontend (1,982 files) — with grep-backed verification of every answer.
+**252 graded answers across 48 cells**: 6 repos × 4 model variants × bare/structured × 6 tasks. Fresh-pack isolated protocol — every `structured_fresh` clone passed `agent-context verify` + strict `check_freshness.sh` before the agent started.
 
-**Freshness is the quality gate.** A May 2 2026 one-shot rerun used a stale pack and produced muddled numbers — that result is recategorized as a maintenance failure, not a product result. Fresh-pack evidence uses an isolated `bare` vs `structured_fresh` protocol maintained outside the public repo, where every structured run must pass `agent-context verify` and the strict `.agent-context/tools/check_freshness.sh` gate before the agent starts.
+| Agent / Model | Bare yes-rate | Structured yes-rate | Δ |
+|---|---:|---:|---:|
+| **Claude Opus 4.7** | 80% (4.80/6) | **100% (6.00/6)** | +20pp |
+| **Cursor `claude-opus-4-7-medium`** | 89% (5.33/6) | **97% (5.83/6)** | +8pp |
+| **Cursor `composer-2-fast`** | 61% (3.67/6) | **81% (4.83/6)** | +20pp |
+| **Codex CLI 0.130.0** | 72% (4.33/6) | **78% (4.67/6)** | +6pp |
 
-| Metric | Bare session | With agent-context | Change |
+**Claude Opus + structured pack: 6/6 perfect across all 6 repos.** Cursor `composer-2-fast` (the default) gains the most absolute lift; Cursor Opus medium and Codex are already strong on bare.
+
+**Production-risk drops to zero** with structured for codex and cursor opus medium (`risk_flag` per 6 tasks, mean): codex 0.33 → **0.00**; cursor opus 0.50 → **0.00**.
+
+**Cursor Opus medium duration cut 65%** under structured (median 219s → 78s per task) — the search-and-verify pattern collapses to direct reads when the pack guides navigation.
+
+Grading is **LLM-provisional** via independent Claude Code subagents (one subagent per cell, fresh context, no human spot-audit). Anomalies preserved in the writeup rather than masked. Full disclosure: [methodology](docs/evidence/metrics.md#methodology-and-disclosure).
+
+→ [Full Q2 2026 results](docs/evidence/results.md#q2-2026-multi-agent-rerun-current-evidence) · [headline metrics](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
+
+### Historical reference (78-graded run set, March/April 2026)
+
+The pre-Q2-2026 evidence: 78+ reviewer-confirmed grades across three repos (ml-pipeline-reference, agent-chorus, react-frontend-reference). Headline numbers preserved for comparison; superseded as the lead claim by the Q2 rerun above.
+
+| Metric | Bare | With agent-context | Change |
 |---|---:|---:|---:|
 | Correct answers | 50% | 88% | **+76%** |
 | Files opened by Claude (3-repo avg) | 6.3 | 1.9 | **~70% fewer** |
@@ -82,26 +101,11 @@ It is **not** a memory database, orchestrator, crawler, or hosted service. No se
 | Dead ends | 2–3 per repo | 0 | **eliminated** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
-### Per-agent evidence (current rerun)
-
 ![agent-context proof summary — per-agent + historical](docs/visuals/proof-results.svg)
 
-Telemetry differs by tool, so the per-agent table reports each agent's strongest measured signal — not one blended scoreboard.
+(The visual summarises the historical 3-repo run set; an updated 6-repo Q2 figure is on the v0.5 roadmap.)
 
-| Agent | Metric | Bare | With agent-context | Change |
-|---|---|---:|---:|---:|
-| **Claude** (3-repo avg) | Files opened / task | 6.3 | 1.9 | **~70% fewer** |
-| **Claude** (3-repo avg) | Tokens / task | 38.6K | 13.1K | **~66% fewer** |
-| **Codex** (6-task cell rerun) | Tokens / 6-task cell | 163K | 130K | **20% fewer** |
-| **Codex** (6-task cell rerun) | Risk flags | 12 | 6 | **50% reduction** |
-| **Codex** (6-task cell rerun) | Files opened / task | 7.7 | 7.1 | **7% fewer** |
-| **Cursor** (6-task cell rerun) | Dead ends / task | 0.24 | 0.07 | **71% fewer** |
-| **Cursor** (6-task cell rerun) | Files opened / task | 3.6 | 2.7 | **25% fewer** |
-| **Cursor** (6-task cell rerun) | Risk flags | 14 | 10 | **29% reduction** |
-
-**Other agents read the same pack.** Gemini, OpenCode (with local OSS or Anthropic backend), and any agent that consumes `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules` route through the same dual architecture (trust-and-follow vs search-and-verify). Measured runs only exist for Claude, Codex, and Cursor today; the artifact set is the same.
-
-→ [Full results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
+**Other agents read the same pack.** Gemini, OpenCode (with local OSS or Anthropic backend), and any agent that consumes `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules` route through the same dual architecture (trust-and-follow vs search-and-verify). Measured runs exist for Claude, Codex, and Cursor (composer-2-fast and claude-opus-4-7-medium); the artifact set is the same for every agent.
 
 ### Definitions
 
