@@ -309,13 +309,13 @@ td.r, th.r { text-align: right; }
 
 /* ---------- Speaker intro slide ---------- */
 .identity {
-  display: flex; align-items: flex-end; gap: 22px;
-  padding-bottom: 14px;
+  display: flex; align-items: flex-end; gap: 18px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--border-soft);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 .identity .photo {
-  width: 116px; height: 116px;
+  width: 96px; height: 96px;
   border-radius: 12px;
   border: 1px solid var(--border);
   flex-shrink: 0;
@@ -332,7 +332,7 @@ td.r, th.r { text-align: right; }
 .identity .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .identity h1 {
   margin: 0;
-  font-size: 44px; font-weight: 800; letter-spacing: -.015em;
+  font-size: 38px; font-weight: 800; letter-spacing: -.015em;
   color: var(--fg); line-height: 1;
 }
 .identity .subtitle {
@@ -344,7 +344,7 @@ td.r, th.r { text-align: right; }
 .identity .journey b { color: var(--fg-mid); font-weight: 500; }
 .identity .contacts { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 .identity .qr {
-  width: 88px; height: 88px;
+  width: 72px; height: 72px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: #fff;
@@ -361,15 +361,15 @@ td.r, th.r { text-align: right; }
   border-bottom: 1px solid var(--green-line);
 }
 .tagline {
-  font-size: 18px; color: var(--fg);
-  margin: 0 0 10px;
+  font-size: 16px; color: var(--fg);
+  margin: 0 0 8px;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.3;
   max-width: 1000px;
 }
 .tagline em { color: var(--fg-mid); font-style: normal; }
 .split {
-  flex: 0 0 344px; min-height: 0;
+  flex: 0 0 334px; min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
@@ -378,7 +378,7 @@ td.r, th.r { text-align: right; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 14px 18px 12px;
+  padding: 12px 14px 10px;
   display: flex; flex-direction: column;
   position: relative;
   overflow: hidden;
@@ -394,7 +394,7 @@ td.r, th.r { text-align: right; }
 .context-card .cc-head {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .context-card .cc-tag {
   font-family: var(--mono); font-size: 11px;
@@ -408,14 +408,14 @@ td.r, th.r { text-align: right; }
   letter-spacing: .04em;
 }
 .context-card .cc-lede {
-  font-size: 14px; color: var(--fg-mid); margin: 0 0 8px;
-  line-height: 1.45;
+  font-size: 13.2px; color: var(--fg-mid); margin: 0 0 7px;
+  line-height: 1.35;
 }
 .context-card .cc-lede strong { color: var(--fg); font-weight: 600; }
-.stat-list { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-direction: column; gap: 6px; }
+.stat-list { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-direction: column; gap: 5px; }
 .stat-list li {
   display: flex; align-items: baseline; gap: 12px;
-  padding: 6px 10px;
+  padding: 6px 9px;
   background: rgba(255,255,255,.018);
   border: 1px solid var(--border-soft);
   border-radius: 6px;
@@ -423,16 +423,16 @@ td.r, th.r { text-align: right; }
 .stat-list li::before { display: none; }
 .stat-list .num {
   font-family: var(--mono); font-weight: 700;
-  font-size: 18px;
+  font-size: 15.5px;
   color: var(--fg); letter-spacing: -.01em;
-  min-width: 130px;
+  min-width: 124px;
 }
 .context-card.work .stat-list .num { color: var(--orange); }
 .stat-list .lbl { font-size: 13px; color: var(--fg-mid); flex: 1; }
 .stat-list .lbl b { color: var(--fg); font-weight: 600; }
-.oss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.oss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; flex: 1; }
 .oss-entry {
-  padding: 10px 12px;
+  padding: 9px 11px;
   background: rgba(255,255,255,.018);
   border: 1px solid var(--border-soft);
   border-left: 2px solid var(--green-line);
@@ -451,17 +451,17 @@ td.r, th.r { text-align: right; }
   color: var(--fg-faint); letter-spacing: .14em; text-transform: uppercase;
 }
 .oss-entry .oss-desc {
-  font-size: 12.8px; color: var(--fg-mid); line-height: 1.42;
+  font-size: 12.2px; color: var(--fg-mid); line-height: 1.34;
 }
 .oss-entry .oss-desc b { color: var(--fg); font-weight: 600; }
-.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--border-soft); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; padding-top: 6px; border-top: 1px dashed var(--border-soft); }
 .context-card.work .chip { color: var(--orange); border-color: var(--orange-line); background: var(--orange-soft); }
 .context-card.play .chip { color: var(--green); border-color: var(--green-line); background: var(--green-soft); }
 .bridge {
-  margin-top: 10px;
+  margin-top: 8px;
   display: flex; align-items: center; justify-content: center;
   gap: 16px;
-  padding: 8px 16px;
+  padding: 6px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: linear-gradient(180deg, rgba(16,185,129,.06) 0%, rgba(249,115,22,.06) 100%);
@@ -761,14 +761,14 @@ td.r, th.r { text-align: right; }
         <span class="cc-org">Edelman</span>
       </div>
       <p class="cc-lede">
-        Leading Edelman's shift from model experiments to <strong>agentic platforms</strong> —
-        systems that connect communications intelligence, workflow automation,
-        evaluation, and measurement.
+        Building <strong>agentic platforms</strong> for communications:
+        listening and new media signals, agentic PR workflows, and
+        measurement that connects activity to outcomes.
       </p>
       <ul class="stat-list">
-        <li><span class="num">Comms futures</span><span class="lbl">listening, new media, and agentic PR workflows</span></li>
-        <li><span class="num">Attribution</span><span class="lbl">econometric links from earned media to outcomes and brand lift</span></li>
-        <li><span class="num">Agentic platform</span><span class="lbl">context, evaluation, cost controls, and workflow integration</span></li>
+        <li><span class="num">Comms futures</span><span class="lbl">listening, new media, and agentic PR</span></li>
+        <li><span class="num">Attribution</span><span class="lbl">earned media to outcomes and brand lift</span></li>
+        <li><span class="num">Platforms</span><span class="lbl">context, evaluation, controls, workflows</span></li>
       </ul>
       <div class="chip-row">
         <span class="chip">Agentic PR</span>
@@ -784,7 +784,8 @@ td.r, th.r { text-align: right; }
         <span class="cc-org">github.com/cote-star</span>
       </div>
       <p class="cc-lede">
-        Two more projects I ship around <code style="font-family:var(--mono);color:var(--green);background:var(--green-soft);border:1px solid var(--green-line);padding:1px 6px;border-radius:4px;font-size:.92em;">agent-context</code> — one for agent evidence, one for local control.
+        Two projects around <code style="font-family:var(--mono);color:var(--green);background:var(--green-soft);border:1px solid var(--green-line);padding:1px 6px;border-radius:4px;font-size:.92em;">agent-context</code>:
+        one for agent evidence, one for local control.
       </p>
       <div class="oss-list">
         <div class="oss-entry">
@@ -793,8 +794,8 @@ td.r, th.r { text-align: right; }
             <span class="oss-tag">Session evidence layer</span>
           </div>
           <div class="oss-desc">
-            A single <b>read / search / compare</b> surface across Claude, Codex, Cursor, and Gemini sessions.
-            It turns agent work into inspectable evidence: timelines, diffs, citations, and cross-agent QA.
+            A <b>read / search / compare</b> surface across Claude, Codex, Cursor, and Gemini:
+            timelines, diffs, citations, and cross-agent QA.
           </div>
         </div>
         <div class="oss-entry">
@@ -803,8 +804,8 @@ td.r, th.r { text-align: right; }
             <span class="oss-tag">Local control plane</span>
           </div>
           <div class="oss-desc">
-            A workstation daemon for trusted local agent workflows: approvals, environment boundaries,
-            and repeatable access to the tools an agent needs without making every session ad hoc.
+            A workstation control plane for trusted local agent workflows:
+            approvals, boundaries, and repeatable tool access.
           </div>
         </div>
       </div>
