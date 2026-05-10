@@ -107,25 +107,26 @@ tests/test_result_schema.py
 
 ## Test 4: Diagnosis
 
-**Question:** "After my last commit, the deck renders without theme — every slide looks broken. Where do I look?"
+**Question:** "`tests/test_skill_sync.py` is failing on CI — what diverged and how do I fix it?"
 
-**Pack-only diagnosis plan (from `10_SYSTEM_OVERVIEW.md` Silent Failure Modes + `30_BEHAVIORAL_INVARIANTS.md` invariant 7 + `20_CODE_MAP.md` row 11):**
+**Pack-only diagnosis plan (from `30_BEHAVIORAL_INVARIANTS.md` invariant 1 + `20_CODE_MAP.md` Quick Lookup Shortcuts + `40_OPERATIONS_AND_RELEASE.md` Validation Commands):**
 
-The pack flags this exact failure mode by name: "Marp frontmatter unrecognized — Deck renders without theme/pagination — every slide looks broken. Root cause: YAML frontmatter not on line 1 (e.g., HTML comment placed before it). See `talk/cursor-meetup-may-2026.md` line 1 — frontmatter must be first."
+The pack flags this failure mode by name: "Template drift — `tests/test_skill_sync.py` fails; `init` copies a stale template — Edit to `templates/` not mirrored to `skills/agent-context/templates/` (forgot `scripts/sync-from-canonical.sh`)."
 
 Investigation steps (in this order):
-1. Open `talk/cursor-meetup-may-2026.md` and confirm line 1 is `---` (start of YAML frontmatter), not an HTML comment.
-2. If a comment block is present, move it below the closing `---` of the frontmatter.
-3. Re-render: `npx --yes @marp-team/marp-cli@latest talk/cursor-meetup-may-2026.md -o talk/cursor-meetup-may-2026.html`.
-4. Re-render PDF and refresh `talk/index.html`.
+1. Read what `tests/test_skill_sync.py` compares: byte-equality between `templates/` ↔ `skills/agent-context/templates/`, `tools/` ↔ `skills/agent-context/tools/`, and `SKILL.md` ↔ `skills/agent-context/SKILL.md`.
+2. Run `git diff --stat templates/ skills/agent-context/templates/` to see which file diverged.
+3. Run `scripts/sync-from-canonical.sh` to mirror the canonical onto the skill copy.
+4. Re-run: `python3 -m unittest tests.test_skill_sync` — must pass.
+5. Commit the mirror update together with the canonical edit.
 
-**Source verification:** The pack named the root cause directly without requiring any source-tree exploration. Verified by reading `talk/cursor-meetup-may-2026.md` line 1: `---` (frontmatter on line 1, comment block at line 125 — correct ordering after the recent fix).
+**Source verification:** The pack named the root cause and the fix directly without requiring source-tree exploration. Verified by reading `tests/test_skill_sync.py:35` (the assertion: "Update one to match the other so the installable skill stays in sync") and `tests/test_skill_sync.py:54` ("templates/ file lists differ between repo root and the installable skill").
 
 | Metric | Value |
 |---|---|
-| Pack pointed to correct subsystem? | yes (`talk/cursor-meetup-may-2026.md`) |
-| Pack avoided dead ends? | yes (no exploration into `bin/`, `tools/`, `scripts/` needed) |
-| Files opened to verify | 1 (the deck source) |
+| Pack pointed to correct subsystem? | yes (`scripts/sync-from-canonical.sh` + `tests/test_skill_sync.py`) |
+| Pack avoided dead ends? | yes (no exploration into `bin/`, `scripts/experiments/`, or the runtime needed) |
+| Files opened to verify | 1 (`tests/test_skill_sync.py`) |
 | Additional files needed beyond pack guidance | 0 |
 
 ---
@@ -141,4 +142,8 @@ Investigation steps (in this order):
 
 **Overall:** all pass.
 
-**Iterations:** 1 pack-content correction was made before all tests passed — invariant #2 originally listed `RELEASE_NOTES.md` as test-enforced, but `tests/test_version_drift.py` actually enforces `README.md` (badge URL). Updated `00_START_HERE.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, `routes.json`, and `completeness_contract.json` to match. Test 2 then passed.
+**Iterations:** 2 pack-content corrections before all tests passed.
+
+1. Invariant #2 originally listed `RELEASE_NOTES.md` as test-enforced, but `tests/test_version_drift.py` actually enforces `README.md` (badge URL). Updated `00_START_HERE.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, `routes.json`, and `completeness_contract.json`. Test 2 then passed.
+
+2. After publishing the v2 hand-authored HTML deck, every Marp reference in the pack (high-impact path #11, `Edit deck` route, "Marp frontmatter on line 1" invariant, `npx marp-cli` validation command) became stale. Updated `00_START_HERE.md`, `10_SYSTEM_OVERVIEW.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, and replaced Test 4's diagnosis question (Marp frontmatter → skill-sync drift). Test 4 then passed against the new diagnosis path.

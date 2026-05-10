@@ -99,7 +99,7 @@
       ]
     },
     "deck_work": {
-      "description": "Editing the meetup deck source. HTML/PDF/index.html are derived artifacts — re-render together after every edit.",
+      "description": "Editing the meetup deck. talk/cursor-meetup-may-2026.html is the hand-authored source. talk/index.html and talk/cursor-meetup-may-2026.pdf are derived — refresh together after every edit.",
       "search_directories": [
         "talk",
         "docs/visuals",
@@ -112,13 +112,14 @@
         "skills",
         "scripts",
         "tests",
-        "examples"
+        "examples",
+        "talk/archive"
       ],
       "verification_shortcuts": [
         {
-          "check": "Marp YAML frontmatter is on line 1 of the source",
-          "file": "talk/cursor-meetup-may-2026.md",
-          "look_for": "marp: true"
+          "check": "PDF render script targets the canonical HTML",
+          "file": "talk/render-pdf.sh",
+          "look_for": "cursor-meetup-may-2026.html"
         }
       ]
     },

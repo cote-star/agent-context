@@ -8,7 +8,7 @@
 |---|---|
 | Product | `agent-context` — CLI + installable Claude skill that scaffolds, verifies, and maintains checked-in `.agent-context/` packs in a target repo |
 | Languages | Python 3 (CLI + verifier — stdlib only, no runtime deps), Bash (freshness gate, hooks, experiments lane runners) |
-| Package manager | None (Python stdlib + Bash). `npx @marp-team/marp-cli` is used only to render the `talk/` deck. |
+| Package manager | None (Python stdlib + Bash). The `talk/` deck is hand-authored HTML; the PDF is rendered via headless Chrome from `talk/render-pdf.sh`. |
 | Quality gate | `python3 -m unittest discover -s tests -v`; `bin/agent-context verify <repo>` against the bundled examples; `tools/check_freshness.sh` (advisory) |
 | Core risk | Drift between canonical `templates/` + `tools/` + `SKILL.md` and their `skills/agent-context/` mirrors — `scripts/sync-from-canonical.sh` keeps them aligned, `tests/test_skill_sync.py` enforces. Version drift across `bin/agent-context` `__version__`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, and the `README.md` version badge URL is enforced by `tests/test_version_drift.py`. |
 | Version | Pinned in `bin/agent-context` (`__version__`), `SKILL.md` frontmatter (`metadata.version`), `skills/agent-context/SKILL.md` frontmatter, and `README.md` (`![Version]...badge/version-X.Y.Z-...`). Currently 0.3.1. `RELEASE_NOTES.md` carries the human-facing release log (convention, not test-enforced). |
@@ -43,4 +43,6 @@ If the pack answers your question, do not open additional files. If it does not,
 - `examples/hello-service/` and `examples/agent-chorus-reference/` — listed in `20_CODE_MAP.md` but not deeply unpacked here. They are reference packs, not toolchain code. Open them only when you need to see what a filled pack looks like.
 - `docs/evidence/figures/` and `docs/visuals/` images (PNG/SVG) — rendered artifacts, not source-of-truth.
 - `talk/Portable_Agent_Context.pdf`, `talk/notebooklm-hero-reference.png` — NotebookLM design references, not the live deck.
-- `talk/cursor-meetup-may-2026.html`, `talk/cursor-meetup-may-2026.pdf`, `talk/index.html` — derived from `talk/cursor-meetup-may-2026.md` via marp-cli; never edit directly.
+- `talk/cursor-meetup-may-2026.html` is the deck source-of-truth (hand-authored HTML + CSS, deep-navy theme).
+- `talk/index.html` is a byte-identical copy of `talk/cursor-meetup-may-2026.html` for GitHub Pages — refresh with `cp` after edits, never edit directly.
+- `talk/cursor-meetup-may-2026.pdf` is rendered from the HTML via `talk/render-pdf.sh` (headless Chrome). Don't edit directly.

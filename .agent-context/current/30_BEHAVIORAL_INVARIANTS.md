@@ -14,7 +14,7 @@
 
 6. **Tier 3 = exactly 11 pack files.** `bin/agent-context init --tier 3` produces 11 files in `.agent-context/current/`. The mapping is encoded in `bin/agent-context`'s `tier_files()` helper and validated by `tests/test_init_tiers.py`. (Tier 1 = 2, Tier 2 = 6, Tier 3 = 11.)
 
-7. **Marp frontmatter must be on line 1 of `talk/cursor-meetup-may-2026.md`.** If the YAML block is preceded by anything (HTML comment, blank line), Marp parses `---/.../---` as a setext H2 instead of frontmatter and the entire deck silently loses its theme. This is documented in `20_CODE_MAP.md` (high-impact path #11) and the deck source's leading comment (placed *after* the frontmatter for that reason).
+7. **Live deck artifacts ship together.** Editing `talk/cursor-meetup-may-2026.html` requires also refreshing `talk/index.html` (`cp` from canonical) and `talk/cursor-meetup-may-2026.pdf` (`talk/render-pdf.sh`). Committing the HTML edit alone leaves stale renders on GitHub Pages and stale handouts. (Marp source for the previous cream-theme deck lives in `talk/archive/cursor-meetup-may-2026-marp-source.md` for reference only.)
 
 ## Update Checklist
 
@@ -28,7 +28,7 @@
 | Edit freshness gate | `tools/check_freshness.sh`, `skills/agent-context/tools/check_freshness.sh` (via sync), `tests/test_freshness.py` |
 | Add a result-schema field | `scripts/experiments/result.schema.json`, `scripts/experiments/extract-events-from-chorus.py`, `scripts/experiments/extract-events-from-codex.py`, `tests/test_result_schema.py`, `tests/test_extract_events.py`, `tests/test_extract_events_codex.py`. Optional backfill: `scripts/experiments/apply-provenance.py`. |
 | Add a new agent extractor | `scripts/experiments/extract-events-from-<agent>.py`, `tests/test_extract_events_<agent>.py`. (Only touch `derived-metrics.py` if the new agent introduces a metric variant.) |
-| Edit deck text | `talk/cursor-meetup-may-2026.md` → re-render `talk/cursor-meetup-may-2026.html` and `talk/cursor-meetup-may-2026.pdf` → `cp talk/cursor-meetup-may-2026.html talk/index.html`. All four artifacts commit together. |
+| Edit deck content/design | `talk/cursor-meetup-may-2026.html` (canonical, hand-authored), then `cp` to `talk/index.html`, then `(cd talk && ./render-pdf.sh)` to refresh `talk/cursor-meetup-may-2026.pdf`. Commit all three together. |
 | Edit the SKILL fill flow | `SKILL.md`, `skills/agent-context/SKILL.md` (via sync), `tests/test_skill_sync.py` |
 
 ## File Families
@@ -56,8 +56,8 @@
 
 - **Do not enumerate gitignored content.** `.agent-chorus/`, `experiments/`, `docs/experiments/`, `__pycache__/`, `.playwright-mcp/`, and any `*.png` at the repo root are intentionally not part of the published artifact. They will not appear in `git ls-files`.
 - **Do not edit the `skills/agent-context/` mirror directly.** Edit the canonical (`templates/`, `tools/`, `SKILL.md`) and run `scripts/sync-from-canonical.sh`. Direct edits will be silently overwritten by the next sync and will fail `tests/test_skill_sync.py`.
-- **Do not edit `talk/cursor-meetup-may-2026.html`, `talk/cursor-meetup-may-2026.pdf`, or `talk/index.html` directly.** They are derived from `talk/cursor-meetup-may-2026.md` via `npx @marp-team/marp-cli`. Direct edits will be lost on the next render.
+- **`talk/cursor-meetup-may-2026.html` IS the canonical deck source — edit it directly.** Then `cp` to `talk/index.html` and run `talk/render-pdf.sh`. The HTML/index.html/PDF triplet ships together. Don't edit `index.html` or the PDF directly — those are derived.
 - **Do not edit `examples/hello-service/.agent-context/current/*` to demonstrate template changes.** Re-init with the updated templates: `agent-context init --force --tier 3 examples/hello-service` (it preserves filled content where possible — but the cleaner approach is to manually port any meaningful content).
 - **Do not enumerate the `tests/test_*.py` files individually when describing test coverage.** Report as a family ("13 unittest files"). Open a specific test only when modifying behavior it asserts.
-- **Do not move the YAML frontmatter in `talk/cursor-meetup-may-2026.md`.** It must stay on line 1. Any HTML comment block goes *after* the frontmatter, not before. (This was the cause of the all-broken-deck regression on 2026-05-10.)
+- **Do not bring back the Marp source as the deck source-of-truth.** It lives in `talk/archive/cursor-meetup-may-2026-marp-source.md` for reference only — the live deck is hand-authored HTML. Editing the archived `.md` does nothing. (Historical note: the Marp render also had a fragile YAML-frontmatter-on-line-1 dependency; that whole class of failure is moot now that the deck is hand-authored HTML.)
 - **Do not assume `docs/*.md` is recursive.** The verifier uses `pathlib.Path.glob()` which is non-recursive — `docs/*.md` matches the 6 top-level files, not files under `docs/evidence/` or `docs/references/`. Use `docs/**/*.md` if you really mean recursive.

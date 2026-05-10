@@ -100,12 +100,12 @@
       ]
     },
     "edit_deck": {
-      "description": "Change deck content or design. Re-render derived artifacts together.",
+      "description": "Change deck content or design. talk/cursor-meetup-may-2026.html is the canonical hand-authored source. Refresh the index.html copy and re-render the PDF in the same commit.",
       "contractually_required_files": [
-        "talk/cursor-meetup-may-2026.md",
         "talk/cursor-meetup-may-2026.html",
         "talk/cursor-meetup-may-2026.pdf",
-        "talk/index.html"
+        "talk/index.html",
+        "talk/render-pdf.sh"
       ]
     },
     "edit_ci_workflow": {
