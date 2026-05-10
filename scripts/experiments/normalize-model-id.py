@@ -34,6 +34,7 @@ from typing import Optional
 
 
 CODEX_SESSIONS_ROOT = pathlib.Path.home() / ".codex" / "sessions"
+CLAUDE_SESSIONS_ROOT = pathlib.Path.home() / ".claude" / "projects"
 TASK_ID_RE = re.compile(r"^(L1|L2|M1|M2|H1|H2)\.json$")
 
 
@@ -90,6 +91,75 @@ def _codex_canonical_model_id(payload: Optional[dict]) -> str:
     return "codex-cli"
 
 
+_CLAUDE_OPUS_PREFIX = "claude-opus-4-7"
+
+
+def _canonicalize_claude_model(model: str) -> str:
+    """Collapse Opus runtime-config variants (e.g., `claude-opus-4-7[1m]` for the
+    1M-context variant) onto the base model id. Other claude models (haiku,
+    sonnet, future opus revs) stay as-is so a real model swap is preserved.
+    """
+    if model.startswith(_CLAUDE_OPUS_PREFIX):
+        return _CLAUDE_OPUS_PREFIX
+    return model
+
+
+def _claude_canonical_model_for_cwd(target_cwd: str) -> Optional[str]:
+    """Walk recent claude session JSONLs; return the most-common assistant message.model
+    for the session whose envelope cwd matches target_cwd. Claude Code's interactive
+    runs sometimes report `claude-opus-4-7[1m]` (1M-context variant) in some messages
+    and `claude-opus-4-7` in others; we pick the modal value per session, then
+    canonicalize Opus variants together (haiku stays distinct).
+    """
+    if not CLAUDE_SESSIONS_ROOT.is_dir():
+        return None
+    candidates: list[tuple[float, pathlib.Path]] = []
+    for p in CLAUDE_SESSIONS_ROOT.rglob("*.jsonl"):
+        try:
+            candidates.append((p.stat().st_mtime, p))
+        except OSError:
+            continue
+    candidates.sort(reverse=True)
+    for _, p in candidates:
+        try:
+            with p.open("r", encoding="utf-8") as fh:
+                first = fh.readline()
+            obj = json.loads(first)
+        except (OSError, json.JSONDecodeError, ValueError):
+            continue
+        if obj.get("cwd") != target_cwd:
+            continue
+        # Tally message.model across all assistant entries.
+        counts: dict[str, int] = {}
+        try:
+            with p.open("r", encoding="utf-8") as fh:
+                for line in fh:
+                    try:
+                        ev = json.loads(line)
+                    except (json.JSONDecodeError, ValueError):
+                        continue
+                    if ev.get("type") != "assistant":
+                        continue
+                    msg = ev.get("message") or {}
+                    model = msg.get("model")
+                    if isinstance(model, str) and model:
+                        counts[model] = counts.get(model, 0) + 1
+        except OSError:
+            continue
+        if not counts:
+            return None
+        modal = max(counts.items(), key=lambda kv: kv[1])[0]
+        return _canonicalize_claude_model(modal)
+    return None
+
+
+def _result_cwd_for_claude(result_path: pathlib.Path, repo_dir: pathlib.Path) -> str:
+    """Same as codex: <repo>/<condition>/ is the claude lane cwd."""
+    parts = result_path.relative_to(repo_dir / "results").parts
+    condition = parts[1]
+    return str((repo_dir / condition).resolve())
+
+
 def _path_model_slug(result_path: pathlib.Path, results_root: pathlib.Path) -> Optional[str]:
     """If results_root/.../<agent>/<condition>/<slug>/<task>.json, return <slug>."""
     try:
@@ -116,6 +186,7 @@ def normalize_repo(repo_dir: pathlib.Path) -> dict[str, int]:
         "scanned": 0,
         "skipped_protected": 0,
         "codex_backfilled": 0,
+        "claude_backfilled": 0,
         "cursor_backfilled_from_slug": 0,
         "unchanged": 0,
         "errors": 0,
@@ -124,7 +195,8 @@ def normalize_repo(repo_dir: pathlib.Path) -> dict[str, int]:
     if not results_root.is_dir():
         return counters
 
-    codex_model_cache: dict[str, Optional[str]] = {}
+    codex_model_cache: dict[str, Optional[dict]] = {}
+    claude_model_cache: dict[str, Optional[str]] = {}
 
     for path in sorted(results_root.rglob("*.json")):
         if not TASK_ID_RE.match(path.name):
@@ -159,6 +231,25 @@ def normalize_repo(repo_dir: pathlib.Path) -> dict[str, int]:
             if canonical != current:
                 new_value = canonical
 
+        elif agent == "claude":
+            # Claude Code tags some messages as `claude-opus-4-7` and others
+            # `claude-opus-4-7[1m]` within a single session, plus the prompt
+            # asks the agent to populate model_id and it sometimes leaves it
+            # null. First normalize whatever's already there (strip Opus
+            # runtime-config suffixes); fall back to the session JSONL's
+            # modal model when the field is empty.
+            if current:
+                canonical = _canonicalize_claude_model(current)
+                if canonical != current:
+                    new_value = canonical
+            else:
+                cwd = _result_cwd_for_claude(path, repo_dir)
+                if cwd not in claude_model_cache:
+                    claude_model_cache[cwd] = _claude_canonical_model_for_cwd(cwd)
+                session_modal = claude_model_cache[cwd]
+                if session_modal:
+                    new_value = session_modal
+
         elif agent == "cursor":
             if not current:
                 slug = _path_model_slug(path, results_root)
@@ -173,6 +264,8 @@ def normalize_repo(repo_dir: pathlib.Path) -> dict[str, int]:
         path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
         if agent == "codex":
             counters["codex_backfilled"] += 1
+        elif agent == "claude":
+            counters["claude_backfilled"] += 1
         else:
             counters["cursor_backfilled_from_slug"] += 1
 
@@ -205,8 +298,9 @@ def main(argv: list[str]) -> int:
         c = normalize_repo(repo_dir)
         print(
             f"  {repo_dir.name}: scanned={c['scanned']} "
-            f"codex_backfilled={c['codex_backfilled']} "
-            f"cursor_backfilled={c['cursor_backfilled_from_slug']} "
+            f"codex={c['codex_backfilled']} "
+            f"claude={c['claude_backfilled']} "
+            f"cursor={c['cursor_backfilled_from_slug']} "
             f"unchanged={c['unchanged']} skipped_protected={c['skipped_protected']} "
             f"errors={c['errors']}"
         )
