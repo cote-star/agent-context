@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Stop Re-Teaching Your Repo to Every Coding Agent · Cursor Meetup, May 2026</title>
+<title>Stop Re-Teaching Your Systems to Every Coding Agent · Cursor Meetup, May 2026</title>
 <meta name="description" content="A concrete, checked-in workflow for portable agent context — Cursor, Claude, Codex, Gemini, OpenCode. Cursor Meetup Amsterdam, May 2026." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -520,18 +520,18 @@ td.r, th.r { text-align: right; }
   </div>
 
   <div class="body">
-    <div class="deck-mark">$ stop re-teaching your repo</div>
+    <div class="deck-mark">$ portable system context</div>
     <h1 class="title-xl">Stop Re-Teaching<br/>Your Repo to Every<br/><span style="color:var(--green)">Coding Agent.</span></h1>
 
     <p class="lead-p" style="max-width:920px;color:var(--fg-mid);">
       Make context <strong>portable</strong>, <strong>reviewable</strong>, <strong>fresh</strong>, and <strong>testable</strong> before the agent edits.
-      A concrete workflow for Cursor, Claude, Codex, Gemini, and OpenCode.
+      The repo is today's venue; the pattern applies to any system an agent must understand before acting.
     </p>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
-      <span class="chip green">Navigation track</span>
+      <span class="chip green">System navigation track</span>
       <span class="chip orange">.agent-context/</span>
-      <span class="chip">252 graded answers</span>
+      <span class="chip">288 graded answers</span>
       <span class="chip">6 repos · 4 model variants</span>
     </div>
 
@@ -618,12 +618,12 @@ td.r, th.r { text-align: right; }
     <div class="right">03 / 21</div>
   </div>
 
-  <h2><span class="lede">It's not the model</span>The failure is missing repo evidence.</h2>
+  <h2><span class="lede">It's not the model</span>The failure is missing system evidence.</h2>
 
   <div class="body">
-    <p class="lead-p">We already check in tests, docs, schemas, CI, runbooks, and migration history.</p>
+    <p class="lead-p">In software, we already check in tests, docs, schemas, CI, runbooks, and migration history.</p>
     <p style="font-size:17px;color:var(--fg);">
-      <strong>Agent context should be another checked-in repo artifact:</strong>
+      <strong>Agent context should be another reviewable system artifact:</strong>
       the map of what is true, risky, connected, and out-of-bounds.
     </p>
 
@@ -636,7 +636,7 @@ td.r, th.r { text-align: right; }
     <div class="spacer"></div>
     <div style="text-align:center;margin-top:8px;">
       <span class="chip green">The standard is simple</span>
-      <span style="font-size:22px;color:var(--fg);font-weight:500;margin-left:14px;">Read the repo map <em style="color:var(--green);">before</em> editing the repo.</span>
+      <span style="font-size:22px;color:var(--fg);font-weight:500;margin-left:14px;">Read the system map <em style="color:var(--green);">before</em> acting on the system.</span>
     </div>
   </div>
 </section>
@@ -648,20 +648,20 @@ td.r, th.r { text-align: right; }
     <div class="right">04 / 21</div>
   </div>
 
-  <h2><span class="lede">Pattern is bigger than code</span>Every serious corpus needs a navigation layer.</h2>
+  <h2><span class="lede">Not just repo recall</span>Every serious system needs a navigation layer.</h2>
 
   <div class="body">
-    <p>The dual-routing architecture generalizes to any file system or stable corpus an agent must explore before acting:</p>
+    <p>Code makes the problem visible. Portable context makes it general. The same pattern applies anywhere an agent must explore, verify, and act:</p>
 
     <div class="grid-4" style="margin-top:6px;">
-      <div class="card"><div class="k">01</div><div class="v">Stable datasets</div></div>
-      <div class="card"><div class="k">02</div><div class="v">Design systems</div></div>
-      <div class="card"><div class="k">03</div><div class="v">Operations runbooks</div></div>
+      <div class="card"><div class="k">01</div><div class="v">Data platforms</div></div>
+      <div class="card"><div class="k">02</div><div class="v">Customer accounts</div></div>
+      <div class="card"><div class="k">03</div><div class="v">Ops runbooks</div></div>
       <div class="card green"><div class="k">04 ← TODAY</div><div class="v"><strong>Code repositories</strong></div></div>
     </div>
 
     <div class="spacer"></div>
-    <p class="lead-p" style="text-align:center;">But today, we focus on where it hurts developers the most: <strong style="color:var(--green);">code repositories.</strong></p>
+    <p class="lead-p" style="text-align:center;">For this developer room, the system is a repo. The thesis is portable context for <strong style="color:var(--green);">any system with state, rules, risk, and work to do.</strong></p>
   </div>
 </section>
 
@@ -672,12 +672,12 @@ td.r, th.r { text-align: right; }
     <div class="right">05 / 21</div>
   </div>
 
-  <h2><span class="lede">The architecture</span>Explorable repo recall as a three-track system.</h2>
+  <h2><span class="lede">The architecture</span>Explorable system recall as a three-track pattern.</h2>
 
   <div class="body">
     <p style="color:var(--fg-mid);font-size:14.5px;margin-bottom:6px;">
       <strong style="color:var(--orange);font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;">Gloss · </strong>
-      <em>Explorable recall</em> = an agent can re-discover the same map any time, on its own, from checked-in repo artifacts.
+      <em>Explorable recall</em> = an agent can re-discover the same map any time, on its own, from reviewable system artifacts.
     </p>
     <p>agent-context works when <strong>navigation</strong>, <strong>operating loop</strong>, and <strong>engineering</strong> are treated as separate controls.</p>
 
@@ -976,7 +976,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 
   <div class="body">
     <div style="display:flex;gap:6px;flex-wrap:wrap;">
-      <span class="chip green">252 graded answers</span>
+      <span class="chip green">288 graded answers</span>
       <span class="chip">48 cells</span>
       <span class="chip">6 repos</span>
       <span class="chip">4 model variants</span>
@@ -1232,7 +1232,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     <div class="grid-2">
       <div class="card">
         <div class="k" style="color:var(--green);">Scope</div>
-        <div class="v small">252 graded tasks · 48 cells · 6 repos × 4 model variants × 2 conditions × 6 tasks. Same template across all repos.</div>
+        <div class="v small">288 graded tasks · 48 cells · 6 repos × 4 model variants × 2 conditions × 6 tasks. Same template across all repos.</div>
       </div>
       <div class="card">
         <div class="k" style="color:var(--green);">Grading</div>
@@ -1320,7 +1320,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 
     <div style="margin-top:auto;padding:12px 16px;border:1px solid var(--green-line);background:var(--green-soft);border-radius:8px;text-align:center;">
       <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">THE BARGAIN</span>
-      <div style="font-size:17px;color:var(--fg);margin-top:2px;">Spend a little repo-maintenance effort to <strong>stop every agent from rediscovering the same map.</strong></div>
+      <div style="font-size:17px;color:var(--fg);margin-top:2px;">Spend a little context-maintenance effort to <strong>stop every agent from rediscovering the same map.</strong></div>
     </div>
   </div>
 </section>
@@ -1369,10 +1369,10 @@ Changing this without updating cookie/v2 will fail silently in prod
   </div>
 
   <div class="body">
-    <div class="deck-mark">$ make context part of the repo</div>
-    <h1 class="title-xl">Make context<br/><span style="color:var(--green);">part of the repo.</span></h1>
+    <div class="deck-mark">$ make context part of the system</div>
+    <h1 class="title-xl">Make context<br/><span style="color:var(--green);">part of the system.</span></h1>
 
-    <p class="lead-p" style="max-width:880px;">Not a prompt trick. Not a vendor feature.<br/>A checked-in standard teams can review.</p>
+    <p class="lead-p" style="max-width:880px;">Not a prompt trick. Not a vendor feature.<br/>For developers, it starts in the repo. For teams, it becomes a reviewable system standard.</p>
 
     <div style="display:flex;gap:6px;flex-wrap:wrap;">
       <span class="chip orange"><code>init</code></span>
