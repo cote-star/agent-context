@@ -20,7 +20,7 @@ Usage:
   scripts/experiments/launch-tmux-batch.sh [--start] [--force] [--dry-run-lanes]
 
 Environment:
-  RERUN_ROOT=/custom/path   default: ~/agent-context-reruns/q2-2026-private
+  RERUN_ROOT=/path/to/rerun-root   required unless each lane is run manually
 
 Options:
   --start          Press Enter in all lanes immediately after creating tmux.
@@ -55,8 +55,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_LANE="$SCRIPT_DIR/run-agent-lane.sh"
 [[ -x "$RUN_LANE" ]] || die "lane runner is not executable: $RUN_LANE"
 
-RERUN_ROOT="${RERUN_ROOT:-$HOME/agent-context-reruns/q2-2026-private}"
+RERUN_ROOT="${RERUN_ROOT:-}"
 RERUN_ROOT="${RERUN_ROOT/#\~/$HOME}"
+[[ -n "$RERUN_ROOT" ]] || die "RERUN_ROOT is required"
 [[ -d "$RERUN_ROOT" ]] || die "rerun root not found: $RERUN_ROOT"
 
 SESSION="rerun-q2-batch"

@@ -11,7 +11,7 @@ their real name unchanged.
 
 Usage:
   scripts/experiments/scrub-aliases.py \\
-    --aliases ~/agent-context-reruns/q2-2026-private/aliases.json \\
+    --aliases /path/to/aliases.json \\
     --in <input-dir-or-file> \\
     --out <output-dir-or-file>
 

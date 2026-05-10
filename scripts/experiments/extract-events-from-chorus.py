@@ -56,7 +56,7 @@ Edge cases:
 
 Usage:
   scripts/experiments/extract-events-from-chorus.py \\
-    --rerun ~/agent-context-reruns/q2-2026-private/agent-chorus
+    --rerun /path/to/rerun-root/agent-chorus
 
   # Optional: feed ground-truth path arrays for one or more tasks. The value
   # may be a JSON file (output of parse-ground-truth.py) or a GROUND_TRUTH.md

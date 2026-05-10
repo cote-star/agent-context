@@ -15,8 +15,8 @@
 #   scripts/experiments/run-agent-lane.sh --agent codex --condition structured_fresh --force
 #
 # Defaults:
-#   RERUN_ROOT=$HOME/agent-context-reruns/q2-2026-private
-#   aliases=the active Q2 2026 seven-repo slate
+#   rerun root must be passed with --rerun-root or RERUN_ROOT
+#   aliases=the active public rerun slate
 
 set -euo pipefail
 
@@ -58,7 +58,7 @@ warn() { echo "WARN: $*" >&2; }
 AGENT=""
 CONDITION=""
 MODEL=""
-RERUN_ROOT="$HOME/agent-context-reruns/q2-2026-private"
+RERUN_ROOT="${RERUN_ROOT:-}"
 # org-second-brain dropped from default 2026-05-10 — interactive claude
 # session ran in circles without writing results; pack/EXPERIMENT setup
 # needs review before re-including. Other agents' results for that repo
@@ -111,6 +111,7 @@ if [[ -n "$MODEL" && "$AGENT" != "cursor" ]]; then
 fi
 
 RERUN_ROOT="${RERUN_ROOT/#\~/$HOME}"
+[[ -n "$RERUN_ROOT" ]] || die "rerun root required: pass --rerun-root PATH or set RERUN_ROOT"
 [[ -d "$RERUN_ROOT" ]] || die "rerun root not found: $RERUN_ROOT"
 
 case "$AGENT" in

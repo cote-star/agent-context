@@ -69,7 +69,8 @@ if [[ "${1:-}" == "" || "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 fi
 
 ALIAS="$1"
-RERUN_ROOT="${RERUN_ROOT:-$HOME/agent-context-reruns/q2-2026-private}"
+RERUN_ROOT="${RERUN_ROOT:-}"
+[[ -n "$RERUN_ROOT" ]] || die "RERUN_ROOT is required" 2
 RERUN_DIR="$RERUN_ROOT/$ALIAS"
 SESSION="rerun-$ALIAS"
 
