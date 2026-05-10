@@ -25,8 +25,15 @@ node_modules/
 
 # Local pack state in host repos that vendor agent-context — do not track
 # if someone clones this repo into another repo. The worked example's pack
-# under examples/hello-service/.agent-context/ is intentionally tracked.
+# under examples/hello-service/.agent-context/ AND this repo's own
+# self-applied pack at /.agent-context/current/ are intentionally tracked.
+# /.agent-context/tools/ is NOT tracked because the canonical tools live at
+# /tools/; the in-pack copies are runtime convenience only.
 .agent-context/
+!/.agent-context/
+!/.agent-context/current/
+!/.agent-context/current/**
+/.agent-context/tools/
 !examples/hello-service/.agent-context/
 !examples/hello-service/.agent-context/**
 

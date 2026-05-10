@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "description": "Task routing for the agent-context toolchain repo. Defaults map task types to pack read orders; named_patterns name common cross-cutting changes specific to this repo.",
+  "default_routes": {
+    "lookup": {
+      "read_order": [
+        ".agent-context/current/20_CODE_MAP.md",
+        ".agent-context/current/10_SYSTEM_OVERVIEW.md"
+      ],
+      "description": "Find a specific value, definition, config, or file location"
+    },
+    "impact_analysis": {
+      "read_order": [
+        ".agent-context/current/30_BEHAVIORAL_INVARIANTS.md",
+        ".agent-context/current/20_CODE_MAP.md"
+      ],
+      "description": "Determine which files must change for a given modification"
+    },
+    "planning": {
+      "read_order": [
+        ".agent-context/current/10_SYSTEM_OVERVIEW.md",
+        ".agent-context/current/20_CODE_MAP.md",
+        ".agent-context/current/30_BEHAVIORAL_INVARIANTS.md"
+      ],
+      "description": "Design a new feature or architectural change"
+    },
+    "diagnosis": {
+      "read_order": [
+        ".agent-context/current/10_SYSTEM_OVERVIEW.md",
+        ".agent-context/current/20_CODE_MAP.md"
+      ],
+      "description": "Debug an error, investigate a failure, or trace a code path"
+    },
+    "operations": {
+      "read_order": [
+        ".agent-context/current/40_OPERATIONS_AND_RELEASE.md"
+      ],
+      "description": "Run tests, deploy, manage migrations, or check CI"
+    }
+  },
+  "named_patterns": {
+    "bump_release_version": {
+      "description": "Cut a new agent-context release (vX.Y.Z).",
+      "steps": [
+        "Read 30_BEHAVIORAL_INVARIANTS.md → 'Bump CLI version' row of the Update Checklist",
+        "Edit bin/agent-context (__version__), SKILL.md (frontmatter metadata.version), skills/agent-context/SKILL.md (frontmatter metadata.version), and README.md (badge URL badge/version-X.Y.Z-...) — all four are test-enforced by tests/test_version_drift.py",
+        "Add a RELEASE_NOTES.md entry under the new version heading (convention, not test-enforced)",
+        "Run python3 -m unittest tests.test_version_drift — must pass",
+        "Tag vX.Y.Z and push (tag triggers .github/workflows/release.yml)"
+      ]
+    },
+    "edit_canonical_template": {
+      "description": "Modify a markdown or JSON file under templates/ that ships with the CLI.",
+      "steps": [
+        "Edit templates/<file>",
+        "Run scripts/sync-from-canonical.sh to mirror the change into skills/agent-context/templates/<file>",
+        "Run python3 -m unittest tests.test_skill_sync tests.test_init_tiers — both must pass",
+        "If the change is structurally significant for the verifier, add coverage in tests/test_verify.py and tests/test_verifier_failures.py"
+      ]
+    },
+    "add_cli_subcommand": {
+      "description": "Add a new top-level subcommand to bin/agent-context.",
+      "steps": [
+        "Edit bin/agent-context (subparser, handler function)",
+        "Update SKILL.md and skills/agent-context/SKILL.md if the subcommand changes the operator/agent flow",
+        "Add coverage in tests/test_cli_smoke.py",
+        "If user-facing: update README.md CLI section"
+      ]
+    },
+    "add_result_schema_field": {
+      "description": "Extend scripts/experiments/result.schema.json with a new field.",
+      "steps": [
+        "Edit scripts/experiments/result.schema.json — add the field with type and description",
+        "Edit scripts/experiments/extract-events-from-chorus.py — populate the field from session data",
+        "Edit scripts/experiments/extract-events-from-codex.py — populate the field",
+        "If the field feeds a metric: add the computation in scripts/experiments/derived-metrics.py",
+        "Update tests/test_result_schema.py, tests/test_extract_events.py, tests/test_extract_events_codex.py",
+        "Optional: backfill old result JSONs via scripts/experiments/apply-provenance.py"
+      ]
+    },
+    "edit_deck": {
+      "description": "Change content or design of the meetup deck.",
+      "steps": [
+        "Edit talk/cursor-meetup-may-2026.md — keep YAML frontmatter on line 1",
+        "Re-render: npx --yes @marp-team/marp-cli@latest talk/cursor-meetup-may-2026.md -o talk/cursor-meetup-may-2026.html",
+        "Re-render PDF: npx --yes @marp-team/marp-cli@latest talk/cursor-meetup-may-2026.md -o talk/cursor-meetup-may-2026.pdf --allow-local-files",
+        "Refresh GitHub Pages target: cp talk/cursor-meetup-may-2026.html talk/index.html",
+        "Commit all four files together (.md + .html + .pdf + index.html)"
+      ]
+    },
+    "add_agent_extractor": {
+      "description": "Wire a new agent's session JSONL into the schema-v3 pipeline.",
+      "steps": [
+        "Create scripts/experiments/extract-events-from-<agent>.py — mirror the chorus/codex shape",
+        "Add tests/test_extract_events_<agent>.py — copy the structure of tests/test_extract_events_codex.py",
+        "Run python3 -m unittest tests.test_extract_events_<agent>",
+        "Touch scripts/experiments/derived-metrics.py only if the agent introduces a metric variant"
+      ]
+    }
+  }
+}
