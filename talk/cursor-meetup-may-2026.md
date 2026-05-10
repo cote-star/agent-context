@@ -1,24 +1,3 @@
-<!--
-Cursor Meetup, May 2026
-Talk: agent-context — Stop Re-Teaching Your Repo to Every Coding Agent
-
-Format: Marp markdown. Renders to PDF / HTML / PPTX:
-  npx @marp-team/marp-cli@latest cursor-meetup-may-2026.md -o cursor-meetup-may-2026.pdf
-  npx @marp-team/marp-cli@latest cursor-meetup-may-2026.md -o cursor-meetup-may-2026.html
-  npx @marp-team/marp-cli@latest cursor-meetup-may-2026.md -o cursor-meetup-may-2026.pptx
-
-Slide breaks are `---` on its own line. SVG paths are relative to this file
-(../docs/visuals/* and ../docs/demos/* and ../docs/evidence/figures/*).
-
-Companion design reference: Portable_Agent_Context.pdf in this folder
-(NotebookLM-generated visual deck). The markdown below is the source-of-truth
-for narrative/evidence; visual figures may lag and will be refreshed.
-
-Structure: 21 slides per talk/notebooklm-update-brief-2026-05-10.md, with
-the per-agent deep-dive series (slides 13–16) and methodology slide (17)
-landing between the headline grid and the comparison-to-prior-art slide.
-Audit log: talk/deck-audit-2026-05-10.md.
--->
 ---
 marp: true
 theme: default
@@ -143,6 +122,28 @@ style: |
   }
   small { color: #94A3B8; font-size: 0.8em; }
 ---
+
+<!--
+Cursor Meetup, May 2026
+Talk: agent-context — Stop Re-Teaching Your Repo to Every Coding Agent
+
+Format: Marp markdown. Renders to PDF / HTML / PPTX:
+  npx @marp-team/marp-cli@latest cursor-meetup-may-2026.md -o cursor-meetup-may-2026.pdf
+  npx @marp-team/marp-cli@latest cursor-meetup-may-2026.md -o cursor-meetup-may-2026.html
+  npx @marp-team/marp-cli@latest cursor-meetup-may-2026.md -o cursor-meetup-may-2026.pptx
+
+Slide breaks are `---` on its own line. SVG paths are relative to this file
+(../docs/visuals/* and ../docs/demos/* and ../docs/evidence/figures/*).
+
+Companion design reference: Portable_Agent_Context.pdf in this folder
+(NotebookLM-generated visual deck). The markdown below is the source-of-truth
+for narrative/evidence; visual figures may lag and will be refreshed.
+
+Structure: 21 slides per talk/notebooklm-update-brief-2026-05-10.md, with
+the per-agent deep-dive series (slides 13–16) and methodology slide (17)
+landing between the headline grid and the comparison-to-prior-art slide.
+Audit log: talk/deck-audit-2026-05-10.md.
+-->
 
 <!-- _class: lead -->
 
