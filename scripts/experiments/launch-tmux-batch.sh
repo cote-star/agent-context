@@ -87,8 +87,13 @@ setup_pane() {
   local title="$agent / $condition"
   local cmd
   cmd="$(lane_cmd "$agent" "$condition")"
+  # Use AGENT_CONTEXT_REPO if exported, otherwise resolve from git, otherwise
+  # fall back to the script's own parent of parent (script lives at
+  # scripts/experiments/launch-tmux-batch.sh inside the repo).
+  local repo_root="${AGENT_CONTEXT_REPO:-$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel 2>/dev/null)}"
+  repo_root="${repo_root:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
   tmux select-pane -t "$pane_id" -T "$title"
-  tmux send-keys -t "$pane_id" "cd '/Users/e059303/sandbox/play/agent-context'" Enter
+  tmux send-keys -t "$pane_id" "cd '$repo_root'" Enter
   tmux send-keys -t "$pane_id" "clear" Enter
   tmux send-keys -t "$pane_id" "echo '== $title lane =='" Enter
   tmux send-keys -t "$pane_id" "echo 'Runs all 7 repos sequentially; fresh agent process per repo.'" Enter

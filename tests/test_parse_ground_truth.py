@@ -11,6 +11,7 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
+import os
 import pathlib
 import sys
 import unittest
@@ -233,15 +234,23 @@ class ParseGroundTruthCliTest(unittest.TestCase):
         self.assertNotEqual(rc, 0)
 
 
-REAL_GT_PATH = pathlib.Path(
-    "/Users/e059303/agent-context-reruns/q2-2026-private/agent-chorus/GROUND_TRUTH.md"
+# Optional round-trip against a real GROUND_TRUTH.md from a private rerun
+# directory. Only runs when the operator points at a real path via env var
+# AGENT_CONTEXT_PRIVATE_RERUN_ROOT — keeps the public test suite portable
+# (no machine-specific hardcoded paths) while preserving the round-trip
+# check for maintainers.
+_PRIVATE_RERUN_ROOT = os.environ.get("AGENT_CONTEXT_PRIVATE_RERUN_ROOT", "")
+REAL_GT_PATH = (
+    pathlib.Path(_PRIVATE_RERUN_ROOT).expanduser() / "agent-chorus" / "GROUND_TRUTH.md"
+    if _PRIVATE_RERUN_ROOT
+    else None
 )
 
 
 class ParseGroundTruthRoundTripTest(unittest.TestCase):
     @unittest.skipUnless(
-        REAL_GT_PATH.exists(),
-        f"private rerun GROUND_TRUTH.md not present at {REAL_GT_PATH}",
+        REAL_GT_PATH is not None and REAL_GT_PATH.exists(),
+        "set AGENT_CONTEXT_PRIVATE_RERUN_ROOT=<path> to enable the real-file round-trip test",
     )
     def test_real_ground_truth_has_all_six_tasks(self) -> None:
         text = REAL_GT_PATH.read_text(encoding="utf-8")
