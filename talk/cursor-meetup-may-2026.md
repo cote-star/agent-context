@@ -3,124 +3,105 @@ marp: true
 theme: default
 paginate: true
 size: 16:9
-backgroundColor: '#0B1220'
-color: '#E2E8F0'
+backgroundColor: '#FDFCF8'
+color: '#111827'
 style: |
-  /* NotebookLM-pattern dark theme: deep navy background, orange primary
-     accent (#F97316), green outcome accent (#10B981 / #34D399) for success
-     metrics and outcome labels. Mirrors talk/Portable_Agent_Context.pdf. */
+  /* Light cream theme — easy on the eyes for HTML/projector/print. Orange
+     accent (#F37021) carries headings, links, and outcome strongs. Warm
+     yellow (#FFF7E8) for code surfaces. NotebookLM dark/orange/green is
+     reserved for the NotebookLM-generated visual deck only. */
   section {
     font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0B1220 radial-gradient(ellipse at top, rgba(249,115,22,0.08), transparent 60%);
-    color: #E2E8F0;
-    padding: 50px 60px;
+    background-color: #FDFCF8;
+    color: #111827;
+    padding: 60px;
     font-size: 0.95em;
   }
   section.lead {
     text-align: center;
     justify-content: center;
-    background:
-      radial-gradient(ellipse at center, rgba(249,115,22,0.18), transparent 65%),
-      #0B1220;
   }
   h1 {
-    color: #FFFFFF;
+    color: #111827;
     font-weight: 800;
-    font-size: 1.9em;
+    font-size: 1.7em;
     letter-spacing: -0.01em;
-    text-shadow: 0 2px 24px rgba(249,115,22,0.18);
   }
   h2 {
-    color: #FFFFFF;
+    color: #111827;
     font-weight: 800;
-    border-bottom: 3px solid #F97316;
-    padding-bottom: 0.25em;
+    border-bottom: 3px solid #F37021;
+    padding-bottom: 0.2em;
     margin-bottom: 0.5em;
-    font-size: 1.55em;
+    font-size: 1.45em;
   }
   h3 {
-    color: #94A3B8;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-size: 0.92em;
+    color: #475569;
+    font-weight: 600;
   }
   code {
-    background-color: #1E293B;
-    color: #FED7AA;
+    background-color: #FFF7E8;
+    color: #111827;
     padding: 0.1em 0.35em;
     border-radius: 4px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   pre {
-    background-color: #0F172A;
-    border: 1px solid #1E293B;
-    border-left: 3px solid #F97316;
+    background-color: #FFF7E8;
+    border: 1px solid #E8D9BE;
+    border-left: 3px solid #F37021;
     border-radius: 8px;
-    padding: 0.8em;
-    font-size: 0.78em;
-    color: #E2E8F0;
+    padding: 0.9em;
+    font-size: 0.82em;
+    color: #111827;
   }
-  pre code {
-    background-color: transparent;
-    padding: 0;
-    color: #6EE7B7;
-  }
+  pre code { background-color: transparent; padding: 0; }
   a {
-    color: #FB923C;
+    color: #F37021;
     text-decoration: none;
     overflow-wrap: anywhere;
-    border-bottom: 1px dotted rgba(251,146,60,0.4);
   }
-  a:hover { border-bottom-style: solid; }
-  strong { color: #F97316; font-weight: 700; }
-  em { color: #94A3B8; }
+  a:hover { text-decoration: underline; }
+  strong { color: #111827; font-weight: 700; }
+  em { color: #475569; }
   blockquote {
-    border-left: 4px solid #F97316;
-    background: rgba(249,115,22,0.06);
+    border-left: 4px solid #F37021;
+    background: #FFF7E8;
     padding: 0.5em 1em;
-    color: #FED7AA;
+    color: #475569;
     margin: 0.5em 0;
-    font-style: normal;
+    font-style: italic;
     border-radius: 0 6px 6px 0;
-    font-size: 0.95em;
   }
-  ul li::marker { color: #F97316; }
-  ol li::marker { color: #F97316; font-weight: 700; }
+  ul li::marker { color: #F37021; }
+  ol li::marker { color: #F37021; font-weight: 700; }
   table {
     border-collapse: collapse;
     width: 100%;
-    background: rgba(15,23,42,0.6);
-    border-radius: 8px;
-    overflow: hidden;
     font-size: 0.85em;
   }
   th, td {
-    padding: 0.4em 0.7em;
-    border-bottom: 1px solid #1E293B;
-    color: #E2E8F0;
+    padding: 0.4em 0.8em;
+    border-bottom: 1px solid #E8D9BE;
+    color: #111827;
   }
   th {
-    background-color: #111827;
+    background-color: #FFF7E8;
     text-align: left;
-    color: #FFFFFF;
-    border-bottom: 2px solid #F97316;
-    text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 0.04em;
+    color: #111827;
+    border-bottom: 2px solid #F37021;
   }
-  td strong { color: #34D399; }
+  td strong { color: #B45309; }
   img {
     display: block;
     margin: 0 auto;
-    max-height: 65vh;
-    border-radius: 8px;
+    max-height: 70vh;
   }
   section::after {
     color: #64748B;
     font-size: 0.65em;
   }
-  small { color: #94A3B8; font-size: 0.8em; }
+  small { color: #475569; font-size: 0.82em; }
 ---
 
 <!--
@@ -135,9 +116,10 @@ Format: Marp markdown. Renders to PDF / HTML / PPTX:
 Slide breaks are `---` on its own line. SVG paths are relative to this file
 (../docs/visuals/* and ../docs/demos/* and ../docs/evidence/figures/*).
 
-Companion design reference: Portable_Agent_Context.pdf in this folder
-(NotebookLM-generated visual deck). The markdown below is the source-of-truth
-for narrative/evidence; visual figures may lag and will be refreshed.
+Design: light cream theme for high-readability HTML/projector/print. The
+NotebookLM-generated visual deck (Portable_Agent_Context.pdf) uses the dark
++ orange/green palette; that palette is reserved for NotebookLM output and
+is not the live deck's style.
 
 Structure: 21 slides per talk/notebooklm-update-brief-2026-05-10.md, with
 the per-agent deep-dive series (slides 13–16) and methodology slide (17)
@@ -241,7 +223,7 @@ Four roles inside one pack:
 - **Navigation** — bounded search: `search_scope.json` + verification shortcuts.
 - **Quality** — machine checks: manifest, acceptance tests, CI helpers.
 
-<small>**Tier 1** = code map + search scope, 2 files. **Tier 3** = full pack with authority + completeness contracts, ~10 files. Start tier 1; promote when the repo has cross-cutting invariants or production-risk workflows.</small>
+<small>**Tier 1** = code map + search scope, 2 files. **Tier 3** = full pack with authority + completeness contracts, 11 files. Start tier 1; promote when the repo has cross-cutting invariants or production-risk workflows.</small>
 
 Read by `[Cursor]` `[Claude]` `[Codex]` `[Gemini]` `[OpenCode]` through the same artifact.
 

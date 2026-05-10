@@ -1,20 +1,40 @@
 # Cursor Meetup talk · May 2026
 
-Files in this folder:
+## Live deck (read this first)
 
 | File | Purpose |
 |---|---|
-| [`index.html`](index.html) | Self-contained HTML deck (current — 21-slide structure). Open locally in any browser, or visit the GitHub Pages URL once Pages is enabled (see below). |
-| [`cursor-meetup-may-2026.md`](cursor-meetup-may-2026.md) | Marp markdown source (single source of truth for the talk content). HTML deck is auto-rendered via marp-cli. |
-| [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | Standalone HTML render (same content as `index.html`). |
+| [`index.html`](index.html) | Self-contained HTML deck (current — 21-slide structure, light cream theme). Open locally in any browser, or visit the GitHub Pages URL once Pages is enabled (see below). |
+| [`cursor-meetup-may-2026.md`](cursor-meetup-may-2026.md) | Marp markdown source — single source of truth for the talk content. HTML and PDF are rendered from this file. |
+| [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | Standalone HTML render (byte-identical to `index.html`). |
 | [`cursor-meetup-may-2026.pdf`](cursor-meetup-may-2026.pdf) | PDF render — portable handout / projection backup. |
-| [`Portable_Agent_Context.pdf`](Portable_Agent_Context.pdf) | NotebookLM-generated visual deck — design reference for the dark + orange/green palette. Not the live deck. |
-| [`unnamed.png`](unnamed.png) | NotebookLM hero infographic — design reference. |
+
+## Stage support
+
+| File | Purpose |
+|---|---|
 | [`demo-script.md`](demo-script.md) | Live-demo commands for slide 9 (Engineering pipeline), on-stage flow, backup plan, reset commands for rehearsal. |
 | [`pre-recorded-fill.md`](pre-recorded-fill.md) | Recording instructions for the fill MP4 (plays during slide 9). |
-| [`notebooklm-update-brief-2026-05-10.md`](notebooklm-update-brief-2026-05-10.md) | Single-source brief to drop into NotebookLM as a "source" so it can refresh `Portable_Agent_Context.pdf` to match the current deck. Inlines every metric tracked. |
+
+## Audit + companion docs
+
+| File | Purpose |
+|---|---|
 | [`deck-audit-2026-05-10.md`](deck-audit-2026-05-10.md) | End-to-end audit (story arc, audience comprehension, evidence credibility, gaps) that drove the current 21-slide structure. |
-| [`audience-presenter-devrel-review.md`](audience-presenter-devrel-review.md) | Earlier audience/presenter/DevRel review (historical — superseded by the 2026-05-10 audit, kept for back-reference). |
+| [`notebooklm-update-brief-2026-05-10.md`](notebooklm-update-brief-2026-05-10.md) | Single-source brief to drop into NotebookLM as a "source" so it can refresh `Portable_Agent_Context.pdf`. Inlines every metric tracked. NotebookLM owns the dark + orange/green palette; the live deck does not. |
+
+## Design references (NotebookLM-generated, not the live deck)
+
+| File | Purpose |
+|---|---|
+| [`Portable_Agent_Context.pdf`](Portable_Agent_Context.pdf) | NotebookLM-generated visual deck — dark + orange/green palette, kept as a design reference for the brief. Not rendered to the live deck. |
+| [`notebooklm-hero-reference.png`](notebooklm-hero-reference.png) | NotebookLM hero infographic — design reference. |
+
+## Archive
+
+| File | Purpose |
+|---|---|
+| [`archive/audience-presenter-devrel-review.md`](archive/audience-presenter-devrel-review.md) | Earlier audience/presenter/DevRel review — superseded by `deck-audit-2026-05-10.md`. Kept for back-reference. |
 
 Fresh Codex/Cursor evidence is produced with the private isolated rerun harness.
 The public deck is `talk/index.html`; local research harnesses stay untracked
