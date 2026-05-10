@@ -42,6 +42,7 @@ if [ -z "$BIN" ]; then
 fi
 
 echo "→ Rendering with: $BIN"
+rm -f "$OUT"
 "$BIN" \
   --headless \
   --disable-gpu \

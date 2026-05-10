@@ -307,6 +307,176 @@ td.r, th.r { text-align: right; }
 .chip.orange { color: var(--orange); border-color: var(--orange-line); background: var(--orange-soft); }
 .chip.dim    { color: var(--fg-faint); }
 
+/* ---------- Speaker intro slide ---------- */
+.identity {
+  display: flex; align-items: flex-end; gap: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 14px;
+}
+.identity .photo {
+  width: 116px; height: 116px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--green-line) inset;
+}
+.identity .photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  display: block;
+}
+.identity .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.identity h1 {
+  margin: 0;
+  font-size: 44px; font-weight: 800; letter-spacing: -.015em;
+  color: var(--fg); line-height: 1;
+}
+.identity .subtitle {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--green); letter-spacing: .14em; text-transform: uppercase;
+  margin-top: 2px;
+}
+.identity .journey { font-size: 14px; color: var(--fg-dim); }
+.identity .journey b { color: var(--fg-mid); font-weight: 500; }
+.identity .contacts { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.identity .qr {
+  width: 88px; height: 88px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  padding: 4px;
+  display: flex;
+}
+.identity .qr img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.identity .li {
+  font-family: var(--mono); font-size: 11px; color: var(--green);
+  border-bottom: 1px solid var(--green-line);
+}
+.tagline {
+  font-size: 18px; color: var(--fg);
+  margin: 0 0 10px;
+  font-weight: 500;
+  line-height: 1.35;
+  max-width: 1000px;
+}
+.tagline em { color: var(--fg-mid); font-style: normal; }
+.split {
+  flex: 0 0 344px; min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.context-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px 12px;
+  display: flex; flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.context-card.work {
+  border-color: var(--orange-line);
+  background: linear-gradient(180deg, var(--orange-soft), transparent 70%), var(--surface);
+}
+.context-card.play {
+  border-color: var(--green-line);
+  background: linear-gradient(180deg, var(--green-soft), transparent 70%), var(--surface);
+}
+.context-card .cc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.context-card .cc-tag {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px;
+}
+.context-card.work .cc-tag { color: var(--orange); border: 1px solid var(--orange-line); background: var(--orange-soft); }
+.context-card.play .cc-tag { color: var(--green); border: 1px solid var(--green-line); background: var(--green-soft); }
+.context-card .cc-org {
+  font-family: var(--mono); font-size: 12px; color: var(--fg-dim);
+  letter-spacing: .04em;
+}
+.context-card .cc-lede {
+  font-size: 14px; color: var(--fg-mid); margin: 0 0 8px;
+  line-height: 1.45;
+}
+.context-card .cc-lede strong { color: var(--fg); font-weight: 600; }
+.stat-list { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-direction: column; gap: 6px; }
+.stat-list li {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,.018);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+}
+.stat-list li::before { display: none; }
+.stat-list .num {
+  font-family: var(--mono); font-weight: 700;
+  font-size: 18px;
+  color: var(--fg); letter-spacing: -.01em;
+  min-width: 130px;
+}
+.context-card.work .stat-list .num { color: var(--orange); }
+.stat-list .lbl { font-size: 13px; color: var(--fg-mid); flex: 1; }
+.stat-list .lbl b { color: var(--fg); font-weight: 600; }
+.oss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.oss-entry {
+  padding: 10px 12px;
+  background: rgba(255,255,255,.018);
+  border: 1px solid var(--border-soft);
+  border-left: 2px solid var(--green-line);
+  border-radius: 6px;
+}
+.oss-entry .oss-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px; margin-bottom: 3px;
+}
+.oss-entry .oss-name {
+  font-family: var(--mono); font-size: 15px; font-weight: 700;
+  color: var(--green); letter-spacing: -.005em;
+}
+.oss-entry .oss-tag {
+  font-family: var(--mono); font-size: 9.5px;
+  color: var(--fg-faint); letter-spacing: .14em; text-transform: uppercase;
+}
+.oss-entry .oss-desc {
+  font-size: 12.8px; color: var(--fg-mid); line-height: 1.42;
+}
+.oss-entry .oss-desc b { color: var(--fg); font-weight: 600; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--border-soft); }
+.context-card.work .chip { color: var(--orange); border-color: var(--orange-line); background: var(--orange-soft); }
+.context-card.play .chip { color: var(--green); border-color: var(--green-line); background: var(--green-soft); }
+.bridge {
+  margin-top: 10px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(16,185,129,.06) 0%, rgba(249,115,22,.06) 100%);
+}
+.bridge .arrow {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--fg-faint); letter-spacing: .14em;
+}
+.bridge .line {
+  font-size: 15px; color: var(--fg);
+  text-align: center;
+  font-style: italic;
+}
+.bridge .line b { color: var(--green); font-style: normal; font-weight: 600; }
+
 /* ---------- Layout helpers ---------- */
 .body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
 .body-row { flex: 1; min-height: 0; display: flex; flex-direction: row; gap: 18px; }
@@ -503,7 +673,7 @@ td.r, th.r { text-align: right; }
   <div><span class="kbd">P</span> print / handout</div>
 </div>
 <div class="brand"><b>agent-context</b> · Cursor Meetup AMS · May 2026</div>
-<div class="counter" id="counter">01 / 21</div>
+<div class="counter" id="counter">01 / 22</div>
 
 <main class="stage" id="stage">
 
@@ -516,7 +686,7 @@ td.r, th.r { text-align: right; }
       <span class="crumb">/</span>
       <span class="crumb on">TITLE</span>
     </div>
-    <div class="right">CURSOR MEETUP AMS · MAY 2026 · 01 / 21</div>
+    <div class="right">CURSOR MEETUP AMS · MAY 2026 · 01 / 22</div>
   </div>
 
   <div class="body">
@@ -549,11 +719,111 @@ td.r, th.r { text-align: right; }
   </div>
 </section>
 
-<!-- ============== SLIDE 02 — Hook ============== -->
+<!-- ============== SLIDE 02 — Who is talking ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left">
+      <span class="dot"></span>
+      <span class="act">ACT 1</span>
+      <span class="crumb">/</span>
+      <span class="crumb on">WHO IS TALKING TO YOU</span>
+    </div>
+    <div class="right">02 / 22</div>
+  </div>
+
+  <div class="identity">
+    <div class="photo">
+      <img src="amit_passport.jpeg" alt="Amit Prusty" />
+    </div>
+    <div class="who">
+      <h1>Amit Prusty</h1>
+      <div class="subtitle">Staff ML Engineer / AI Lead · Agent Systems · Evaluation · Applied GenAI</div>
+      <div class="journey">
+        <b>Edelman</b> · Amsterdam · Singapore
+      </div>
+    </div>
+    <div class="contacts">
+      <div class="qr"><img src="LinkedIN_QR.JPG" alt="LinkedIn QR code" /></div>
+      <span class="li">linkedin.com/in/amit-prusty</span>
+    </div>
+  </div>
+
+  <p class="tagline">
+    I build the <b style="color:var(--green);font-weight:600;">operating layer around AI agents</b> —
+    <em>context, evals, workflows, and production adoption.</em>
+    Today we use coding agents because this is a developer room.
+  </p>
+
+  <div class="split">
+    <div class="context-card work">
+      <div class="cc-head">
+        <span class="cc-tag">At Work</span>
+        <span class="cc-org">Edelman · Oct 2021 → present</span>
+      </div>
+      <p class="cc-lede">
+        Led Edelman's <strong>global transition to LLM-as-a-Service</strong> —
+        real-time Trust, Topic Intelligence, and Summarization across markets.
+        Platform underneath global analytics + content workflows.
+      </p>
+      <ul class="stat-list">
+        <li><span class="num">14 → 2 days</span><span class="lbl">deployment cycle <b>(7× faster)</b></span></li>
+        <li><span class="num">$350–400 K/yr</span><span class="lbl">infra + workflow savings</span></li>
+        <li><span class="num">+12 F1</span><span class="lbl">Trust LLM 78 → 90+% · <b>40% cheaper inference</b></span></li>
+      </ul>
+      <div class="chip-row">
+        <span class="chip">Multi-agent</span>
+        <span class="chip">LLMOps</span>
+        <span class="chip">Econometrics</span>
+        <span class="chip">Causal MMM</span>
+        <span class="chip">vLLM · DSPy</span>
+      </div>
+    </div>
+
+    <div class="context-card play">
+      <div class="cc-head">
+        <span class="cc-tag">OSS</span>
+        <span class="cc-org">github.com/cote-star</span>
+      </div>
+      <p class="cc-lede">
+        Two more projects I ship around <code style="font-family:var(--mono);color:var(--green);background:var(--green-soft);border:1px solid var(--green-line);padding:1px 6px;border-radius:4px;font-size:.92em;">agent-context</code> — one for agent evidence, one for local control.
+      </p>
+      <div class="oss-list">
+        <div class="oss-entry">
+          <div class="oss-head">
+            <span class="oss-name">agent-chorus</span>
+            <span class="oss-tag">Session evidence layer</span>
+          </div>
+          <div class="oss-desc">
+            A single <b>read / search / compare</b> surface across Claude, Codex, Cursor, and Gemini sessions.
+            It turns agent work into inspectable evidence: timelines, diffs, citations, and cross-agent QA.
+          </div>
+        </div>
+        <div class="oss-entry">
+          <div class="oss-head">
+            <span class="oss-name">latchkeyd</span>
+            <span class="oss-tag">Local control plane</span>
+          </div>
+          <div class="oss-desc">
+            A workstation daemon for trusted local agent workflows: approvals, environment boundaries,
+            and repeatable access to the tools an agent needs without making every session ad hoc.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bridge">
+    <span class="arrow">AT WORK →</span>
+    <span class="line">Both sides teach the same lesson: <b>AI gets useful after the demo.</b></span>
+    <span class="arrow">← OSS</span>
+  </div>
+</section>
+
+<!-- ============== SLIDE 03 — Hook ============== -->
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">THE HOOK</span></div>
-    <div class="right">02 / 21</div>
+    <div class="right">03 / 22</div>
   </div>
 
   <h2><span class="lede">The hook</span>The agent is new here every time.</h2>
@@ -615,7 +885,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">REFRAME</span></div>
-    <div class="right">03 / 21</div>
+    <div class="right">04 / 22</div>
   </div>
 
   <h2><span class="lede">It's not the model</span>The failure is missing system evidence.</h2>
@@ -645,7 +915,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">GENERALIZE</span></div>
-    <div class="right">04 / 21</div>
+    <div class="right">05 / 22</div>
   </div>
 
   <h2><span class="lede">Not just repo recall</span>Every serious system needs a navigation layer.</h2>
@@ -669,7 +939,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">THREE-TRACK</span></div>
-    <div class="right">05 / 21</div>
+    <div class="right">06 / 22</div>
   </div>
 
   <h2><span class="lede">The architecture</span>Explorable system recall as a three-track pattern.</h2>
@@ -710,7 +980,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">TODAY = NAVIGATION</span></div>
-    <div class="right">06 / 21</div>
+    <div class="right">07 / 22</div>
   </div>
 
   <h2><span class="lede">Today's session</span>The Navigation track only.</h2>
@@ -745,7 +1015,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">THE ARTIFACT</span></div>
-    <div class="right">07 / 21</div>
+    <div class="right">08 / 22</div>
   </div>
 
   <h2><span class="lede">The artifact · real repo</span><code style="font-family:var(--mono);color:var(--orange);background:var(--orange-soft);border-color:var(--orange-line);padding:2px 10px;border-radius:6px;">.agent-context/</code> — a committed folder.</h2>
@@ -802,7 +1072,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">AGENT LOOPS</span></div>
-    <div class="right">08 / 21</div>
+    <div class="right">09 / 22</div>
   </div>
 
   <h2><span class="lede">Behavior</span>Same navigation design, opposite agent loops.</h2>
@@ -847,7 +1117,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">LIVE DEMO</span><span class="chip green" style="margin-left:6px;">85 SEC</span></div>
-    <div class="right">09 / 21</div>
+    <div class="right">10 / 22</div>
   </div>
 
   <h2><span class="lede">A repeatable loop</span>The engineering pipeline — live, on stage.</h2>
@@ -911,7 +1181,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">REVIEW</span></div>
-    <div class="right">10 / 21</div>
+    <div class="right">11 / 22</div>
   </div>
 
   <h2><span class="lede">Quality gate</span>What a reviewer actually checks.</h2>
@@ -941,7 +1211,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">METHOD</span></div>
-    <div class="right">11 / 21</div>
+    <div class="right">12 / 22</div>
   </div>
 
   <h2><span class="lede">Test protocol</span>How to test whether it works.</h2>
@@ -969,7 +1239,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">EVIDENCE</span></div>
-    <div class="right">12 / 21</div>
+    <div class="right">13 / 22</div>
   </div>
 
   <h2><span class="lede">Q2 2026 multi-agent rerun</span>Quantified evidence.</h2>
@@ -1031,7 +1301,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CLAUDE OPUS 4.7</span></div>
-    <div class="right">13 / 21</div>
+    <div class="right">14 / 22</div>
   </div>
 
   <h2><span class="lede">Per-agent · Trust-and-Follow</span>Claude Opus 4.7 — <em style="color:var(--green);">6/6 perfect under structured.</em></h2>
@@ -1079,7 +1349,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CURSOR · OPUS-MEDIUM</span></div>
-    <div class="right">14 / 21</div>
+    <div class="right">15 / 22</div>
   </div>
 
   <h2><span class="lede">Per-agent · Search-and-Verify</span>Cursor <code>claude-opus-4-7-medium</code></h2>
@@ -1127,7 +1397,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CURSOR · COMPOSER-2-FAST</span></div>
-    <div class="right">15 / 21</div>
+    <div class="right">16 / 22</div>
   </div>
 
   <h2><span class="lede">Per-agent · default model</span>Cursor <code>composer-2-fast</code> — <em style="color:var(--green);">the pack rescues a weaker model.</em></h2>
@@ -1175,7 +1445,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CODEX CLI 0.130.0</span></div>
-    <div class="right">16 / 21</div>
+    <div class="right">17 / 22</div>
   </div>
 
   <h2><span class="lede">Per-agent · Search-and-Verify</span>Codex CLI <code>0.130.0</code> — <em style="color:var(--green);">trades wall-clock for correctness.</em></h2>
@@ -1223,7 +1493,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">DISCLOSURE</span></div>
-    <div class="right">17 / 21</div>
+    <div class="right">18 / 22</div>
   </div>
 
   <h2><span class="lede">Trust the numbers</span>How we measured. What it covers. What it doesn't.</h2>
@@ -1261,7 +1531,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">PRIOR ART</span></div>
-    <div class="right">18 / 21</div>
+    <div class="right">19 / 22</div>
   </div>
 
   <h2><span class="lede">"Isn't this just .cursorrules?"</span>How agent-context fits what you already do.</h2>
@@ -1281,8 +1551,8 @@ Changing this without updating cookie/v2 will fail silently in prod
           <td>Different layer. agent-context is the <em>navigation map</em>; MCP is <em>access</em>.</td>
         </tr>
         <tr>
-          <td><strong>Vector RAG</strong><br/><span class="small faint">semantic recall over chunks</span></td>
-          <td>Pack is <em>structural recall</em>: deterministic file lists, contracts, verification shortcuts. <strong style="color:var(--green);">Pair them; don't pick.</strong></td>
+          <td><strong>Vector search</strong><br/><span class="small faint">semantic recall over chunks</span></td>
+          <td>Pack is <em>structural recall</em>: deterministic file lists, contracts, verification shortcuts. <strong style="color:var(--green);">Use each where it fits.</strong></td>
         </tr>
         <tr>
           <td><strong>Cursor project memory</strong> / "rules for AI"</td>
@@ -1303,7 +1573,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">TRADEOFFS</span></div>
-    <div class="right">19 / 21</div>
+    <div class="right">20 / 22</div>
   </div>
 
   <h2><span class="lede">Not magic</span>Tradeoffs.</h2>
@@ -1329,7 +1599,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">TRY THIS</span></div>
-    <div class="right">20 / 21</div>
+    <div class="right">21 / 22</div>
   </div>
 
   <h2><span class="lede">Try this on one repo</span>Tomorrow.</h2>
@@ -1361,11 +1631,11 @@ Changing this without updating cookie/v2 will fail silently in prod
   </div>
 </section>
 
-<!-- ============== SLIDE 21 — Closing ============== -->
+<!-- ============== SLIDE 22 — Closing ============== -->
 <section class="slide lead-slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">CLOSE</span></div>
-    <div class="right">21 / 21</div>
+    <div class="right">22 / 22</div>
   </div>
 
   <div class="body">
