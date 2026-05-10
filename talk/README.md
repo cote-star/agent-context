@@ -9,39 +9,9 @@
 | [`cursor-meetup-may-2026.pdf`](cursor-meetup-may-2026.pdf) | PDF render of the HTML deck — portable handout / projection backup. Rendered via `render-pdf.sh` (Chrome/Chromium/Edge headless). |
 | [`render-pdf.sh`](render-pdf.sh) | Re-renders `cursor-meetup-may-2026.pdf` from the HTML source. Picks the first available headless browser (Chrome / Chromium / Edge). Run from inside `talk/`. |
 
-## Stage support
-
-| File | Purpose |
-|---|---|
-| [`demo-script.md`](demo-script.md) | Live-demo commands for slide 9 (Engineering pipeline), on-stage flow, backup plan, reset commands for rehearsal. |
-| [`pre-recorded-fill.md`](pre-recorded-fill.md) | Recording instructions for the fill MP4 (plays during slide 9). |
-
-## Audit + companion docs
-
-| File | Purpose |
-|---|---|
-| [`deck-audit-2026-05-10.md`](deck-audit-2026-05-10.md) | End-to-end audit (story arc, audience comprehension, evidence credibility, gaps) that drove the 21-slide structure. |
-| [`notebooklm-update-brief-2026-05-10.md`](notebooklm-update-brief-2026-05-10.md) | Single-source brief to drop into NotebookLM as a "source" so it can refresh `Portable_Agent_Context.pdf`. Inlines every metric tracked. The NotebookLM-generated visual deck and the live HTML deck share a deep-navy + green/orange palette family. |
-
-## Design references (NotebookLM-generated, not the live deck)
-
-| File | Purpose |
-|---|---|
-| [`Portable_Agent_Context.pdf`](Portable_Agent_Context.pdf) | NotebookLM-generated visual deck — design reference, not rendered to the live deck. |
-| [`notebooklm-hero-reference.png`](notebooklm-hero-reference.png) | NotebookLM hero infographic — design reference. |
-
-## Archive
-
-| File | Purpose |
-|---|---|
-| [`archive/audience-presenter-devrel-review.md`](archive/audience-presenter-devrel-review.md) | Earlier audience/presenter/DevRel review — superseded by `deck-audit-2026-05-10.md`. Kept for back-reference. |
-| [`archive/cursor-meetup-may-2026-marp-source.md`](archive/cursor-meetup-may-2026-marp-source.md) | Earlier Marp markdown source for the deck (light cream theme, content auto-rendered to HTML/PDF). Superseded by the hand-authored `cursor-meetup-may-2026.html`; kept for content recovery. |
-| [`archive/cursor-meetup-may-2026-marp-cream.html`](archive/cursor-meetup-may-2026-marp-cream.html) | Marp render of the previous deck (cream theme). Reference only. |
-| [`archive/cursor-meetup-may-2026-marp-cream.pdf`](archive/cursor-meetup-may-2026-marp-cream.pdf) | PDF of the same. Reference only. |
-
-Fresh Codex/Cursor evidence is produced with the private isolated rerun
-harness. The public deck is `talk/index.html`; local research harnesses
-stay untracked and ignored.
+Fresh Codex/Cursor evidence is produced with the isolated rerun harness.
+The public deck is `talk/index.html`; local research notes and generated
+working artifacts stay untracked and ignored.
 
 ## Rendering
 
@@ -101,7 +71,6 @@ automatically.
 
 ## Format conversion
 
-PowerPoint export is no longer auto-generated (the old Marp `.pptx`
-flow is in `archive/`). To produce a `.pptx`, open the PDF in
-PowerPoint or Keynote and export, or hand-port slides from the HTML
-source.
+PowerPoint export is not auto-generated. To produce a `.pptx`, open the
+PDF in PowerPoint or Keynote and export, or hand-port slides from the
+HTML source.

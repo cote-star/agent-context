@@ -42,7 +42,7 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 warn() { echo "WARN: $*" >&2; }
 
 CONDITION=""
-RERUN_ROOT="$HOME/agent-context-reruns/q2-2026-private"
+RERUN_ROOT="${RERUN_ROOT:-}"
 # org-second-brain dropped from default 2026-05-10 — see anomalies log.
 ALIASES_CSV="agent-chorus,ml-pipeline-reference,react-frontend-reference,backend-service-reference,polyglot-monorepo-reference,daemon-reference"
 FORCE=0
@@ -65,6 +65,7 @@ case "$CONDITION" in
 esac
 
 RERUN_ROOT="${RERUN_ROOT/#\~/$HOME}"
+[[ -n "$RERUN_ROOT" ]] || die "rerun root required: pass --rerun-root PATH or set RERUN_ROOT"
 [[ -d "$RERUN_ROOT" ]] || die "rerun root not found: $RERUN_ROOT"
 command -v claude >/dev/null || die "claude not found on PATH"
 

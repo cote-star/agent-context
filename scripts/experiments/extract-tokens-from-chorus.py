@@ -27,7 +27,7 @@ for a future revision.
 
 Usage:
   scripts/experiments/extract-tokens-from-chorus.py \\
-    --rerun ~/agent-context-reruns/q2-2026-private/agent-chorus
+    --rerun /path/to/rerun-root/agent-chorus
 
   # Override which agents to process (default: claude + codex)
   scripts/experiments/extract-tokens-from-chorus.py \\

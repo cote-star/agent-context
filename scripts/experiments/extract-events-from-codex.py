@@ -52,7 +52,7 @@ Per-cell session resolution (no chorus dependency):
 
 Usage:
   scripts/experiments/extract-events-from-codex.py \\
-    --rerun ~/agent-context-reruns/q2-2026-private/agent-chorus
+    --rerun /path/to/rerun-root/agent-chorus
 
   # Optional: feed ground-truth path arrays for one or more tasks.
   scripts/experiments/extract-events-from-codex.py \\

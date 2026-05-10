@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import re
 import sys
@@ -274,11 +275,15 @@ def normalize_repo(repo_dir: pathlib.Path) -> dict[str, int]:
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("--rerun-root", default="~/agent-context-reruns/q2-2026-private",
+    parser.add_argument("--rerun-root", default=os.environ.get("AGENT_CONTEXT_RERUN_ROOT", ""),
                         help="Matrix root containing per-repo subdirs")
     parser.add_argument("--repo", action="append", default=[],
                         help="Restrict to specific repo subdirs (repeatable)")
     args = parser.parse_args(argv)
+
+    if not args.rerun_root:
+        print("ERROR: rerun root required: pass --rerun-root or set AGENT_CONTEXT_RERUN_ROOT", file=sys.stderr)
+        return 1
 
     root = pathlib.Path(args.rerun_root).expanduser().resolve()
     if not root.is_dir():

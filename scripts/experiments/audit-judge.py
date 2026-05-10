@@ -11,7 +11,7 @@ the corresponding result JSON's `grading_method` is set to
 Public-claims gate: only `reviewer-confirmed` rows are eligible for public
 artifacts (README, viz, talk). See METHODOLOGY.md.
 
-Audit log: `~/agent-context-reruns/q2-2026-private/audit-log/<timestamp>.jsonl`
+Audit log: `<audit-log-dir>/<timestamp>.jsonl`
 
 Stdlib-only, Python 3.8+.
 """
@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import os
 import pathlib
 import random
 import sys
@@ -123,10 +124,13 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--all", action="store_true", help="Audit every llm-provisional row instead of sampling")
     parser.add_argument(
         "--audit-log-dir",
-        default=str(pathlib.Path.home() / "agent-context-reruns" / "q2-2026-private" / "audit-log"),
-        help="Directory to write audit JSONL log",
+        default=os.environ.get("AGENT_CONTEXT_AUDIT_LOG_DIR", ""),
+        help="Directory to write audit JSONL log, or AGENT_CONTEXT_AUDIT_LOG_DIR",
     )
     args = parser.parse_args(argv)
+    if not args.audit_log_dir:
+        print("ERROR: audit log dir required: pass --audit-log-dir or set AGENT_CONTEXT_AUDIT_LOG_DIR", file=sys.stderr)
+        return 1
 
     rerun = pathlib.Path(args.rerun).expanduser()
     results_root = rerun / "results"
