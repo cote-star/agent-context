@@ -19,54 +19,118 @@ marp: true
 theme: default
 paginate: true
 size: 16:9
-backgroundColor: '#FDFCF8'
-color: '#111827'
+backgroundColor: '#0B1220'
+color: '#E2E8F0'
 style: |
+  /* NotebookLM-pattern dark theme: deep navy background, orange primary
+     accent (#F97316), green secondary accent (#10B981) for success metrics
+     and outcome labels. Mirrors the visual language of
+     talk/Portable_Agent_Context.pdf (NotebookLM design reference). */
   section {
     font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #FDFCF8;
-    color: #111827;
+    background: #0B1220 radial-gradient(ellipse at top, rgba(249,115,22,0.08), transparent 60%);
+    color: #E2E8F0;
     padding: 60px;
   }
   section.lead {
     text-align: center;
     justify-content: center;
+    background:
+      radial-gradient(ellipse at center, rgba(249,115,22,0.18), transparent 65%),
+      #0B1220;
   }
-  h1 { color: #111827; font-weight: 800; font-size: 1.7em; }
-  h2 { color: #111827; font-weight: 800; border-bottom: 3px solid #F37021; padding-bottom: 0.2em; }
-  h3 { color: #475569; font-weight: 600; }
+  h1 {
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 1.9em;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 24px rgba(249,115,22,0.18);
+  }
+  h2 {
+    color: #FFFFFF;
+    font-weight: 800;
+    border-bottom: 3px solid #F97316;
+    padding-bottom: 0.25em;
+    margin-bottom: 0.6em;
+  }
+  h3 {
+    color: #94A3B8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.95em;
+  }
   code {
-    background-color: #FFF7E8;
-    color: #111827;
-    padding: 0.1em 0.3em;
+    background-color: #1E293B;
+    color: #FED7AA;
+    padding: 0.1em 0.35em;
     border-radius: 4px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   pre {
-    background-color: #FFF7E8;
-    border: 1px solid #E8D9BE;
+    background-color: #0F172A;
+    border: 1px solid #1E293B;
+    border-left: 3px solid #F97316;
     border-radius: 8px;
     padding: 1em;
     font-size: 0.85em;
+    color: #E2E8F0;
   }
-  pre code { background-color: transparent; padding: 0; }
-  a { color: #F37021; text-decoration: none; overflow-wrap: anywhere; }
-  a:hover { text-decoration: underline; }
-  strong { color: #111827; font-weight: 700; }
-  em { color: #475569; }
+  pre code {
+    background-color: transparent;
+    padding: 0;
+    color: #6EE7B7;
+  }
+  a {
+    color: #FB923C;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    border-bottom: 1px dotted rgba(251,146,60,0.4);
+  }
+  a:hover { border-bottom-style: solid; }
+  strong { color: #F97316; font-weight: 700; }
+  em { color: #94A3B8; }
   blockquote {
-    border-left: 4px solid #F37021;
-    padding-left: 1em;
-    color: #475569;
-    margin-left: 0;
-    font-style: italic;
+    border-left: 4px solid #F97316;
+    background: rgba(249,115,22,0.06);
+    padding: 0.6em 1em;
+    color: #FED7AA;
+    margin: 0.6em 0;
+    font-style: normal;
+    border-radius: 0 6px 6px 0;
   }
-  ul li::marker { color: #F37021; }
-  ol li::marker { color: #F37021; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { padding: 0.4em 0.8em; border-bottom: 1px solid #E8D9BE; }
-  th { background-color: #FFF7E8; text-align: left; }
-  img { display: block; margin: 0 auto; max-height: 75vh; }
+  ul li::marker { color: #F97316; }
+  ol li::marker { color: #F97316; font-weight: 700; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    background: rgba(15,23,42,0.6);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 0.5em 0.85em;
+    border-bottom: 1px solid #1E293B;
+    color: #E2E8F0;
+  }
+  th {
+    background-color: #111827;
+    text-align: left;
+    color: #FFFFFF;
+    border-bottom: 2px solid #F97316;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+  }
+  /* Bold values inside tables (last cell typically) get the green
+     "outcome/success" accent that NotebookLM uses for measured wins. */
+  td strong { color: #34D399; }
+  img {
+    display: block;
+    margin: 0 auto;
+    max-height: 70vh;
+    border-radius: 8px;
+  }
   section::after {
     color: #64748B;
     font-size: 0.65em;
