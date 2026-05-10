@@ -79,13 +79,12 @@
       ]
     },
     "edit_deck": {
-      "description": "Change content or design of the meetup deck.",
+      "description": "Change content or design of the meetup deck. The deck is hand-authored HTML — edit it directly, no Marp build.",
       "steps": [
-        "Edit talk/cursor-meetup-may-2026.md — keep YAML frontmatter on line 1",
-        "Re-render: npx --yes @marp-team/marp-cli@latest talk/cursor-meetup-may-2026.md -o talk/cursor-meetup-may-2026.html",
-        "Re-render PDF: npx --yes @marp-team/marp-cli@latest talk/cursor-meetup-may-2026.md -o talk/cursor-meetup-may-2026.pdf --allow-local-files",
+        "Edit talk/cursor-meetup-may-2026.html (canonical, hand-authored HTML+CSS, deep-navy theme)",
         "Refresh GitHub Pages target: cp talk/cursor-meetup-may-2026.html talk/index.html",
-        "Commit all four files together (.md + .html + .pdf + index.html)"
+        "Re-render PDF: (cd talk && ./render-pdf.sh) — picks up Chrome / Chromium / Edge automatically",
+        "Commit all three artifacts together (cursor-meetup-may-2026.html + index.html + cursor-meetup-may-2026.pdf)"
       ]
     },
     "add_agent_extractor": {

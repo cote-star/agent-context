@@ -10,7 +10,7 @@
 | `bin/agent-context doctor` | Python version, CLI version, working-dir status | When debugging an operator issue |
 | `tools/check_freshness.sh --base-ref origin/main` | Advisory freshness on the live working tree | Before committing changes that touch CONTEXT_RELEVANT_PATHS |
 | `scripts/sync-from-canonical.sh` | Mirrors `templates/`, `tools/`, `SKILL.md` into `skills/agent-context/` | After any edit to a canonical file |
-| `npx --yes @marp-team/marp-cli@latest talk/cursor-meetup-may-2026.md -o talk/cursor-meetup-may-2026.html` | Re-render the deck HTML | After deck edits (also re-render PDF; refresh `talk/index.html`) |
+| `cp talk/cursor-meetup-may-2026.html talk/index.html && (cd talk && ./render-pdf.sh)` | Refresh the GitHub Pages target and the PDF after editing the canonical HTML deck | After every edit to `talk/cursor-meetup-may-2026.html` |
 
 ## CI / Workflow Integration
 
@@ -34,7 +34,7 @@
 
 - **Python:** stdlib-only. No `requirements.txt`, no virtualenv needed. CI uses the GitHub-Actions-default Python 3 (currently 3.12 family).
 - **Bash:** `set -euo pipefail` patterns; tested on macOS and Ubuntu. The shell scripts in `scripts/experiments/` rely on `git`, `jq` (most), and standard POSIX tooling.
-- **Marp render:** `npx --yes @marp-team/marp-cli@latest …` — required only for the `talk/` deck. PDF render needs `--allow-local-files`.
+- **Deck render:** the live deck is hand-authored HTML (`talk/cursor-meetup-may-2026.html`). PDF is produced by `talk/render-pdf.sh` via headless Chrome / Chromium / Edge — no node/marp dependency required.
 - **Tests run:** locally on macOS dev workstations and on Ubuntu CI. They do not require network access. They do not require any agent CLI to be installed (no `claude`, `codex`, or `cursor-agent` invocations).
 - **Experiments harness:** the `scripts/experiments/` tooling is for *operator-driven* multi-agent reruns. It does NOT run in CI — running an experiment requires a private rerun root with isolated clones of target repos. See `docs/architecture.md` and the deck's methodology slide for the protocol.
 

@@ -8,7 +8,7 @@
 2. An **installable Claude skill** (`SKILL.md` + `skills/agent-context/`) — the fill flow the agent runs after `init`.
 3. **Canonical templates** (`templates/`, 11 files for tier 3) that `init` copies into the target repo's `.agent-context/current/`.
 4. An **experiments harness** (`scripts/experiments/`) for the Q2 2026 multi-agent rerun: bare vs `structured_fresh` clones × 4 model variants × 6 repos × 6 tasks, with extractors, derived-metrics, ground-truth parser, and an LLM-judge dispatcher.
-5. A **meetup deck** (`talk/cursor-meetup-may-2026.md`) plus rendering pipeline.
+5. A **meetup deck** (`talk/cursor-meetup-may-2026.html`, hand-authored HTML + CSS, deep-navy theme) with a one-command PDF renderer (`talk/render-pdf.sh`).
 
 ## Runtime Architecture
 
@@ -44,7 +44,7 @@
 | Templates (canonical) | `templates/*.md`, `templates/*.json` | 11-file tier-3 scaffold | source-of-truth for both copies |
 | Experiments harness | `scripts/experiments/{*.py,*.sh}` + `result.schema.json` | bare vs `structured_fresh` runs, schema-v3 extractors, derived-metrics, judge dispatcher | bash + python stdlib |
 | Tests | `tests/test_*.py` (13 files) + `_helpers.py` | unittest, no third-party deps | unittest (stdlib) |
-| Talk | `talk/cursor-meetup-may-2026.md` (Marp source) → `.html` / `.pdf` / `index.html` | 21-slide cream-theme deck + supporting docs | npx marp-cli (render-only) |
+| Talk | `talk/cursor-meetup-may-2026.html` (hand-authored HTML+CSS, deep-navy theme) + `talk/render-pdf.sh` → `.pdf` / `index.html` (cp) | 21-slide deck + supporting docs | headless Chrome (PDF render only) |
 | CI | `.github/workflows/{ci,release,deploy-pages}.yml` | unit suite + verify on examples + GitHub Pages deploy | github actions |
 
 ## Silent Failure Modes
@@ -52,11 +52,12 @@
 | Failure | Symptom | Root cause |
 |---|---|---|
 | Template drift | `tests/test_skill_sync.py` fails; `init` copies a stale template | Edit to `templates/` not mirrored to `skills/agent-context/templates/` (forgot `scripts/sync-from-canonical.sh`) |
-| Version drift | `tests/test_version_drift.py` fails | Bumped one of `bin/agent-context`, `SKILL.md`, `skills/agent-context/SKILL.md`, `RELEASE_NOTES.md` without the others |
+| Version drift | `tests/test_version_drift.py` fails | Bumped one of the 4 test-enforced surfaces (`bin/agent-context` `__version__`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, `README.md` badge URL) without the others |
 | Verifier passes but pack is wrong | CI green; agents still fail tasks | `acceptance_tests.md` not iterated — verifier checks structure, not semantic correctness |
 | Freshness false-positive | Every commit triggers a stale-pack warning | `CONTEXT_RELEVANT_PATHS` declared too broad in operator's freshness invocation |
 | Schema/extractor drift | `derived-metrics.py` returns `null` for a metric across all cells | New field added to `result.schema.json` but not populated by the relevant extractor |
-| Marp frontmatter unrecognized | Deck renders without theme/pagination — every slide looks broken | YAML frontmatter not on line 1 (e.g., HTML comment placed before it). See `talk/cursor-meetup-may-2026.md` line 1 — frontmatter must be first. |
+| Deck/index drift | `talk/index.html` and `talk/cursor-meetup-may-2026.html` show different content | After editing the canonical HTML, forgot to `cp talk/cursor-meetup-may-2026.html talk/index.html`. Always refresh both together. |
+| Stale deck PDF | `talk/cursor-meetup-may-2026.pdf` lags the HTML | Forgot to run `talk/render-pdf.sh` after an HTML edit. The script picks the first available headless browser (Chrome / Chromium / Edge). |
 
 ## Command / API Surface
 
@@ -77,7 +78,8 @@
 | `templates/` | 11 | canonical tier-3 scaffold |
 | `skills/agent-context/templates/` | 11 | mirror of `templates/` for the installable skill |
 | `examples/agent-chorus-reference/` | 11 | reference filled tier-3 pack |
-| `talk/` | 11 | meetup deck source + renders + supporting docs (excludes `talk/archive/` items) |
+| `talk/` | 12 | hand-authored HTML deck + PDF + index.html + render-pdf.sh + 4 supporting docs + 2 NotebookLM design references (excludes `talk/archive/` items) |
+| `talk/archive/` | 4 | superseded artifacts: earlier audience review, Marp source for the prior cream-theme deck, its rendered HTML and PDF |
 | `examples/hello-service/.agent-context/current/` | 8 | demo pack used by the CI verify smoke |
 | `docs/` (top-level *.md) | 6 | architecture · ci-adaptation · design-principles · getting-started · roadmap · SYNC |
 | `docs/evidence/figures/` | 6 | rendered evidence figures (3 svg + 3 png) |

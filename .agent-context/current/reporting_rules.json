@@ -60,16 +60,16 @@
   ],
   "never_enumerate_individually": [
     {
-      "glob": "talk/cursor-meetup-may-2026.html",
-      "reason": "Derived from talk/cursor-meetup-may-2026.md via marp-cli; never edit directly."
-    },
-    {
       "glob": "talk/cursor-meetup-may-2026.pdf",
-      "reason": "Derived from talk/cursor-meetup-may-2026.md via marp-cli; never edit directly."
+      "reason": "Rendered from talk/cursor-meetup-may-2026.html via talk/render-pdf.sh (headless Chrome); never edit directly."
     },
     {
       "glob": "talk/index.html",
       "reason": "Byte-identical copy of talk/cursor-meetup-may-2026.html for GitHub Pages; refreshed via cp."
+    },
+    {
+      "glob": "talk/archive/*",
+      "reason": "Superseded artifacts (earlier audience review, prior Marp deck source + renders). Reference only — never edit."
     }
   ],
   "global_rules": {
@@ -85,7 +85,8 @@
         "scripts/experiments/derived-metrics.py",
         "scripts/experiments/extract-events-from-chorus.py",
         "scripts/experiments/extract-events-from-codex.py",
-        "talk/cursor-meetup-may-2026.md",
+        "talk/cursor-meetup-may-2026.html",
+        "talk/render-pdf.sh",
         ".github/workflows/ci.yml",
         ".github/workflows/release.yml",
         ".github/workflows/deploy-pages.yml"
@@ -94,7 +95,6 @@
         "skills/agent-context/templates/",
         "skills/agent-context/tools/",
         "skills/agent-context/SKILL.md",
-        "talk/cursor-meetup-may-2026.html",
         "talk/cursor-meetup-may-2026.pdf",
         "talk/index.html"
       ]
