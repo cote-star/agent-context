@@ -10,11 +10,13 @@
 
 4. **The CLI and verifier are Python stdlib only.** `bin/agent-context` and `tools/verify_agent_context.py` import only stdlib modules — no `requirements.txt`, no `pyproject` runtime deps. Tested by `tests/test_cli_smoke.py` running on a fresh interpreter. (Counter-example check: `git grep -nE '^import |^from ' bin/agent-context tools/verify_agent_context.py` should return only stdlib names.)
 
-5. **Both example packs verify on every PR.** `.github/workflows/ci.yml` runs `bin/agent-context verify examples/hello-service` and `bin/agent-context verify examples/agent-chorus-reference` as part of the CI matrix. A regression in either fails the merge.
+5. **The worked example verifies on every PR.** `.github/workflows/ci.yml` runs `bin/agent-context verify examples/hello-service` as part of the CI matrix. The richer `examples/agent-chorus-reference/` pack is a flat reference snapshot, not a direct CLI verify target.
 
 6. **Tier 3 = exactly 11 pack files.** `bin/agent-context init --tier 3` produces 11 files in `.agent-context/current/`. The mapping is encoded in `bin/agent-context`'s `tier_files()` helper and validated by `tests/test_init_tiers.py`. (Tier 1 = 2, Tier 2 = 6, Tier 3 = 11.)
 
-7. **Live deck artifacts ship together.** Editing `talk/cursor-meetup-may-2026.html` requires also refreshing `talk/index.html` (`cp` from canonical) and `talk/cursor-meetup-may-2026.pdf` (`talk/render-pdf.sh`). Committing the HTML edit alone leaves stale renders on GitHub Pages and stale handouts. (Marp source for the previous cream-theme deck lives in `talk/archive/cursor-meetup-may-2026-marp-source.md` for reference only.)
+7. **Live deck artifacts ship together.** Editing `talk/cursor-meetup-may-2026.html` requires also refreshing `talk/index.html` (`cp` from canonical) and `talk/cursor-meetup-may-2026.pdf` (`talk/render-pdf.sh`). Committing the HTML edit alone leaves stale renders on GitHub Pages and stale handouts.
+
+8. **Public story surfaces stay aligned.** The README, getting-started guide, evidence docs, and deck must agree on the core workflow: invoke the agent-context skill to author/refresh the pack; use the CLI for scaffold/verify/freshness/hooks. Evidence claims should trace back to the 288-task Q2 2026 rerun summaries in `docs/evidence/`.
 
 ## Update Checklist
 
@@ -29,6 +31,7 @@
 | Add a result-schema field | `scripts/experiments/result.schema.json`, `scripts/experiments/extract-events-from-chorus.py`, `scripts/experiments/extract-events-from-codex.py`, `tests/test_result_schema.py`, `tests/test_extract_events.py`, `tests/test_extract_events_codex.py`. Optional backfill: `scripts/experiments/apply-provenance.py`. |
 | Add a new agent extractor | `scripts/experiments/extract-events-from-<agent>.py`, `tests/test_extract_events_<agent>.py`. (Only touch `derived-metrics.py` if the new agent introduces a metric variant.) |
 | Edit deck content/design | `talk/cursor-meetup-may-2026.html` (canonical, hand-authored), then `cp` to `talk/index.html`, then `(cd talk && ./render-pdf.sh)` to refresh `talk/cursor-meetup-may-2026.pdf`. Commit all three together. |
+| Edit public onboarding/story | `README.md`, `docs/getting-started.md`, and any matching claim in `talk/cursor-meetup-may-2026.html` (+ refreshed `talk/index.html` and PDF if deck changes). If evidence claims change, update `docs/evidence/metrics.md` and/or `docs/evidence/results.md`. |
 | Edit the SKILL fill flow | `SKILL.md`, `skills/agent-context/SKILL.md` (via sync), `tests/test_skill_sync.py` |
 
 ## File Families
@@ -42,8 +45,8 @@
 | `tools/*` | 3 | "canonical verifier+freshness+pre-push tools (3 files)" |
 | `skills/agent-context/tools/*` | 3 | "skill copy of tools (3 files; mirror of `tools/*`)" |
 | `tests/test_*.py` | 13 | "unittest suite (13 files)" |
-| `scripts/experiments/*.py` | 11 | "experiments harness Python tools (11 files)" |
-| `scripts/experiments/*.sh` | 4 | "experiments harness shell tools (4 files)" |
+| `scripts/experiments/*.py` | 14 | "experiments harness Python tools (14 files)" |
+| `scripts/experiments/*.sh` | 2 | "experiments harness shell tools (2 files)" |
 | `docs/*.md` | 6 | "top-level public docs (6 files: architecture · ci-adaptation · design-principles · getting-started · roadmap · SYNC)" |
 | `docs/visuals/*.svg` | 5 | "deck/diagram visuals (5 files)" |
 | `docs/demos/*.svg` | 4 | "demo svgs (4 files)" |
@@ -59,5 +62,5 @@
 - **`talk/cursor-meetup-may-2026.html` IS the canonical deck source — edit it directly.** Then `cp` to `talk/index.html` and run `talk/render-pdf.sh`. The HTML/index.html/PDF triplet ships together. Don't edit `index.html` or the PDF directly — those are derived.
 - **Do not edit `examples/hello-service/.agent-context/current/*` to demonstrate template changes.** Re-init with the updated templates: `agent-context init --force --tier 3 examples/hello-service` (it preserves filled content where possible — but the cleaner approach is to manually port any meaningful content).
 - **Do not enumerate the `tests/test_*.py` files individually when describing test coverage.** Report as a family ("13 unittest files"). Open a specific test only when modifying behavior it asserts.
-- **Do not bring back the Marp source as the deck source-of-truth.** It lives in `talk/archive/cursor-meetup-may-2026-marp-source.md` for reference only — the live deck is hand-authored HTML. Editing the archived `.md` does nothing. (Historical note: the Marp render also had a fragile YAML-frontmatter-on-line-1 dependency; that whole class of failure is moot now that the deck is hand-authored HTML.)
+- **Do not bring back deleted talk working artifacts as public source.** The live public talk surface is the HTML/index/PDF triplet plus explicit speaker assets and `talk/README.md`.
 - **Do not assume `docs/*.md` is recursive.** The verifier uses `pathlib.Path.glob()` which is non-recursive — `docs/*.md` matches the 6 top-level files, not files under `docs/evidence/` or `docs/references/`. Use `docs/**/*.md` if you really mean recursive.

@@ -108,6 +108,16 @@
         "talk/render-pdf.sh"
       ]
     },
+    "edit_public_story": {
+      "description": "Change public onboarding, setup flow, or Q2 2026 evidence claims.",
+      "contractually_required_files": [
+        "README.md",
+        "docs/getting-started.md"
+      ],
+      "required_file_families": [
+        "docs/evidence/*.md"
+      ]
+    },
     "edit_ci_workflow": {
       "description": "Change CI behaviour (unit suite, verify-on-examples, release packaging, Pages deploy).",
       "required_file_families": [

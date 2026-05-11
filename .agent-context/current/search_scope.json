@@ -112,14 +112,47 @@
         "skills",
         "scripts",
         "tests",
-        "examples",
-        "talk/archive"
+        "examples"
       ],
       "verification_shortcuts": [
         {
           "check": "PDF render script targets the canonical HTML",
           "file": "talk/render-pdf.sh",
           "look_for": "cursor-meetup-may-2026.html"
+        }
+      ]
+    },
+    "public_story_work": {
+      "description": "Editing public onboarding, talk framing, or Q2 2026 evidence claims. Keep README, getting-started, evidence docs, and deck aligned.",
+      "search_directories": [
+        ".",
+        "docs",
+        "talk"
+      ],
+      "exclude_from_search": [
+        "bin",
+        "tools",
+        "templates",
+        "skills",
+        "scripts",
+        "tests",
+        "examples"
+      ],
+      "verification_shortcuts": [
+        {
+          "check": "README states the skill-first workflow",
+          "file": "README.md",
+          "look_for": "skill"
+        },
+        {
+          "check": "Evidence docs carry the Q2 2026 rerun count",
+          "file": "docs/evidence/results.md",
+          "look_for": "288"
+        },
+        {
+          "check": "Deck source is hand-authored HTML",
+          "file": "talk/cursor-meetup-may-2026.html",
+          "look_for": "<!doctype html>"
         }
       ]
     },

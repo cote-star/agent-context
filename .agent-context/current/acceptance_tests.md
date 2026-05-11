@@ -142,8 +142,10 @@ Investigation steps (in this order):
 
 **Overall:** all pass.
 
-**Iterations:** 2 pack-content corrections before all tests passed.
+**Iterations:** 3 pack-content corrections before all tests passed.
 
 1. Invariant #2 originally listed `RELEASE_NOTES.md` as test-enforced, but `tests/test_version_drift.py` actually enforces `README.md` (badge URL). Updated `00_START_HERE.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, `routes.json`, and `completeness_contract.json`. Test 2 then passed.
 
-2. After publishing the v2 hand-authored HTML deck, every Marp reference in the pack (high-impact path #11, `Edit deck` route, "Marp frontmatter on line 1" invariant, `npx marp-cli` validation command) became stale. Updated `00_START_HERE.md`, `10_SYSTEM_OVERVIEW.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, and replaced Test 4's diagnosis question (Marp frontmatter → skill-sync drift). Test 4 then passed against the new diagnosis path.
+2. After publishing the v2 hand-authored HTML deck, old slide-compiler references in the pack became stale. Updated `00_START_HERE.md`, `10_SYSTEM_OVERVIEW.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, and replaced Test 4's diagnosis question with skill-sync drift. Test 4 then passed against the new diagnosis path.
+
+3. After the README/deck makeover for the May 2026 talk, the public workflow became explicitly skill-first and the evidence headline standardized on 288 graded tasks across 48 cells. Removed deleted talk working-artifact references, updated file counts, added public-story routing/search guidance, and expanded freshness scope so README/deck/evidence changes trigger pack review.

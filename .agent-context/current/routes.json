@@ -79,12 +79,21 @@
       ]
     },
     "edit_deck": {
-      "description": "Change content or design of the meetup deck. The deck is hand-authored HTML — edit it directly, no Marp build.",
+      "description": "Change content or design of the meetup deck. The deck is hand-authored HTML — edit it directly, no separate slide compiler.",
       "steps": [
         "Edit talk/cursor-meetup-may-2026.html (canonical, hand-authored HTML+CSS, deep-navy theme)",
         "Refresh GitHub Pages target: cp talk/cursor-meetup-may-2026.html talk/index.html",
         "Re-render PDF: (cd talk && ./render-pdf.sh) — picks up Chrome / Chromium / Edge automatically",
         "Commit all three artifacts together (cursor-meetup-may-2026.html + index.html + cursor-meetup-may-2026.pdf)"
+      ]
+    },
+    "update_public_story": {
+      "description": "Change README, getting-started, deck, or evidence claims about how users create packs or what the Q2 2026 rerun shows.",
+      "steps": [
+        "Read 20_CODE_MAP.md rows for README/getting-started, docs/evidence, and talk/cursor-meetup-may-2026.html",
+        "Keep the workflow skill-first: users invoke the agent-context skill to author or refresh the pack; CLI commands scaffold, verify, check freshness, and install hooks",
+        "If evidence numbers or exclusions change, update docs/evidence/metrics.md and docs/evidence/results.md before repeating the claim in README or deck",
+        "If the deck changes, refresh talk/index.html and talk/cursor-meetup-may-2026.pdf in the same commit"
       ]
     },
     "add_agent_extractor": {
