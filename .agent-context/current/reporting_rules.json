@@ -9,7 +9,7 @@
     },
     {
       "glob": "scripts/experiments/*.py",
-      "report_as": "experiments harness Python tools (11 files)",
+      "report_as": "experiments harness Python tools (14 files)",
       "reason": "Q2 rerun pipeline; report as a family unless the change targets a specific extractor or metric tool."
     },
     {
@@ -66,10 +66,6 @@
     {
       "glob": "talk/index.html",
       "reason": "Byte-identical copy of talk/cursor-meetup-may-2026.html for GitHub Pages; refreshed via cp."
-    },
-    {
-      "glob": "talk/archive/*",
-      "reason": "Superseded artifacts (earlier audience review, prior Marp deck source + renders). Reference only — never edit."
     }
   ],
   "global_rules": {
@@ -85,6 +81,11 @@
         "scripts/experiments/derived-metrics.py",
         "scripts/experiments/extract-events-from-chorus.py",
         "scripts/experiments/extract-events-from-codex.py",
+        "README.md",
+        "docs/getting-started.md",
+        "docs/evidence/metrics.md",
+        "docs/evidence/results.md",
+        "talk/README.md",
         "talk/cursor-meetup-may-2026.html",
         "talk/render-pdf.sh",
         ".github/workflows/ci.yml",

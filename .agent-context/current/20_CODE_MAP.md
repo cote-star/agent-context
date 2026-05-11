@@ -13,10 +13,12 @@
 | 7 | `scripts/experiments/derived-metrics.py` | Computes 28 metrics per cell. Discovers both 4-level and 5-level result paths; honors `<repo>/.skipped` markers. | Every public metric in the deck and `docs/evidence/` is computed here. | HIGH | authoritative |
 | 8 | `scripts/experiments/extract-events-from-chorus.py`, `extract-events-from-codex.py` | Session JSONL → schema-v3 event streams. Per-task segmentation via Write/Edit-to-`<task>.json` boundaries. | Extraction is the bottleneck for telemetry; bugs here silently corrupt all downstream metrics. | HIGH | authoritative |
 | 9 | `tools/check_freshness.sh` | `git diff <base>..HEAD` against `CONTEXT_RELEVANT_PATHS`; advisory exit. | Drives the "stale-pack" advisory and the pre-push hook. | MEDIUM | authoritative |
-| 10 | `.github/workflows/ci.yml` | Runs unittest suite + verify on `examples/hello-service` and `examples/agent-chorus-reference`. | Merge blocker for every PR. | HIGH | authoritative |
-| 11 | `talk/cursor-meetup-may-2026.html` | Hand-authored 21-slide HTML+CSS deck (deep-navy theme; green=lift/structured wins, orange=bare/routing). Source-of-truth — edit the HTML directly. | The deck. `talk/index.html` and `talk/cursor-meetup-may-2026.pdf` are derived; `talk/render-pdf.sh` produces the PDF via headless Chrome. | MEDIUM | authoritative; index.html + PDF derived |
-| 12 | `examples/hello-service/` | Small Python demo service + filled tier-3 pack. | CI verify smoke; acts as the live "what does a filled pack look like" example. | MEDIUM | authoritative |
-| 13 | `examples/agent-chorus-reference/` | Reference filled tier-3 pack from a real agent-chorus seal. | Shows what a richer pack looks like; CI verifies it on every PR. | LOW | reference |
+| 10 | `.github/workflows/ci.yml` | Runs unittest suite + `bin/agent-context verify examples/hello-service`. | Merge blocker for every PR. | HIGH | authoritative |
+| 11 | `README.md`, `docs/getting-started.md` | Public onboarding story and practical setup guide. Current framing is skill-first: install/invoke the skill to author the pack; use the CLI to scaffold, verify, freshness-check, and install hooks. | Primary user conversion path. Drift here directly changes how people create packs. | HIGH | authoritative |
+| 12 | `docs/evidence/metrics.md`, `docs/evidence/results.md` | Public methodology/results summary for the Q2 2026 rerun. Current headline set is 288 graded tasks across 48 cells, excluding one skipped repo that needs setup review. | Source for evidence claims in the README and deck. | HIGH | authoritative summary |
+| 13 | `talk/cursor-meetup-may-2026.html` | Hand-authored 22-slide HTML+CSS deck (deep-navy theme; green=lift/structured wins, orange=bare/routing). Source-of-truth — edit the HTML directly. | The deck. `talk/index.html` and `talk/cursor-meetup-may-2026.pdf` are derived; `talk/render-pdf.sh` produces the PDF via headless Chrome. | MEDIUM | authoritative; index.html + PDF derived |
+| 14 | `examples/hello-service/` | Small Python demo service + filled tier-3 pack. | CI verify smoke; acts as the live "what does a filled pack look like" example. | MEDIUM | authoritative |
+| 15 | `examples/agent-chorus-reference/` | Reference filled tier-3 pack from a real agent-chorus seal, stored flat rather than under `.agent-context/current/`. | Shows what a richer pack looks like; not a direct `bin/agent-context verify <path>` target. | LOW | reference |
 
 ## Quick Lookup Shortcuts
 
@@ -34,7 +36,9 @@
 | Where are derived metrics computed? | `scripts/experiments/derived-metrics.py` — 28 metrics, glob-discovers result JSONs, filters archive subdirs by name pattern. |
 | How is per-task segmentation done in extractors? | `extract-events-from-chorus.py` and `extract-events-from-codex.py` use `Write`/`Edit`-to-`<task>.json` boundaries to split one cell-level event stream across the 6 tasks. |
 | Where do tests live? | `tests/test_*.py` — 13 test files, plus `tests/_helpers.py` and `tests/__init__.py`. unittest, no third-party deps. |
-| Where is the deck source? | `talk/cursor-meetup-may-2026.html` (hand-authored HTML+CSS, deep-navy theme). After edits: `cp talk/cursor-meetup-may-2026.html talk/index.html` and `(cd talk && ./render-pdf.sh)`. The Marp source for the previous cream-theme deck is in `talk/archive/cursor-meetup-may-2026-marp-source.md`. |
+| Where is the skill-first onboarding story? | `README.md` and `docs/getting-started.md`; deck reinforcement lives in `talk/cursor-meetup-may-2026.html` around the setup/demo/CTA slides. |
+| Where are the public Q2 2026 evidence claims? | `docs/evidence/metrics.md` and `docs/evidence/results.md`; deck/README claims should stay consistent with these summaries. |
+| Where is the deck source? | `talk/cursor-meetup-may-2026.html` (hand-authored HTML+CSS, deep-navy theme). After edits: `cp talk/cursor-meetup-may-2026.html talk/index.html` and `(cd talk && ./render-pdf.sh)`. |
 | Where is the canonical-vs-skill sync contract? | `scripts/sync-from-canonical.sh` (the script) + `docs/SYNC.md` (the contract) + `tests/test_skill_sync.py` (enforcement). |
 | What does each top-level doc cover? | `docs/architecture.md` (toolchain shape), `docs/getting-started.md` (operator quickstart), `docs/ci-adaptation.md` (how to wire this into existing CI), `docs/design-principles.md` (the why), `docs/roadmap.md` (next), `docs/SYNC.md` (canonical/skill sync). |
 | Where does the freshness `CONTEXT_RELEVANT_PATHS` get tuned? | Operator-supplied at invocation time. For *this* repo, see `40_OPERATIONS_AND_RELEASE.md`. |
@@ -83,6 +87,13 @@
 2. Refresh `talk/index.html`: `cp talk/cursor-meetup-may-2026.html talk/index.html`.
 3. Re-render PDF: `(cd talk && ./render-pdf.sh)` — picks up Chrome / Chromium / Edge automatically.
 4. Commit `cursor-meetup-may-2026.html`, `index.html`, and `cursor-meetup-may-2026.pdf` together.
+
+### Edit public onboarding or evidence claims
+
+1. Edit `README.md` first for the product promise and setup path.
+2. Edit `docs/getting-started.md` if the practical user flow changes.
+3. Edit `docs/evidence/metrics.md` and/or `docs/evidence/results.md` if counts, methodology, exclusions, or headline numbers change.
+4. If the talk repeats the claim, edit `talk/cursor-meetup-may-2026.html`, refresh `talk/index.html`, and re-render the PDF in the same commit.
 
 ## Extension Recipe
 

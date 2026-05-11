@@ -2,32 +2,37 @@
 
 ## Product Shape
 
-`agent-context` is an authoring + verification toolchain for *checked-in* repo evidence that any coding agent (Cursor, Claude Code, Codex CLI, Gemini, OpenCode) can consume before editing source. It ships five surfaces from one source-of-truth:
+`agent-context` is an authoring + verification toolchain for *checked-in* system evidence that any coding agent (Cursor, Claude Code, Codex CLI, Gemini, OpenCode) can consume before acting. The developer venue emphasizes repo navigation, but the product framing is broader: portable context packs for systems whose operators need reliable recall, routes, contracts, and verification. It ships six surfaces from one source-of-truth:
 
-1. A **CLI** (`bin/agent-context`) — Python 3 stdlib, no runtime deps. Subcommands: `init`, `verify`, `freshness`, `doctor`, `install-hook`.
-2. An **installable Claude skill** (`SKILL.md` + `skills/agent-context/`) — the fill flow the agent runs after `init`.
+1. An **installable agent-context skill** (`SKILL.md` + `skills/agent-context/`) — the preferred authoring workflow: ask an agent to build or refresh the pack, then review the diff.
+2. A **CLI** (`bin/agent-context`) — Python 3 stdlib, no runtime deps. Subcommands: `init`, `verify`, `freshness`, `doctor`, `install-hook`. The CLI scaffolds, verifies, checks freshness, and installs hooks; it is not the primary authoring interface for filled content.
 3. **Canonical templates** (`templates/`, 11 files for tier 3) that `init` copies into the target repo's `.agent-context/current/`.
-4. An **experiments harness** (`scripts/experiments/`) for the Q2 2026 multi-agent rerun: bare vs `structured_fresh` clones × 4 model variants × 6 repos × 6 tasks, with extractors, derived-metrics, ground-truth parser, and an LLM-judge dispatcher.
-5. A **meetup deck** (`talk/cursor-meetup-may-2026.html`, hand-authored HTML + CSS, deep-navy theme) with a one-command PDF renderer (`talk/render-pdf.sh`).
+4. An **experiments harness** (`scripts/experiments/`) for the Q2 2026 multi-agent rerun: bare vs `structured_fresh` clones × 4 agent/model lanes × 6 repos × 6 tasks = 288 graded tasks, with extractors, derived-metrics, ground-truth parser, and an LLM-judge dispatcher.
+5. **Public docs/evidence** (`README.md`, `docs/getting-started.md`, `docs/evidence/`) that carry the skill-first onboarding path and Q2 2026 results.
+6. A **meetup deck** (`talk/cursor-meetup-may-2026.html`, hand-authored HTML + CSS, deep-navy theme) with a one-command PDF renderer (`talk/render-pdf.sh`).
 
 ## Runtime Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│  1. operator: bin/agent-context init --tier 3 <repo>                          │
+│  1. operator: install/use the agent-context skill in an agent session          │
+│     └── agent inspects the system, fills .agent-context/current/, and          │
+│         explains the diff for review                                           │
+│                                                                                │
+│  2. optional scaffold: bin/agent-context init --tier 3 <repo>                  │
 │     └── copies templates/ → <repo>/.agent-context/current/                    │
 │     └── writes routing block in CLAUDE.md / AGENTS.md / GEMINI.md / .cursorrules│
 │                                                                                │
-│  2. agent: reads SKILL.md → enumerates subsystems via git ls-files →           │
+│  3. agent: reads SKILL.md → enumerates subsystems via git ls-files →           │
 │            fills 11 templates → verifies globs against real files              │
 │                                                                                │
-│  3. operator: bin/agent-context verify <repo>                                  │
+│  4. operator: bin/agent-context verify <repo>                                  │
 │     └── tools/verify_agent_context.py: structural + JSON schema + glob checks │
 │                                                                                │
-│  4. operator: bin/agent-context freshness <repo>                               │
+│  5. operator: bin/agent-context freshness <repo>                               │
 │     └── tools/check_freshness.sh: git diff base..HEAD vs CONTEXT_RELEVANT_PATHS│
 │                                                                                │
-│  5. CI: .github/workflows/ci.yml runs unittest + verify on bundled examples    │
+│  6. CI: .github/workflows/ci.yml runs unittest + verify on bundled examples    │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -44,7 +49,8 @@
 | Templates (canonical) | `templates/*.md`, `templates/*.json` | 11-file tier-3 scaffold | source-of-truth for both copies |
 | Experiments harness | `scripts/experiments/{*.py,*.sh}` + `result.schema.json` | bare vs `structured_fresh` runs, schema-v3 extractors, derived-metrics, judge dispatcher | bash + python stdlib |
 | Tests | `tests/test_*.py` (13 files) + `_helpers.py` | unittest, no third-party deps | unittest (stdlib) |
-| Talk | `talk/cursor-meetup-may-2026.html` (hand-authored HTML+CSS, deep-navy theme) + `talk/render-pdf.sh` → `.pdf` / `index.html` (cp) | 21-slide deck + supporting docs | headless Chrome (PDF render only) |
+| Public docs/story | `README.md`, `docs/getting-started.md`, `docs/evidence/{metrics,results}.md`, `talk/README.md` | skill-first onboarding, experiment methodology/results, talk support notes | markdown |
+| Talk | `talk/cursor-meetup-may-2026.html` (hand-authored HTML+CSS, deep-navy theme) + `talk/render-pdf.sh` → `.pdf` / `index.html` (cp) | 22-slide deck + public speaker assets | headless Chrome (PDF render only) |
 | CI | `.github/workflows/{ci,release,deploy-pages}.yml` | unit suite + verify on examples + GitHub Pages deploy | github actions |
 
 ## Silent Failure Modes
@@ -78,10 +84,10 @@
 | `templates/` | 11 | canonical tier-3 scaffold |
 | `skills/agent-context/templates/` | 11 | mirror of `templates/` for the installable skill |
 | `examples/agent-chorus-reference/` | 11 | reference filled tier-3 pack |
-| `talk/` | 12 | hand-authored HTML deck + PDF + index.html + render-pdf.sh + 4 supporting docs + 2 NotebookLM design references (excludes `talk/archive/` items) |
-| `talk/archive/` | 4 | superseded artifacts: earlier audience review, Marp source for the prior cream-theme deck, its rendered HTML and PDF |
+| `talk/` | 7 | hand-authored HTML deck + PDF + index.html + render-pdf.sh + public talk README + speaker assets |
 | `examples/hello-service/.agent-context/current/` | 8 | demo pack used by the CI verify smoke |
 | `docs/` (top-level *.md) | 6 | architecture · ci-adaptation · design-principles · getting-started · roadmap · SYNC |
+| `docs/evidence/` | 2 | public methodology/results summary for the 288-task Q2 2026 rerun |
 | `docs/evidence/figures/` | 6 | rendered evidence figures (3 svg + 3 png) |
 | `docs/visuals/` | 5 | deck/diagram visuals (svg) |
 | `examples/hello-service/src/` | 4 | demo Python service (config, server, main, init) |
