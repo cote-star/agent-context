@@ -3,7 +3,7 @@
 ## TL;DR
 
 Agent-context makes AI agents **dramatically better** at navigating large
-codebases. Q2 2026 multi-agent rerun (current evidence): 252 graded tasks
+codebases. Q2 2026 multi-agent rerun (current evidence): 288 graded tasks
 across 48 cells (6 repos × 4 model variants × 2 conditions × 6 tasks).
 
 - **Claude Opus 4.7 + structured = 6/6 perfect** across all 6 repos.
@@ -58,10 +58,10 @@ Plus minimal routing blocks in `CLAUDE.md` / `AGENTS.md` (~100-200 tokens each).
 ## Q2 2026 Multi-Agent Rerun (current evidence)
 
 **Scope.** 6 repos × 4 model variants × bare/structured × 6 tasks =
-**252 graded answers across 48 cells.** Run May 9–10, 2026 under the
+**288 graded answers across 48 cells.** Run May 9–10, 2026 under the
 fresh-pack isolated protocol: every `structured_fresh` clone passed
 `agent-context verify` + strict `check_freshness.sh` before the agent
-started. All 252 task verdicts carry `grading_method: llm-provisional`
+started. All 288 task verdicts carry `grading_method: llm-provisional`
 — LLM-judged via independent Claude Code subagents (one subagent per
 cell, fresh context). No human spot-audit.
 

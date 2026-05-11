@@ -8,7 +8,7 @@ visit the [agent-context dashboard](https://cote-star.github.io/agent-recall/doc
 
 ## Headline — Q2 2026 multi-agent rerun (current evidence)
 
-**252 graded tasks** across **48 cells**: 6 repos × 4 model variants ×
+**288 graded tasks** across **48 cells**: 6 repos × 4 model variants ×
 2 conditions × 6 tasks. Grading is LLM-provisional via independent
 Claude Code subagents (one subagent per cell, fresh context, no human
 spot-audit). See [methodology disclosure](#methodology-and-disclosure)
@@ -94,7 +94,7 @@ headline numbers. The run is preserved in the rerun infra and
 
 ## Methodology and disclosure
 
-**Grading method.** All 252 task verdicts in the Q2 2026 rerun carry
+**Grading method.** All 288 task verdicts in the Q2 2026 rerun carry
 `grading_method: llm-provisional`. Each cell (6 tasks) was graded by an
 independent Claude Code subagent with fresh context — the subagent
 read the cell's results, the per-task ground truth, and a fixed judge
@@ -232,4 +232,4 @@ The full experiment visualization with per-repo breakdowns is available at:
 
 - **Full result breakdown**: [results.md](./results.md) in this repo
 - **Experiment data and figures**: [cote-star/agent-recall](https://github.com/cote-star/agent-recall) -- SVG/PNG figures, evidence map, interactive dashboard
-- **Experiment protocol and reference data**: [cote-star/agent-chorus](https://github.com/cote-star/agent-chorus) -- `docs/agent-context-results.md` and research artifacts. Pack creation and maintenance use this repo's `bin/agent-context` CLI.
+- **Experiment protocol and reference data**: [cote-star/agent-chorus](https://github.com/cote-star/agent-chorus) -- `docs/agent-context-results.md` and research artifacts. Pack creation uses this repo's `agent-context` skill, with the CLI providing scaffold, verification, and freshness checks.

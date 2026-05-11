@@ -22,15 +22,15 @@ Open Claude Code, Cursor, Codex, or another coding agent in the repo you want to
 
 Ask:
 
-> Set up agent context for this repo.
+> Use the agent-context skill to build context for this repo.
 
-The skill drives scaffold → subsystem inventory → filled templates → grep-backed acceptance tests → verification → freshness hook guidance. It may invoke:
+The skill drives scaffold → subsystem inventory → filled templates → grep-backed acceptance tests → verification → freshness hook guidance. It may invoke the CLI scaffold:
 
 ```bash
 ~/agent-context/bin/agent-context init --tier 3 --install-hook .
 ```
 
-That scaffold creates `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/` and writes managed routing blocks to agent rule files.
+That scaffold creates `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/` and writes managed routing blocks to agent rule files. `init` is the bootstrap step; the skill is the authoring workflow.
 
 The skill then fills the pack:
 
