@@ -1125,9 +1125,9 @@ td.r, th.r { text-align: right; }
   <div class="body-row" style="align-items:stretch;">
     <div class="col" style="flex:1;">
       <ol style="margin-top:2px;">
-        <li><strong>Ask agent</strong> — start with one repo and one painful workflow.</li>
-        <li><strong>Skill authors pack</strong> — inventories subsystems, scaffolds when needed, fills templates.</li>
-        <li><strong>CLI verifies</strong> — schema checks, grep-backed acceptance tests, freshness.</li>
+        <li><strong>Ask agent</strong> — type the skill request into Claude, Codex, Cursor, or OpenCode.</li>
+        <li><strong>Skill authors pack</strong> — inventories subsystems, may scaffold with <code>init</code>, fills templates.</li>
+        <li><strong>CLI checks</strong> — after authoring, run <code>verify</code> and <code>freshness</code>.</li>
         <li><strong>PR diff</strong> — review the generated context like code.</li>
       </ol>
 
@@ -1144,21 +1144,21 @@ td.r, th.r { text-align: right; }
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 1</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> ask agent · ~40s</div>
-              <div class="small muted">agent uses the skill; <code>init</code> is only the scaffold step it may invoke.</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> agent chat · ~40s</div>
+              <div class="small muted">paste the skill request; the agent starts the authoring workflow.</div>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 2</div>
             <div style="flex:1;">
               <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> skill authors · ~30s</div>
-              <div class="small muted">narrate: "<code>SKILL.md</code> drives the agent — inventory subsystems, fill templates, write grep-backed tests."</div>
+              <div class="small muted">narrate: "the skill may call <code>init</code>, then fills the pack and writes grep-backed tests."</div>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 3</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> CLI verifies · ~10s</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> CLI checks · ~10s</div>
               <div class="small muted">machine checks pass — proof the authored pack is reviewable.</div>
             </div>
           </div>
@@ -1166,10 +1166,13 @@ td.r, th.r { text-align: right; }
       </div>
 
       <div class="terminal" style="font-size:12.5px;line-height:1.5;">
-<span class="term-comment"># ask your coding agent</span>
-Use the agent-context skill to build context for this repo.
+<span class="term-comment"># 1. in your coding agent</span>
+&gt; Use the agent-context skill to build context for this repo.
 
-<span class="term-comment"># make it reviewable</span>
+<span class="term-comment"># 2. skill may scaffold, then authors the pack</span>
+<span class="term-prompt">$</span> agent-context init --tier 3 --install-hook .
+
+<span class="term-comment"># 3. after the agent opens the diff</span>
 <span class="term-prompt">$</span> agent-context verify .
 <span class="term-prompt">$</span> agent-context freshness .
       </div>
