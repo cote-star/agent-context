@@ -1169,8 +1169,8 @@ td.r, th.r { text-align: right; }
 <span class="term-comment"># 1. in your coding agent</span>
 &gt; Use the agent-context skill to build context for this repo.
 
-<span class="term-comment"># 2. skill may scaffold, then authors the pack</span>
-<span class="term-prompt">$</span> agent-context init --tier 3 --install-hook .
+<span class="term-comment"># 2. agent authors the pack and opens a diff</span>
+<span class="term-comment">#    it may call init internally as scaffold</span>
 
 <span class="term-comment"># 3. after the agent opens the diff</span>
 <span class="term-prompt">$</span> agent-context verify .
@@ -1610,23 +1610,23 @@ Changing this without updating cookie/v2 will fail silently in prod
   <div class="body-row" style="align-items:stretch;">
     <div class="col" style="flex:1.1;">
       <ol style="margin-top:2px;">
-        <li><strong>Pick one painful workflow</strong> — impact analysis, auth, cache, release, migration, or docs corpus.</li>
-        <li><strong>Ask your agent</strong> — use the <code>agent-context</code> skill.</li>
+        <li><strong>Install the skill once</strong> — then open your target repo.</li>
+        <li><strong>Ask your agent</strong> — use the <code>agent-context</code> skill to build the pack.</li>
         <li><strong>Review the generated diff</strong> — inspect the new <code>.agent-context/</code> pack.</li>
         <li><strong>Run checks</strong> — <code>verify</code> and <code>freshness</code>.</li>
-        <li><strong>Test one task</strong> — bare vs context, same repo, same request.</li>
+        <li><strong>Pick one painful workflow</strong> — use it to test the pack's value.</li>
       </ol>
-      <p class="small muted" style="margin-top:10px;">That is enough to decide whether the repo needs the full tier 3 pack.</p>
+      <p class="small muted" style="margin-top:10px;">The fastest path is not hand-authoring files. Let the agent create the pack; use the CLI to make it reviewable.</p>
     </div>
 
     <div class="col" style="flex:1;">
       <div class="terminal" style="font-size:12.5px;">
 <span class="term-comment"># ask your coding agent</span>
-Use the agent-context skill to build context for this repo.
+&gt; Use the agent-context skill to build context for this repo.
 
 <span class="term-prompt">$</span> agent-context verify .
 <span class="term-prompt">$</span> agent-context freshness .
-<span class="term-comment"># 30 minutes. one repo. one workflow.</span>
+<span class="term-comment"># open a PR for the generated context diff</span>
       </div>
       <div class="card green">
         <div class="k">Any agent that reads <code>AGENTS.md</code></div>
