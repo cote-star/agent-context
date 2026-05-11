@@ -44,7 +44,7 @@ The skill invokes the same `agent-context` CLI under the hood. Running it yourse
 
 | | Feature | Why it matters | Where in this README |
 |---:|---|---|---|
-| 1 | **Works across agents** | Cursor, Claude, Codex, Gemini, and OpenCode all read the same `.agent-context/`. `init` writes the routing block to `.cursorrules`, `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` — modern agents read several of these together as project rules (Cursor, for example, picks up `.cursorrules` + `CLAUDE.md` + `AGENTS.md`), so any one of the four is enough to route any agent. | [§Architecture](#architecture) |
+| 1 | **Works across agents** | Cursor, Claude, Codex, Gemini, and OpenCode all read the same `.agent-context/`. The CLI scaffold writes routing blocks to `.cursorrules`, `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md`; the skill decides what to author so modern agents can route through the same pack. | [§Architecture](#architecture) |
 | 2 | **Quantified evidence** | 78+ reviewer-graded answers across three real repos, with grep-backed verification of every claim | [§Results](#results) |
 | 3 | **Tiered adoption** | Start with 2 files, scale to 11 — every tier is a valid stopping point | [§Tiers](#tiers) |
 | 4 | **Agent-creatable** | One prompt — `Set up agent context for this repo.` — fills the pack, acceptance tests, routing blocks, and hook/CI guidance via the included root skill and installable `skills/agent-context/` package | [SKILL.md](SKILL.md) |
@@ -122,11 +122,19 @@ Every claim above maps to an operational definition and a citation in the eviden
 
 ## How it works
 
-The skill drives the workflow end-to-end. Each step is a CLI subcommand the skill invokes — and that you can run directly if you skip the agent path.
+The skill is the authoring workflow. The CLI provides deterministic scaffold, verification, freshness, and doctor checks that the skill can invoke — and that you can run directly for manual or scripted setup.
 
-### 1. Initialize
+### 1. Ask the agent
 
-The skill starts by scaffolding the pack:
+Start in the repo you want to improve:
+
+> Set up agent context for this repo.
+
+The agent runs the `agent-context` skill, inventories the system, and decides what the context pack needs for the chosen tier.
+
+### 2. Skill scaffolds and fills
+
+The skill may invoke the CLI scaffold:
 
 ```bash
 agent-context init --tier 3 --install-hook .
@@ -134,19 +142,15 @@ agent-context init --tier 3 --install-hook .
 
 ![agent-context init demo](docs/demos/init.svg)
 
-Creates `.agent-context/current/`, copies helper tools into `.agent-context/tools/`, writes managed routing blocks to `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `.cursorrules`, and installs an advisory pre-push freshness hook when no unmanaged hook blocks safe install.
+The scaffold creates `.agent-context/current/`, copies helper tools into `.agent-context/tools/`, writes managed routing blocks to `CLAUDE.md`, `GEMINI.md`, `AGENTS.md`, and `.cursorrules`, and installs an advisory pre-push freshness hook when no unmanaged hook blocks safe install.
 
-### 2. Fill the artifacts
-
-Once scaffolded, the agent enumerates every subsystem (so nothing silently gets skipped), fills all templates, writes acceptance tests with grep verification, and leaves a reviewable diff. [SKILL.md](SKILL.md) is the workflow it follows.
-
-> Set up agent context for this repo.
+Once scaffolded, the skill enumerates every subsystem (so nothing silently gets skipped), fills all templates, writes acceptance tests with grep verification, and leaves a reviewable diff. [SKILL.md](SKILL.md) is the workflow it follows.
 
 If you skipped the skill path, you can edit the `REPLACE` markers manually instead.
 
 ![agent-context workflow](docs/demos/demo-agent-context.svg)
 
-### 3. Verify
+### 3. Verify and keep fresh
 
 ```bash
 agent-context verify .

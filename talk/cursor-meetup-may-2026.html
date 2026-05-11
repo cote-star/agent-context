@@ -921,7 +921,7 @@ td.r, th.r { text-align: right; }
   <h2><span class="lede">Not just repo recall</span>Every serious system needs a navigation layer.</h2>
 
   <div class="body">
-    <p>Code makes the problem visible. Portable context makes it general. The same pattern applies anywhere an agent must explore, verify, and act:</p>
+    <p>Code makes the problem visible. Portable context makes it general. This is not repo recall; it is a portable context pattern for any system with state, rules, risk, and work to do.</p>
 
     <div class="grid-4" style="margin-top:6px;">
       <div class="card"><div class="k">01</div><div class="v">Data platforms</div></div>
@@ -931,7 +931,7 @@ td.r, th.r { text-align: right; }
     </div>
 
     <div class="spacer"></div>
-    <p class="lead-p" style="text-align:center;">For this developer room, the system is a repo. The thesis is portable context for <strong style="color:var(--green);">any system with state, rules, risk, and work to do.</strong></p>
+    <p class="lead-p" style="text-align:center;">For this developer room, the system is a repo; the pattern travels anywhere an agent must explore, verify, and act.</p>
   </div>
 </section>
 
@@ -1125,11 +1125,10 @@ td.r, th.r { text-align: right; }
   <div class="body-row" style="align-items:stretch;">
     <div class="col" style="flex:1;">
       <ol style="margin-top:2px;">
-        <li><strong>Initialize</strong> — scaffold the pack.</li>
-        <li><strong>Fill</strong> — agent enumerates subsystems, fills templates (<code>SKILL.md</code>).</li>
-        <li><strong>Verify</strong> — schema checks, grep-backed acceptance tests.</li>
-        <li><strong>Freshness</strong> — fail the run when relevant code changed but context did not.</li>
-        <li><strong>Measure</strong> — bare vs <code>structured_fresh</code> on hard tasks.</li>
+        <li><strong>Ask agent</strong> — start with one repo and one painful workflow.</li>
+        <li><strong>Skill authors pack</strong> — inventories subsystems, scaffolds when needed, fills templates.</li>
+        <li><strong>CLI verifies</strong> — schema checks, grep-backed acceptance tests, freshness.</li>
+        <li><strong>PR diff</strong> — review the generated context like code.</li>
       </ol>
 
       <div class="card green" style="margin-top:auto;padding:12px 14px;">
@@ -1145,33 +1144,34 @@ td.r, th.r { text-align: right; }
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 1</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> <code>init</code> · ~40s</div>
-              <div class="small muted">empty repo → run <code>agent-context init</code>; show the generated routing block.</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> ask agent · ~40s</div>
+              <div class="small muted">agent uses the skill; <code>init</code> is only the scaffold step it may invoke.</div>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 2</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> <code>fill</code> · ~30s</div>
-              <div class="small muted">narrate: "<code>SKILL.md</code> drives the agent — inventory subsystems, fill 11 templates, write grep-backed tests."</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> skill authors · ~30s</div>
+              <div class="small muted">narrate: "<code>SKILL.md</code> drives the agent — inventory subsystems, fill templates, write grep-backed tests."</div>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 3</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> <code>verify</code> · ~10s</div>
-              <div class="small muted">machine checks pass — proof the generation worked.</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> CLI verifies · ~10s</div>
+              <div class="small muted">machine checks pass — proof the authored pack is reviewable.</div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="terminal" style="font-size:12.5px;line-height:1.5;">
-<span class="term-prompt">$</span> agent-context init .
-<span class="term-out">scaffold .agent-context/  <span class="ok">ok</span></span>
+<span class="term-comment"># ask your coding agent</span>
+Use the agent-context skill to build context for this repo.
+
+<span class="term-comment"># make it reviewable</span>
 <span class="term-prompt">$</span> agent-context verify .
-<span class="term-out">routes.json schema       <span class="ok">ok</span></span>
-<span class="term-out">acceptance tests (12/12) <span class="ok">ok</span></span>
+<span class="term-prompt">$</span> agent-context freshness .
       </div>
     </div>
   </div>
@@ -1608,17 +1608,19 @@ Changing this without updating cookie/v2 will fail silently in prod
     <div class="col" style="flex:1.1;">
       <ol style="margin-top:2px;">
         <li><strong>Pick one painful workflow</strong> — impact analysis, auth, cache, release, migration, or docs corpus.</li>
-        <li><strong>Create tier 1</strong> — start with code map + search scope.</li>
-        <li><strong>Add one invariant</strong> — name the silent failure and near-miss files.</li>
-        <li><strong>Run bare vs context</strong> — same task, same repo, two clones.</li>
-        <li><strong>Review the diff</strong> — files opened, dead ends, missing surfaces, risk.</li>
+        <li><strong>Ask your agent</strong> — use the <code>agent-context</code> skill.</li>
+        <li><strong>Review the generated diff</strong> — inspect the new <code>.agent-context/</code> pack.</li>
+        <li><strong>Run checks</strong> — <code>verify</code> and <code>freshness</code>.</li>
+        <li><strong>Test one task</strong> — bare vs context, same repo, same request.</li>
       </ol>
       <p class="small muted" style="margin-top:10px;">That is enough to decide whether the repo needs the full tier 3 pack.</p>
     </div>
 
     <div class="col" style="flex:1;">
       <div class="terminal" style="font-size:12.5px;">
-<span class="term-prompt">$</span> agent-context init .
+<span class="term-comment"># ask your coding agent</span>
+Use the agent-context skill to build context for this repo.
+
 <span class="term-prompt">$</span> agent-context verify .
 <span class="term-prompt">$</span> agent-context freshness .
 <span class="term-comment"># 30 minutes. one repo. one workflow.</span>
@@ -1645,15 +1647,15 @@ Changing this without updating cookie/v2 will fail silently in prod
     <p class="lead-p" style="max-width:880px;">Not a prompt trick. Not a vendor feature.<br/>For developers, it starts in the repo. For teams, it becomes a reviewable system standard.</p>
 
     <div style="display:flex;gap:6px;flex-wrap:wrap;">
-      <span class="chip orange"><code>init</code></span>
+      <span class="chip orange"><code>skill authors</code></span>
       <span class="chip orange"><code>verify</code></span>
       <span class="chip orange"><code>freshness</code></span>
-      <span class="chip green"><code>bare vs structured_fresh</code></span>
+      <span class="chip green"><code>reviewable PR</code></span>
     </div>
 
     <div style="margin-top:6px;padding:14px 18px;border:1px solid var(--green-line);background:var(--green-soft);border-radius:10px;max-width:920px;">
       <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">DO THIS WEEK</span>
-      <div style="font-size:21px;color:var(--fg);margin-top:4px;font-weight:600;">Pick one repo. Run <code style="color:var(--orange);">agent-context init</code>. Open a PR for the diff.</div>
+      <div style="font-size:21px;color:var(--fg);margin-top:4px;font-weight:600;">Pick one repo. Ask your agent to build the context pack. Verify it. Open a PR.</div>
     </div>
 
     <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;">
