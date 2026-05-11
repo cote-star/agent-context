@@ -1,30 +1,38 @@
 # Getting Started with Agent Context
 
-## 1. Clone and install
+## 1. Install the skill
+
+Clone the repo once so your agent can use the bundled skill:
 
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
-cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 3 --install-hook .
 ```
 
-This scaffolds `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/`.
+Then install or register `~/agent-context/skills/agent-context` with your agent:
 
-For a demo-ready setup that also installs the advisory local freshness hook when safe:
+| Agent | Setup |
+|---|---|
+| Claude Code | `cp -r ~/agent-context/skills/agent-context ~/.claude/skills/` |
+| Codex | register `~/agent-context/skills/agent-context/agents/openai.yaml` with your Codex skill registry |
+| Cursor | open the target repo; Cursor reads `.cursorrules` after the pack exists |
+
+## 2. Ask your agent to author the pack
+
+Open Claude Code, Cursor, Codex, or another coding agent in the repo you want to create context for. The repo should have **50+ files or 3+ subsystems** to benefit most from agent-context.
+
+Ask:
+
+> Set up agent context for this repo.
+
+The skill drives scaffold → subsystem inventory → filled templates → grep-backed acceptance tests → verification → freshness hook guidance. It may invoke:
 
 ```bash
 ~/agent-context/bin/agent-context init --tier 3 --install-hook .
 ```
 
-Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for a starter pack without system overview, operations docs, or authority contracts. `--tier 3` (the default) gives you everything.
+That scaffold creates `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/` and writes managed routing blocks to agent rule files.
 
-## 2. Open a session in the target repo
-
-Open Claude Code, Cursor, or Codex in the repo you want to create context for. The repo should have **50+ files or 3+ subsystems** to benefit most from a agent-context.
-
-## 3. Fill the templates
-
-Each template file contains `REPLACE` markers. Work through them in order:
+The skill then fills the pack:
 
 1. `00_START_HERE.md` — entrypoint, fast facts, task routing, stop rules
 2. `10_SYSTEM_OVERVIEW.md` — architecture, runtime flow, silent failure modes
@@ -32,15 +40,28 @@ Each template file contains `REPLACE` markers. Work through them in order:
 4. `30_BEHAVIORAL_INVARIANTS.md` — testable invariants, change checklists, file families
 5. `40_OPERATIONS_AND_RELEASE.md` — validation commands, CI checks, deploy, release
 
-You can fill these manually or ask an agent: **"Fill the agent context templates for this repo"** — the agent reads the pack structure and fills markers from the codebase.
+You should end with a reviewable diff that contains the `.agent-context/` pack plus managed routing blocks.
 
-## 4. Verify the pack
+## 3. Review and verify the pack
 
 ```bash
 ~/agent-context/bin/agent-context verify .
+~/agent-context/bin/agent-context freshness . --base-ref origin/main
+~/agent-context/bin/agent-context doctor
 ```
 
-This runs machine-checkable structural and semantic validation. Fix any reported issues, then re-run until it exits 0.
+`verify` runs machine-checkable structural and semantic validation. `freshness` checks whether relevant code changed without corresponding context updates. `doctor` audits local setup. Fix any reported issues, then re-run until the pack passes.
+
+Review the diff like code:
+- No `REPLACE` markers remain
+- Every JSON artifact has repo-specific entries
+- `CLAUDE.md` says **"BEFORE starting any task, read these 3 files"**
+- `AGENTS.md` includes **"Search ONLY within scoped directories"**
+- Acceptance tests cite concrete source evidence
+
+## 4. Test one bare-vs-context task
+
+Pick the painful workflow that motivated the pack. Run the same request once against a bare clone and once against the context-enabled clone. Compare files opened, dead ends, missing surfaces, and production-risk mistakes.
 
 ## 5. Set up CI enforcement
 
@@ -87,3 +108,17 @@ Every agent session reads the routing block and follows the pack. No extra per-p
 | CI check fails | Code changed but pack wasn't updated — update the pack before merging |
 | Pre-push hook warns | Advisory only, never blocks — update when convenient |
 | Freshness check via CLI | Run `bin/agent-context freshness . --base-ref origin/main` to check locally |
+
+## Advanced/manual/scripted setup
+
+You can use the CLI directly when no agent is in the loop, or when you are scripting repo bootstrap:
+
+```bash
+git clone https://github.com/cote-star/agent-context.git ~/agent-context
+cd /path/to/your-repo
+~/agent-context/bin/agent-context init --tier 3 --install-hook .
+```
+
+Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for a starter pack without system overview, operations docs, or authority contracts. `--tier 3` (the default) gives you everything.
+
+Direct CLI setup leaves `REPLACE` markers for you or an agent to fill manually before `verify` will pass.
