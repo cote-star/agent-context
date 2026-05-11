@@ -751,7 +751,7 @@ td.r, th.r { text-align: right; }
   <p class="tagline">
     I build the <b style="color:var(--green);font-weight:600;">operating layer around AI agents</b> —
     <em>context, evals, workflows, and production adoption.</em>
-    Today we use coding agents because this is a developer room.
+    Today, coding agents are the venue because this is a developer room.
   </p>
 
   <div class="split">
@@ -891,7 +891,7 @@ td.r, th.r { text-align: right; }
   <h2><span class="lede">It's not the model</span>The failure is missing system evidence.</h2>
 
   <div class="body">
-    <p class="lead-p">In software, we already check in tests, docs, schemas, CI, runbooks, and migration history.</p>
+    <p class="lead-p">Software teams already check in tests, docs, schemas, CI, runbooks, and migration history.</p>
     <p style="font-size:17px;color:var(--fg);">
       <strong>Agent context should be another reviewable system artifact:</strong>
       the map of what is true, risky, connected, and out-of-bounds.
@@ -971,7 +971,7 @@ td.r, th.r { text-align: right; }
 
     <div style="margin-top:auto;padding:10px 16px;border:1px solid var(--green-line);border-radius:8px;background:var(--green-soft);text-align:center;">
       <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">OUTCOMES WHEN ALL THREE LINE UP</span>
-      <div style="font-size:17px;color:var(--fg);margin-top:2px;"><strong>bounded loading</strong> · <strong>provenance</strong> · <strong>faster evidence</strong></div>
+      <div style="font-size:17px;color:var(--fg);margin-top:2px;"><strong>bounded loading</strong> · <strong>provenance</strong> · <strong>faster verified answers</strong></div>
     </div>
   </div>
 </section>
@@ -1006,7 +1006,7 @@ td.r, th.r { text-align: right; }
     <div class="spacer"></div>
     <div style="border-top:1px dashed var(--border);padding-top:10px;">
       <span class="chip dim">OUT OF SCOPE TODAY</span>
-      <span class="small muted" style="margin-left:10px;">Operating Loop (how Claude vs Cursor vs Codex consume the same pack) and Engineering (manifest / tests / CI / freshness gates) — companion conversations.</span>
+      <span class="small muted" style="margin-left:10px;">Operating Loop and Engineering appear where needed; the main track is Navigation.</span>
     </div>
   </div>
 </section>
@@ -1047,7 +1047,7 @@ td.r, th.r { text-align: right; }
         <div class="fe-row fe-dir open"><span class="fe-tw">▾</span><span class="fe-icon-folder"></span><span>tools</span><span class="fe-role">QUALITY</span></div>
         <div class="fe-children">
           <div class="fe-row sh"><span class="fe-icon-sh"></span>check_freshness.sh<span class="fe-tag green">quality</span></div>
-          <div class="fe-row py"><span class="fe-icon-py"></span>verify_context_pack.py<span class="fe-tag green">quality</span></div>
+          <div class="fe-row py"><span class="fe-icon-py"></span>verify_agent_context.py<span class="fe-tag green">quality</span></div>
         </div>
       </div>
     </div>
@@ -1113,14 +1113,14 @@ td.r, th.r { text-align: right; }
   </div>
 </section>
 
-<!-- ============== SLIDE 09 — Engineering pipeline + LIVE DEMO choreography ============== -->
+<!-- ============== SLIDE 09 — Engineering pipeline ============== -->
 <section class="slide">
   <div class="eyebrow">
-    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">LIVE DEMO</span><span class="chip green" style="margin-left:6px;">85 SEC</span></div>
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">WORKFLOW</span></div>
     <div class="right">10 / 22</div>
   </div>
 
-  <h2><span class="lede">A repeatable loop</span>The engineering pipeline — live, on stage.</h2>
+  <h2><span class="lede">A repeatable loop</span>The workflow: ask, author, verify, review.</h2>
 
   <div class="body-row" style="align-items:stretch;">
     <div class="col" style="flex:1;">
@@ -1132,34 +1132,34 @@ td.r, th.r { text-align: right; }
       </ol>
 
       <div class="card green" style="margin-top:auto;padding:12px 14px;">
-        <div class="k">Meetup takeaway</div>
+        <div class="k">Takeaway</div>
         <div class="v" style="font-size:16px;"><strong>A repeatable operating loop, not a magic prompt.</strong></div>
       </div>
     </div>
 
     <div class="col" style="flex:1.05;">
       <div class="card orange" style="padding:14px 16px;">
-        <div class="k">Demo choreography · 85s total</div>
+        <div class="k">What happens in practice</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 1</div>
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 1</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> agent chat · ~40s</div>
-              <div class="small muted">paste the skill request; the agent starts the authoring workflow.</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Agent request</strong></div>
+              <div class="small muted">Ask the coding agent to use the skill and build context for the repo.</div>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 2</div>
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 2</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> skill authors · ~30s</div>
-              <div class="small muted">narrate: "the skill may call <code>init</code>, then fills the pack and writes grep-backed tests."</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Pack authoring</strong></div>
+              <div class="small muted">The skill inventories the repo, scaffolds when needed, and fills reviewable files.</div>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">BEAT 3</div>
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 3</div>
             <div style="flex:1;">
-              <div style="font-size:14.5px;color:var(--fg);"><strong>live</strong> CLI checks · ~10s</div>
-              <div class="small muted">machine checks pass — proof the authored pack is reviewable.</div>
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Machine checks</strong></div>
+              <div class="small muted">Run verify and freshness before the generated context lands in a PR.</div>
             </div>
           </div>
         </div>
@@ -1228,7 +1228,7 @@ Changing this without updating cookie/v2 will fail silently in prod
         <tr><td><strong>bare clone vs structured_fresh clone</strong></td><td>Same repo, same task, only context changes.</td></tr>
         <tr><td><strong>Hard multi-hop tasks</strong></td><td>Lookup tasks prove little; synthesis exposes wrong turns.</td></tr>
         <tr><td><strong>Grep-backed ground truth</strong></td><td>Every expected file family is mechanically checkable.</td></tr>
-        <tr><td><strong>Independent judge + audit</strong></td><td>Self-scores are evidence, not verdicts.</td></tr>
+        <tr><td><strong>Fixed-rubric grading</strong></td><td>Answers are scored against expected paths and risk criteria.</td></tr>
       </tbody>
     </table>
 
@@ -1296,7 +1296,7 @@ Changing this without updating cookie/v2 will fail silently in prod
       <div class="card green"><div class="k">Cursor Opus med</div><div class="v"><strong style="color:var(--green);">−65% duration</strong> (219s→78s).</div></div>
     </div>
 
-    <p class="xs" style="margin-top:auto;">* <strong style="color:var(--rose);">Risk-flag</strong> = the agent confidently cites the wrong file or misses an invariant; acting on the answer would break production. · LLM-provisional grading — see methodology slide.</p>
+    <p class="xs" style="margin-top:auto;">* <strong style="color:var(--rose);">Risk-flag</strong> = the agent confidently cites the wrong file or misses an invariant; acting on the answer would break production. · May 2026 rerun grading is LLM-provisional; historical audited rows remain marked in docs.</p>
   </div>
 </section>
 
@@ -1329,7 +1329,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     </div>
 
     <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Narrative.</strong> Claude consumes the pack as authoritative — opens fewer files; the top-level Grep tool is not invoked. Tool-call efficiency gain is the strongest of any lane.</div>
+      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Claude consumes the pack as authoritative — opens fewer files; the top-level Grep tool is not invoked. Tool-call efficiency gain is the strongest of any lane.</div>
     </div>
 
     <table class="ref">
@@ -1339,7 +1339,7 @@ Changing this without updating cookie/v2 will fail silently in prod
         <tr><td class="label">Median duration / task</td><td class="r bare">65s</td><td class="r struct">56s</td><td class="r delta win">−14%</td></tr>
         <tr><td class="label">Re-read rate <span class="faint">same file twice</span></td><td class="r bare">0.015</td><td class="r struct">0.004</td><td class="r delta win">−73%</td></tr>
         <tr><td class="label">Citations / task</td><td class="r bare">8.9</td><td class="r struct">9.3</td><td class="r delta">flat</td></tr>
-        <tr><td class="label">Quality self-score</td><td class="r bare">8.8</td><td class="r struct">9.0</td><td class="r delta">up</td></tr>
+        <tr><td class="label">Judge quality score</td><td class="r bare">8.8</td><td class="r struct">9.0</td><td class="r delta">up</td></tr>
         <tr><td class="label">Dead ends / post-hit</td><td class="r bare">0 / 0</td><td class="r struct">0 / 0</td><td class="r delta">perfect</td></tr>
       </tbody>
     </table>
@@ -1377,7 +1377,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     </div>
 
     <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Narrative.</strong> Bare Opus medium is the slowest lane — heavy <code>glob</code>+<code>grep</code> recon before reads. Hop-count up = a feature: structured Opus reads more files near the answer to verify pack vs source.</div>
+      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Bare Opus medium is the slowest lane — heavy <code>glob</code>+<code>grep</code> recon before reads. Hop-count up = a feature: structured Opus reads more files near the answer to verify pack vs source.</div>
     </div>
 
     <table class="ref">
@@ -1403,7 +1403,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     <div class="right">16 / 22</div>
   </div>
 
-  <h2><span class="lede">Per-agent · default model</span>Cursor <code>composer-2-fast</code> — <em style="color:var(--green);">the pack rescues a weaker model.</em></h2>
+  <h2><span class="lede">Per-agent · default model</span>Cursor <code>composer-2-fast</code> — <em style="color:var(--green);">the pack lifts the faster model.</em></h2>
 
   <div class="body">
     <div class="hero-row">
@@ -1425,7 +1425,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     </div>
 
     <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Narrative.</strong> Smallest duration lift (none) but largest correctness lift. Still the riskiest lane in both conditions — structured doesn't eliminate composer risk flags entirely. Lower citation count throughout — composer cites less by design.</div>
+      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Smallest duration lift (none) but largest correctness lift. Still the riskiest lane in both conditions — structured doesn't eliminate composer risk flags entirely. Lower citation count throughout — composer cites less by design.</div>
     </div>
 
     <table class="ref">
@@ -1473,7 +1473,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     </div>
 
     <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Narrative.</strong> Codex is <em>slower</em> under structured — trades wall-clock for correctness. Pack utilization 97% means codex reads almost every file in <code style="color:var(--orange);">.agent-context/current/</code>. Verification-shortcut hit rate is the highest of any agent (19%).</div>
+      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Codex is <em>slower</em> under structured — trades wall-clock for correctness. Pack utilization 97% means codex reads almost every file in <code style="color:var(--orange);">.agent-context/current/</code>. Verification-shortcut hit rate is the highest of any agent (19%).</div>
     </div>
 
     <table class="ref">
@@ -1484,7 +1484,7 @@ Changing this without updating cookie/v2 will fail silently in prod
         <tr><td class="label">Files opened / task</td><td class="r bare">6.2</td><td class="r struct">5.1</td><td class="r delta win">−18%</td></tr>
         <tr><td class="label">Verification-shortcut hit rate</td><td class="r bare">n/a</td><td class="r struct">0.19</td><td class="r delta">highest</td></tr>
         <tr><td class="label">Hops to first correct file <span class="faint">verification depth</span></td><td class="r bare">1.0</td><td class="r struct">1.33</td><td class="r delta">↑ feature</td></tr>
-        <tr><td class="label">Quality self-score</td><td class="r bare">8.9</td><td class="r struct">9.3</td><td class="r delta win">up</td></tr>
+        <tr><td class="label">Judge quality score</td><td class="r bare">8.9</td><td class="r struct">9.3</td><td class="r delta win">up</td></tr>
       </tbody>
     </table>
 
@@ -1499,7 +1499,7 @@ Changing this without updating cookie/v2 will fail silently in prod
     <div class="right">18 / 22</div>
   </div>
 
-  <h2><span class="lede">Trust the numbers</span>How we measured. What it covers. What it doesn't.</h2>
+  <h2><span class="lede">Trust the numbers</span>Measurement protocol. Scope, grading, limits.</h2>
 
   <div class="body">
     <div class="grid-2">
@@ -1509,7 +1509,7 @@ Changing this without updating cookie/v2 will fail silently in prod
       </div>
       <div class="card">
         <div class="k" style="color:var(--green);">Grading</div>
-        <div class="v small">Each cell graded by an independent Claude Code subagent — fresh context, fixed judge prompt. <strong>No human spot-audit.</strong> Treat numbers as <em>directional, not certified</em>.</div>
+        <div class="v small">Outputs were graded against grep-backed ground truth with a fixed rubric. The May 2026 rerun is LLM-provisional; historical Claude rows include prior human audit.</div>
       </div>
       <div class="card">
         <div class="k" style="color:var(--green);">Protocol</div>
@@ -1523,10 +1523,10 @@ Changing this without updating cookie/v2 will fail silently in prod
 
     <div class="card orange" style="padding:12px 16px;">
       <div class="k">Anomalies preserved · not masked</div>
-      <div class="v small">composer/structured/polyglot transient retry · opus-medium/bare/daemon hallucination retry · claude/bare/agent-chorus ran on Haiku via 5h-session fallback · <code>org-second-brain</code> skipped (pack/EXPERIMENT setup needs review). <strong style="color:var(--orange);">Working slate is 6 repos.</strong></div>
+      <div class="v small">One repo was excluded after setup review. Retry/fallback anomalies are preserved in the run notes and excluded from headline claims where appropriate. <strong style="color:var(--orange);">Working slate is 6 repos.</strong></div>
     </div>
 
-    <p class="xs" style="margin-top:auto;">Public claims may only quote reviewer-confirmed rows. This rerun's grading is provisional; cell numbers may shift after spot-audit.</p>
+    <p class="xs" style="margin-top:auto;">Use headline claims as directional until reviewer-confirmed rows are marked in docs; historical audited rows remain part of the evidence base.</p>
   </div>
 </section>
 
@@ -1588,7 +1588,7 @@ Changing this without updating cookie/v2 will fail silently in prod
       <div class="card"><div class="k">Repo-size fit</div><div class="v small">Small repos may only need tier 1. Full packs scale to monorepos.</div></div>
       <div class="card"><div class="k">Telemetry gaps</div><div class="v small">Cursor stores sessions in opaque SQLite; tokens/cost stay null without reverse-engineering.</div></div>
       <div class="card"><div class="k">Human review remains</div><div class="v small">Context improves first drafts; it does not replace code review.</div></div>
-      <div class="card"><div class="k">Runtime cost</div><div class="v small">Structured runs are similar or cheaper <em>per correct answer</em>. Cost is human-time to author the pack.</div></div>
+      <div class="card"><div class="k">Evidence status</div><div class="v small">Some rows are provisional until reviewer confirmation is marked in the docs.</div></div>
     </div>
 
     <div style="margin-top:auto;padding:12px 16px;border:1px solid var(--green-line);background:var(--green-soft);border-radius:8px;text-align:center;">
