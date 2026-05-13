@@ -4,10 +4,10 @@
 
 | File | Purpose |
 |---|---|
-| [`index.html`](index.html) | Self-contained HTML deck — 21 slides, deep-navy theme. Byte-identical copy of `cursor-meetup-may-2026.html`; this filename is the GitHub Pages target. |
-| [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | The deck source-of-truth. Hand-authored HTML + CSS (deep-navy `#0A0E1A` background; green `#10B981` = lift/structured wins; orange `#F97316` = bare/routing/`.agent-context/` artifact). 21 slides, strict 720px-per-slide budget, Rule-of-Three on per-agent panels. |
-| [`cursor-meetup-may-2026.pdf`](cursor-meetup-may-2026.pdf) | PDF render of the HTML deck — portable handout / projection backup. Rendered via `render-pdf.sh` (Chrome/Chromium/Edge headless). |
-| [`render-pdf.sh`](render-pdf.sh) | Re-renders `cursor-meetup-may-2026.pdf` from the HTML source. Picks the first available headless browser (Chrome / Chromium / Edge). Run from inside `talk/`. |
+| [`index.html`](index.html) | Self-contained HTML deck — 22 slides, deep-navy theme. Byte-identical copy of `cursor-meetup-may-2026.html`; this filename is the GitHub Pages target. |
+| [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | The deck source-of-truth. Hand-authored HTML + CSS (deep-navy `#0A0E1A` background; green `#10B981` = lift/structured wins; orange `#F97316` = bare/routing/`.agent-context/` artifact). 22 slides, strict 720px-per-slide budget, Rule-of-Three on per-agent panels. |
+| [`Amit Prusty - Agent-Context.pdf`](Amit%20Prusty%20-%20Agent-Context.pdf) | PDF render of the HTML deck — portable handout / projection backup. Rendered via `render-pdf.sh` (Chrome/Chromium/Edge headless). |
+| [`render-pdf.sh`](render-pdf.sh) | Re-renders `Amit Prusty - Agent-Context.pdf` from the HTML source. Picks the first available headless browser (Chrome / Chromium / Edge). Run from inside `talk/`. |
 
 Fresh Codex/Cursor evidence is produced with the isolated rerun harness.
 The public deck is `talk/index.html`; local research notes and generated
@@ -66,7 +66,7 @@ cp talk/cursor-meetup-may-2026.html talk/index.html
 ```
 
 After edits, commit `cursor-meetup-may-2026.html`, `index.html`, and
-`cursor-meetup-may-2026.pdf` together; push to `main`; Pages re-deploys
+`Amit Prusty - Agent-Context.pdf` together; push to `main`; Pages re-deploys
 automatically.
 
 ## Format conversion
