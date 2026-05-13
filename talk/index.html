@@ -988,7 +988,13 @@ td.r, th.r { text-align: right; }
   <div class="body">
     <p class="lead-p"><strong>Navigation = the control surface.</strong> What the agent loads, doesn't load, and when it stops.</p>
 
-    <div class="grid-3" style="margin-top:6px;">
+    <div style="margin:8px 0 4px;padding:10px 14px;border-left:2px solid var(--green);background:var(--green-soft);border-radius:0 6px 6px 0;">
+      <p style="margin:0;color:var(--fg);font-size:15.5px;">
+        <strong>Human version:</strong> senior engineers navigate by landmarks: likely owner file, generated folders, real tests, colleague pointers. Agents need those landmarks too.
+      </p>
+    </div>
+
+    <div class="grid-3" style="margin-top:4px;">
       <div class="card">
         <div class="k" style="color:var(--green);">What to load</div>
         <div class="v">Completeness contracts that name every file family that must change together.</div>
@@ -1120,27 +1126,28 @@ td.r, th.r { text-align: right; }
     <div class="right">10 / 22</div>
   </div>
 
-  <h2><span class="lede">A repeatable loop</span>The workflow: ask, author, verify, review.</h2>
+  <h2><span class="lede">A repeatable loop</span>The workflow: ask, author, self-test, verify, review.</h2>
 
   <div class="body-row" style="align-items:stretch;">
     <div class="col" style="flex:1;">
       <ol style="margin-top:2px;">
         <li><strong>Ask agent</strong> — type the skill request into Claude, Codex, Cursor, or OpenCode.</li>
         <li><strong>Skill authors pack</strong> — inventories subsystems, may scaffold with <code>init</code>, fills templates.</li>
+        <li><strong>Research-style self-test</strong> — asks pack-only questions, verifies with grep, improves weak routes.</li>
         <li><strong>CLI checks</strong> — after authoring, run <code>verify</code> and <code>freshness</code>.</li>
         <li><strong>PR diff</strong> — review the generated context like code.</li>
       </ol>
 
       <div class="card green" style="margin-top:auto;padding:12px 14px;">
         <div class="k">Takeaway</div>
-        <div class="v" style="font-size:16px;"><strong>A repeatable operating loop, not a magic prompt.</strong></div>
+        <div class="v" style="font-size:16px;"><strong>A repeatable operating loop, not a magic prompt.</strong> First run includes its own quality trial.</div>
       </div>
     </div>
 
     <div class="col" style="flex:1.05;">
       <div class="card orange" style="padding:14px 16px;">
         <div class="k">What happens in practice</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px;">
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 1</div>
             <div style="flex:1;">
@@ -1158,6 +1165,13 @@ td.r, th.r { text-align: right; }
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 3</div>
             <div style="flex:1;">
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Acceptance loop</strong></div>
+              <div class="small muted">Lookup, impact, cross-cutting, and diagnosis tests answer from the pack, then grep-check reality.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 4</div>
+            <div style="flex:1;">
               <div style="font-size:14.5px;color:var(--fg);"><strong>Machine checks</strong></div>
               <div class="small muted">Run verify and freshness before the generated context lands in a PR.</div>
             </div>
@@ -1165,14 +1179,15 @@ td.r, th.r { text-align: right; }
         </div>
       </div>
 
-      <div class="terminal" style="font-size:12.5px;line-height:1.5;">
+      <div class="terminal" style="font-size:12.2px;line-height:1.42;">
 <span class="term-comment"># 1. in your coding agent</span>
 &gt; Use the agent-context skill to build context for this repo.
 
-<span class="term-comment"># 2. agent authors the pack and opens a diff</span>
-<span class="term-comment">#    it may call init internally as scaffold</span>
+<span class="term-comment"># 2. agent authors + self-tests the pack</span>
+<span class="term-comment">#    pack-only answer → grep verification → patch weak sections</span>
+<span class="term-comment">#    stronger flow: sub-agents pressure-test routes</span>
 
-<span class="term-comment"># 3. after the agent opens the diff</span>
+<span class="term-comment"># 3. after the agent opens the context diff</span>
 <span class="term-prompt">$</span> agent-context verify .
 <span class="term-prompt">$</span> agent-context freshness .
       </div>
@@ -1220,13 +1235,24 @@ Changing this without updating cookie/v2 will fail silently in prod
   <h2><span class="lede">Test protocol</span>How to test whether it works.</h2>
 
   <div class="body">
-    <p>The methodology is deliberately boring:</p>
+    <p>There are two test layers: the pack tests itself first, then we run the external experiment.</p>
 
-    <table style="margin-top:4px;">
+    <div class="grid-2" style="margin-top:6px;">
+      <div class="card green">
+        <div class="k">Pack self-test</div>
+        <div class="v small">Pack-only questions → grep verification → patch weak routes → rerun. Captured in <code>acceptance_tests.md</code>.</div>
+      </div>
+      <div class="card">
+        <div class="k">External rerun</div>
+        <div class="v small">Same repo and task, comparing bare clone against <code>structured_fresh</code>.</div>
+      </div>
+    </div>
+
+    <table style="margin-top:6px;font-size:14px;">
       <thead><tr><th style="width:40%;">Protocol piece</th><th>Why it matters</th></tr></thead>
       <tbody>
-        <tr><td><strong>bare clone vs structured_fresh clone</strong></td><td>Same repo, same task, only context changes.</td></tr>
-        <tr><td><strong>Hard multi-hop tasks</strong></td><td>Lookup tasks prove little; synthesis exposes wrong turns.</td></tr>
+        <tr><td><strong>Pack-only questions</strong></td><td>Catch weak routes before the pack is treated as usable context.</td></tr>
+        <tr><td><strong>Hard multi-hop tasks</strong></td><td>Synthesis exposes wrong turns better than simple lookup.</td></tr>
         <tr><td><strong>Grep-backed ground truth</strong></td><td>Every expected file family is mechanically checkable.</td></tr>
         <tr><td><strong>Fixed-rubric grading</strong></td><td>Answers are scored against expected paths and risk criteria.</td></tr>
       </tbody>
@@ -1540,7 +1566,7 @@ Changing this without updating cookie/v2 will fail silently in prod
   <h2><span class="lede">"Isn't this just .cursorrules?"</span>How agent-context fits what you already do.</h2>
 
   <div class="body">
-    <table style="font-size:14px;">
+    <table style="font-size:13.5px;">
       <thead>
         <tr><th style="width:34%;">You already have…</th><th>agent-context</th></tr>
       </thead>
@@ -1560,6 +1586,10 @@ Changing this without updating cookie/v2 will fail silently in prod
         <tr>
           <td><strong>Cursor project memory</strong> / "rules for AI"</td>
           <td>Pack supplements, doesn't replace. Pack lives in git; IDE memory may not.</td>
+        </tr>
+        <tr>
+          <td><strong>Skills</strong><br/><span class="small faint">repeatable tasks, org knowledge, taste</span></td>
+          <td>The skill creates and maintains the map. The checked-in pack is the repo-specific navigation future sessions read.</td>
         </tr>
       </tbody>
     </table>
@@ -1588,7 +1618,7 @@ Changing this without updating cookie/v2 will fail silently in prod
       <div class="card"><div class="k">Repo-size fit</div><div class="v small">Small repos may only need tier 1. Full packs scale to monorepos.</div></div>
       <div class="card"><div class="k">Telemetry gaps</div><div class="v small">Cursor stores sessions in opaque SQLite; tokens/cost stay null without reverse-engineering.</div></div>
       <div class="card"><div class="k">Human review remains</div><div class="v small">Context improves first drafts; it does not replace code review.</div></div>
-      <div class="card"><div class="k">Evidence status</div><div class="v small">Some rows are provisional until reviewer confirmation is marked in the docs.</div></div>
+      <div class="card"><div class="k">Bad context risk</div><div class="v small">Stale or overconfident maps can route agents wrong; freshness and review are the guard.</div></div>
     </div>
 
     <div style="margin-top:auto;padding:12px 16px;border:1px solid var(--green-line);background:var(--green-soft);border-radius:8px;text-align:center;">

@@ -3,7 +3,7 @@
 #
 # Usage:
 #   ./render-pdf.sh
-#   ./render-pdf.sh cursor-meetup-may-2026-v2.html cursor-meetup-may-2026-v2.pdf
+#   ./render-pdf.sh cursor-meetup-may-2026-v2.html "Amit Prusty - Agent-Context.pdf"
 #
 # Picks the first available headless browser. Run from inside talk/.
 # Requires Chrome / Chromium / Microsoft Edge installed locally.
@@ -12,7 +12,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 IN="$(pwd)/${1:-cursor-meetup-may-2026.html}"
-OUT="$(pwd)/${2:-cursor-meetup-may-2026.pdf}"
+OUT="$(pwd)/${2:-Amit Prusty - Agent-Context.pdf}"
 PROFILE_DIR="${TMPDIR:-/tmp}/agent-context-chrome-pdf"
 
 CANDIDATES=(
