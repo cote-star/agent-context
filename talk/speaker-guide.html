@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Slide Narratives · Agent-Context Speaker Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #0A0E1A;
+  --bg-soft: #0E1422;
+  --surface: #131826;
+  --surface-2: #1A2030;
+  --border: #2A3142;
+  --border-soft: #1F2533;
+  --fg: #F8FAFC;
+  --fg-mid: #D1D5DB;
+  --fg-dim: #94A3B8;
+  --fg-faint: #64748B;
+  --green: #10B981;
+  --green-soft: rgba(16,185,129,.13);
+  --green-line: rgba(16,185,129,.42);
+  --orange: #F97316;
+  --orange-soft: rgba(249,115,22,.13);
+  --orange-line: rgba(249,115,22,.45);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(1100px 600px at 80% -10%, rgba(16,185,129,.05), transparent 60%),
+    radial-gradient(900px 500px at -5% 110%, rgba(249,115,22,.05), transparent 60%),
+    var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--green); text-decoration: none; border-bottom: 1px solid var(--green-line); }
+code, .mono { font-family: var(--mono); font-feature-settings: 'liga' 0; }
+.page { width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 72px; }
+.hero {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #10162A 0%, #0A0E1A 100%);
+  padding: 34px 38px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.35);
+}
+.kicker, .eyebrow {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+h1, h2, h3 { margin: 0; letter-spacing: -0.015em; }
+h1 { margin-top: 10px; font-size: clamp(36px, 6vw, 62px); line-height: 1; }
+.subtitle { margin: 14px 0 0; max-width: 780px; color: var(--fg-mid); font-size: 18px; }
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 24px;
+}
+.memory {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  padding: 14px 16px;
+}
+.memory b { color: var(--fg); }
+.memory p { margin: 4px 0 0; color: var(--fg-dim); font-size: 14px; }
+.nav {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 18px 0 24px;
+}
+.nav-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--fg-mid);
+  font: 600 12px/1 var(--mono);
+}
+.note-card {
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,.018), transparent 32%), var(--surface);
+  overflow: hidden;
+  page-break-inside: avoid;
+}
+.note-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-head h2 { margin-top: 4px; font-size: 26px; line-height: 1.15; }
+.top-link { color: var(--fg-faint); font: 600 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; border-bottom: 0; }
+.note-body { padding: 18px 22px 22px; }
+.note-body h3 {
+  margin: 14px 0 8px;
+  color: var(--green);
+  font: 600 11px/1 var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.note-body h3.transition-label { color: var(--orange); }
+.note-body h3.final-label { color: var(--fg); }
+p { margin: 0 0 10px; color: var(--fg-mid); font-size: 15.5px; }
+strong { color: var(--fg); font-weight: 650; }
+code {
+  background: var(--surface-2);
+  color: var(--fg);
+  border-radius: 5px;
+  padding: .1em .38em;
+  font-size: .9em;
+}
+.cue {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 14px;
+  border-left: 2px solid var(--green);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--green-soft);
+  padding: 12px 14px;
+}
+.cue-label {
+  color: var(--green);
+  font: 600 10.5px/1.3 var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.cue-text { color: var(--fg); font-size: 16.5px; }
+blockquote {
+  margin: 12px 0;
+  padding: 12px 16px;
+  border-left: 2px solid var(--orange);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--orange-soft);
+}
+blockquote p { color: var(--fg); margin: 0 0 8px; }
+blockquote p:last-child { margin-bottom: 0; }
+.footer-note {
+  margin-top: 24px;
+  color: var(--fg-faint);
+  font: 500 12px/1.5 var(--mono);
+  text-align: center;
+}
+@media (max-width: 720px) {
+  .page { width: min(100% - 24px, 1080px); padding-top: 20px; }
+  .hero { padding: 24px; }
+  .memory-grid { grid-template-columns: 1fr; }
+  .cue { grid-template-columns: 1fr; gap: 6px; }
+}
+@media print {
+  @page { size: A4; margin: 12mm; }
+  html { scroll-behavior: auto; }
+  body { background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 100%; padding: 0; }
+  .hero, .note-card { box-shadow: none; }
+  .nav, .top-link { display: none; }
+  .note-card { break-inside: avoid; margin-top: 10px; }
+  .note-head { padding: 14px 18px 10px; }
+  .note-body { padding: 14px 18px 16px; }
+  p { font-size: 12.5px; margin-bottom: 7px; }
+  .note-head h2 { font-size: 20px; }
+  .cue-text { font-size: 13.5px; }
+  h1 { font-size: 38px; }
+  .subtitle { font-size: 14px; }
+}
+</style>
+</head>
+<body id="top">
+  <main class="page">
+    <section class="hero">
+      <span class="kicker">Agent-Context · Speaker Guide</span>
+      <h1>Slide Narratives</h1>
+      <p class="subtitle">A rehearsal-first companion to the Cursor Meetup deck. Use it to remember the point, land the concrete example, and move cleanly to the next slide.</p>
+      <div class="memory-grid">
+        <div class="memory"><b>1. State the point</b><p>One sentence. No apology. Let the slide support you.</p></div>
+        <div class="memory"><b>2. Ground it</b><p>Use the concrete repo, human navigation, or test evidence example.</p></div>
+        <div class="memory"><b>3. Move forward</b><p>Each transition tells the room why the next slide exists.</p></div>
+      </div>
+    </section>
+    <nav class="nav" aria-label="Slide shortcuts"><a class="nav-chip" href="#slide-01">01</a>
+<a class="nav-chip" href="#slide-02">02</a>
+<a class="nav-chip" href="#slide-03">03</a>
+<a class="nav-chip" href="#slide-04">04</a>
+<a class="nav-chip" href="#slide-05">05</a>
+<a class="nav-chip" href="#slide-06">06</a>
+<a class="nav-chip" href="#slide-07">07</a>
+<a class="nav-chip" href="#slide-08">08</a>
+<a class="nav-chip" href="#slide-09">09</a>
+<a class="nav-chip" href="#slide-10">10</a>
+<a class="nav-chip" href="#slide-11">11</a>
+<a class="nav-chip" href="#slide-12">12</a>
+<a class="nav-chip" href="#slide-13">13</a>
+<a class="nav-chip" href="#slide-14">14</a>
+<a class="nav-chip" href="#slide-15">15</a>
+<a class="nav-chip" href="#slide-16">16</a>
+<a class="nav-chip" href="#slide-17">17</a>
+<a class="nav-chip" href="#slide-18">18</a>
+<a class="nav-chip" href="#slide-19">19</a>
+<a class="nav-chip" href="#slide-20">20</a>
+<a class="nav-chip" href="#slide-21">21</a>
+<a class="nav-chip" href="#slide-22">22</a></nav>
+    
+        <article class="note-card" id="slide-01">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 01</span>
+              <h2>Title</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Every coding agent starts cold unless the repo carries its own map.</div></div>
+<h3>Talk Track</h3>
+<p>Open with the simple pain: every new agent session has to rediscover the repo. It reads files, guesses boundaries, and often misses the one invariant that would make the answer safe.</p>
+<p>Then address the obvious objection early:</p>
+<blockquote><p>A big <code>AGENTS.md</code> works until it becomes a junk drawer. It costs context on every run, it goes stale, rules compete with each other, and there is no freshness or verification layer.</p>
+<p>I still want <code>AGENTS.md</code>, <code>CLAUDE.md</code>, and <code>.cursorrules</code>, but I want them to be signposts, not the whole map. <code>agent-context</code> moves the map into smaller reviewable pieces: overview, invariants, search scope, completeness contracts, and freshness checks.</p></blockquote>
+<p>The talk is about turning repeated rediscovery into a small artifact that lives with the code.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Before the mechanism, establish why you care about this problem and where it came from.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-02">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 02</span>
+              <h2>Who Is Talking</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">This comes from both production agent work and open-source agent tooling.</div></div>
+<h3>Talk Track</h3>
+<p>Introduce yourself as someone building the operating layer around AI agents: context, evals, workflows, controls, and production adoption. At work, the theme is making agents useful after the demo. In OSS, <code>agent-chorus</code> gives session evidence across agents, while <code>latchkeyd</code> explores local control and boundaries. Today is the navigation piece: <code>agent-context</code>.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Now move from biography to the shared problem in the room.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-03">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 03</span>
+              <h2>The Hook</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">The agent is new here every time.</div></div>
+<h3>Talk Track</h3>
+<p>Frame the agent as capable but contextless. It does not know which files matter, which paths are deprecated, which invariants are dangerous, or what the last agent already learned. The cost is not just tokens or time; it is repeated uncertainty. A cold session becomes bounded work only when the repo carries a map the agent can load first.</p>
+<h3 class="transition-label">Transition</h3>
+<p>That means the fix is not only &quot;use a better model.&quot;</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-04">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 04</span>
+              <h2>Reframe</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">The failure is missing system evidence.</div></div>
+<h3>Talk Track</h3>
+<p>Software teams already check in tests, schemas, docs, runbooks, and CI because private memory is not enough. Agent context should be the same kind of artifact: portable, reviewable, and fresh. The standard is not magical: read the system map before acting on the system.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Although code makes this problem obvious, the pattern is bigger than repos.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-05">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 05</span>
+              <h2>Generalize</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Every serious system needs a navigation layer.</div></div>
+<h3>Talk Track</h3>
+<p>For this audience, the system is a code repository. But the pattern applies to any complex system with state, rules, risks, and work to do: data platforms, customer accounts, operations runbooks, and product workflows. Today we stay with code because it is inspectable and familiar.</p>
+<h3 class="transition-label">Transition</h3>
+<p>To make the pattern precise, separate it into three control surfaces.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-06">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 06</span>
+              <h2>Three-Track Architecture</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Explorable recall has three separable tracks: navigation, operating loop, and engineering.</div></div>
+<h3>Talk Track</h3>
+<p>Define explorable recall as the ability for an agent to rediscover the same map, from reviewable artifacts, whenever it needs to work. Navigation asks what to load and when to stop. Operating loop asks how a specific agent consumes that context. Engineering asks what makes the artifact durable and auditable.</p>
+<h3 class="transition-label">Transition</h3>
+<p>This talk mostly focuses on one track: navigation.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-07">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 07</span>
+              <h2>Today&#x27;s Session</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Navigation is the control surface for what loads, what does not, and when the agent has enough.</div></div>
+<h3>Talk Track</h3>
+<p>Start with the human version. When I work in a codebase I know well, I do not re-read the whole repo. I know which file probably owns the behavior, which folder is generated, which test is the real signal, and which colleague can point me to the right subsystem. That is navigation.</p>
+<p>Agents need the same kind of pointer. Today we often give it manually every session: &quot;look in this folder, avoid that old path, run this test, don&#x27;t touch this generated file.&quot; It works, but it burns context every time. Then the thread gets long, compaction starts, details get summarized away, and we repeat the same briefing in the next session.</p>
+<p>So <code>agent-context</code> is not a wrapper around everything you might paste into the prompt. It is a deterministic pathway for exploration: for this kind of task, start here, search only there, verify this shortcut, and stop when the contract is satisfied.</p>
+<p>The goal is not to teach every detail of every codebase to the model. The goal is to offload the repeatable briefing into the repo: required files, excluded directories, stop rules, and verification shortcuts. That is why the system has both human-readable markdown and machine-readable JSON.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Now show the actual artifact that carries this navigation.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-08">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 08</span>
+              <h2>The Artifact</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text"><code>.agent-context/</code> is a committed folder, not a hosted service or hidden memory.</div></div>
+<h3>Talk Track</h3>
+<p>Walk through the layers. Content gives humans and agents the overview. Authority gives trust-and-follow agents explicit routes and completeness contracts. Navigation gives search-and-verify agents scoped search and shortcuts. Quality gives verification, freshness, acceptance tests, and manifests. The important bit: it is in git, so it can be reviewed and kept fresh.</p>
+<h3 class="transition-label">Transition</h3>
+<p>The same artifact works because different agents use it differently.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-09">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 09</span>
+              <h2>Same Navigation, Opposite Loops</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">One pack supports two agent behaviors.</div></div>
+<h3>Talk Track</h3>
+<p>Claude-like agents often trust and follow the pack. They can stop when the completeness contract is satisfied. Cursor and Codex are more search-and-verify: they still inspect source, but the pack tells them where to search and what evidence matters. Same navigation design, different consumption pattern.</p>
+<h3 class="transition-label">Transition</h3>
+<p>So how does this get created in practice?</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-10">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 10</span>
+              <h2>Workflow</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Ask, author, self-test, verify, review.</div></div>
+<h3>Talk Track</h3>
+<p>The fastest path is not hand-authoring eleven files. Start in a large repo and ask the agent to use the <code>agent-context</code> skill. The skill inventories the repo, scaffolds if needed, and fills the structured pack.</p>
+<p>The routing files stay tiny. <code>AGENTS.md</code>, <code>CLAUDE.md</code>, and <code>.cursorrules</code> should not become the full context; they should be a small signpost, roughly 100-300 tokens depending on the repo, that tells the agent how to enter <code>.agent-context/current/</code>.</p>
+<p>Once the pack is reviewed and merged, hooks and policy keep it fresh. In agent-authored PRs, the agent includes <code>.agent-context</code> updates as a separate commit. In human-authored work, the pre-push hook and CI policy can flag drift, then someone asks the agent to update the context. <code>main</code> is the preferred sync anchor because it is the shared truth, though teams can adapt the base branch.</p>
+<p>The important operating rule: update only the relevant context slice. Maybe a new file family was added, a data schema changed, a subsystem appeared, verification shortcuts moved, or stale guidance should be deleted. The agent treats that as a context update, not permission to edit product code without explicit approval.</p>
+<p>On first setup, the current skill already creates grep-verified acceptance tests so it can test whether the navigation actually works. It asks lookup, impact-analysis, cross-cutting, and diagnosis questions; answers from the pack first; verifies against the real code; and if the pack misses something, it improves the relevant section and reruns the test.</p>
+<p>In the team-skills / stronger workflow, that acceptance loop can be run as sub-agent pressure testing: separate agents try to use the pack, expose weak routes or missing ground truth, and the authoring agent tightens the context before the PR lands.</p>
+<p>Then the CLI verifies structure and freshness. Finally, you review the generated context diff like any other code change. The key line for the room: first run is not just &quot;write docs&quot;; it is closer to a small research loop that creates ground truth, tests the map, and tightens weak routes.</p>
+<h3 class="transition-label">Transition</h3>
+<p>That review step matters because the artifact becomes part of the system.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-11">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 11</span>
+              <h2>Quality Gate</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Review the context diff, not the model&#x27;s private memory.</div></div>
+<h3>Talk Track</h3>
+<p>Show what a reviewer should look for: file families that change together, negative guidance for deprecated or generated paths, and silent failures that do not show up as compile errors. The example invariant is the kind of thing agents miss when they only browse files opportunistically.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Once this artifact exists, we can test whether it changes agent behavior.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-12">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 12</span>
+              <h2>Test Protocol</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">There is an internal pack self-test, then an external bare-vs-structured evaluation.</div></div>
+<h3>Talk Track</h3>
+<p>There are two test layers. First, the pack tests itself during creation: lookup, impact analysis, cross-cutting impact, and diagnosis. The agent answers from the pack, verifies against grep, improves weak sections, and records the result in <code>acceptance_tests.md</code>.</p>
+<p>Then there is the external experiment protocol. That method is intentionally boring: same repo, same task, only context changes. The tasks are multi-hop, because lookup tasks are too easy. Ground truth is grep-backed, and grading uses a fixed rubric. Structured runs are only allowed to start after verify and freshness pass.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Now show the current evidence, with the caveat that it is directional.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-13">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 13</span>
+              <h2>Quantified Evidence</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Structured context improved correctness across all measured lanes.</div></div>
+<h3>Talk Track</h3>
+<p>Do not overperform the numbers. Say the evidence is current, useful, and LLM-provisional. The headline is that structured context improved every lane: Claude reaches 100 percent, Cursor default gets the biggest lift, Cursor Opus medium gets much faster, and risk flags drop to zero for Codex and Cursor Opus medium.</p>
+<h3 class="transition-label">Transition</h3>
+<p>The aggregate hides different agent behaviors, so walk through them one by one.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-14">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 14</span>
+              <h2>Claude Opus 4.7</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Claude is the clean trust-and-follow case.</div></div>
+<h3>Talk Track</h3>
+<p>Claude consumes the pack as authority. With structured context, it opens fewer files, makes fewer tool calls per correct answer, and reaches perfect correctness in the current rerun. This is the clearest example of the completeness contract doing its job.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Cursor&#x27;s stronger model shows a different benefit: not just correctness, but speed.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-15">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 15</span>
+              <h2>Cursor Opus Medium</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Structured context turns slow reconnaissance into targeted verification.</div></div>
+<h3>Talk Track</h3>
+<p>Bare Cursor Opus medium spends time on glob and grep before it knows where to read. With the pack, it still verifies, but it gets to the right area faster. The key story is the 219 seconds to 78 seconds duration drop, plus risk flags going to zero.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Now contrast that with the default faster Cursor model.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-16">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 16</span>
+              <h2>Cursor Composer-2-Fast</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">The pack lifts the default fast model, but does not make it risk-free.</div></div>
+<h3>Talk Track</h3>
+<p>This is a useful practical slide because many people use the faster default model. The context pack gives the biggest correctness lift here, from 61 percent to 81 percent. But composer remains the riskiest lane, so the honest message is: structure helps weaker or faster models, but human review still matters.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Codex shows the search-and-verify pattern even more explicitly.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-17">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 17</span>
+              <h2>Codex CLI</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Codex reads the pack thoroughly and trades wall-clock time for safer answers.</div></div>
+<h3>Talk Track</h3>
+<p>Codex is not the speed story. It is the thoroughness story. It reads almost the whole pack, uses verification shortcuts more than other lanes, eliminates risk flags, and improves correctness modestly. The cost is slower structured runs. That is fine; the point is not that every metric always improves, but that the work becomes more controlled.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Before anyone treats the chart as gospel, disclose the limits.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-18">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 18</span>
+              <h2>Methodology Disclosure</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Trust comes from naming the limits.</div></div>
+<h3>Talk Track</h3>
+<p>Be direct: 288 graded answers, six repos, four model variants, bare versus structured. The May rerun is LLM-provisional, Cursor telemetry has gaps, and anomalies were preserved rather than hidden. The stance is not &quot;perfect benchmark.&quot; The stance is &quot;transparent measurement of a practical workflow.&quot;</p>
+<h3 class="transition-label">Transition</h3>
+<p>Now answer the predictable objection from a Cursor meetup room.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-19">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 19</span>
+              <h2>Prior Art</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">This is not a replacement for <code>.cursorrules</code>, MCP, vector search, or project memory.</div></div>
+<h3>Talk Track</h3>
+<p>Position <code>agent-context</code> as the navigation layer. <code>.cursorrules</code>, <code>AGENTS.md</code>, and <code>CLAUDE.md</code> become routing blocks into the pack. MCP is access, not navigation. Vector search is semantic recall; the pack is structural recall with contracts and verification shortcuts. These tools can coexist.</p>
+<p>Also separate it from skills. Skills are best for highly repeatable tasks, organization knowledge, brand preferences, and taste: &quot;how we write launch copy,&quot; &quot;how we review a deck,&quot; &quot;how this team scores social relevance.&quot; <code>agent-context</code> is the system map for a specific repo or system. The skill creates and maintains the map; the map is what every future agent session reads.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Then be honest about what it costs.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-20">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 20</span>
+              <h2>Tradeoffs</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">The bargain is maintenance effort for less repeated rediscovery.</div></div>
+<h3>Talk Track</h3>
+<p>Name the costs plainly: the pack has to stay fresh, it can be overfit if it quotes answers instead of routing work, and not every repo needs the full tier. It does not replace review. It makes the first draft and the investigation path better.</p>
+<p>Say the warning directly: bad context is worse than no context. If the map is stale or too confident, it can send the agent in the wrong direction faster. That is why freshness, scoped updates, and human review are not bureaucracy; they are the safety rails that make the context worth trusting.</p>
+<h3 class="transition-label">Transition</h3>
+<p>So what should people actually do tomorrow?</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-21">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 21</span>
+              <h2>Try This</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Start with one repo and one painful workflow.</div></div>
+<h3>Talk Track</h3>
+<p>Give the audience a small action: install the skill, ask the agent to build the pack, review the generated diff, run verify and freshness, then test it on one workflow that usually causes confusion. The call to action is intentionally concrete.</p>
+<h3 class="transition-label">Transition</h3>
+<p>Close by restating the principle, not the tool.</p>
+          </div>
+        </article>
+        
+
+        <article class="note-card" id="slide-22">
+          <header class="note-head">
+            <div>
+              <span class="eyebrow">Slide 22</span>
+              <h2>Closing</h2>
+            </div>
+            <a class="top-link" href="#top">Top</a>
+          </header>
+          <div class="note-body">
+            <div class="cue cue-point"><div class="cue-label">Point</div><div class="cue-text">Make context part of the system.</div></div>
+<h3>Talk Track</h3>
+<p>End with the standard: context should not live only in a chat thread, a prompt, or one developer&#x27;s head. For developers, it starts in the repo. For teams, it becomes a reviewable system artifact. The ask is simple: pick one repo, build the context pack, verify it, and open a PR.</p>
+<h3 class="final-label">Final Line</h3>
+<p>Make the map part of the system, so every agent does not have to rediscover it from scratch.</p>
+          </div>
+        </article>
+        
+    <p class="footer-note">Source: slide-narratives.md · Rendered for quick rehearsal and printable PDF.</p>
+  </main>
+</body>
+</html>
