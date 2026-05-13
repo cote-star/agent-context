@@ -1,5 +1,13 @@
 # Reference Pack: agent-chorus
 
+> **Historical snapshot.** This is a faithful capture of an `agent-chorus` v0.14.1
+> pack, preserved as-is to show what a complex filled tier-3 pack looks like in a
+> real Rust + Node.js monorepo. The inner files reference that source repo's
+> bundled `chorus agent-context` CLI (including the older `seal` verb); the
+> current public `agent-context` CLI replaces that step with `verify` + `freshness`.
+> Do not copy commands out of this directory — see [`docs/getting-started.md`](../../docs/getting-started.md)
+> for current setup.
+
 This directory contains a complete, real-world agent-context artifact set from the
 [agent-chorus](https://github.com/cote-star/agent-chorus) repository -- a
 155-file CLI project with dual Rust and Node.js implementations.
@@ -51,23 +59,13 @@ to bare condition.
 
 See the full results at [docs/evidence/results.md](../../docs/evidence/results.md).
 
-## Using this as a template
+## Using this as a structural reference
 
-To create a similar pack for your own repo:
+This pack is for reading, not copying. The shape — five markdown files, three
+authority JSON files, one navigation JSON, one manifest — is what a richer
+tier-3 pack looks like. The content is specific to agent-chorus and will not
+fit another repo verbatim.
 
-```bash
-# Install the CLI
-npm install -g agent-context
-
-# Initialize a pack (choose tier 1, 2, or 3)
-agent-context init --tier 3
-
-# Have an agent fill in the template sections, then seal
-agent-context seal
-```
-
-The markdown files in this reference pack are specific to agent-chorus. When
-creating your own pack, replace the content with your repo's architecture, code
-map, invariants, and operations. The JSON files follow the same schema regardless
-of repo -- adapt the file paths, search directories, and contractually required
-files to match your codebase.
+For setup on your own repo, follow [`docs/getting-started.md`](../../docs/getting-started.md).
+That is the canonical install and authoring flow; this directory does not
+duplicate it.
