@@ -8,6 +8,11 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# Python packaging build artifacts (sdist + wheel land in dist/; build/ is
+# the setuptools temp tree).
+/build/
+/dist/
+
 # Node
 node_modules/
 

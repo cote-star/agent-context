@@ -5,13 +5,58 @@ on:
     tags:
       - "v*"
 
-permissions:
-  contents: write
-
 jobs:
+  build:
+    name: Build sdist + wheel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build backend
+        run: python -m pip install --upgrade build
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Show distribution contents
+        run: |
+          ls -l dist/
+          python -m zipfile -l dist/*.whl
+
+      - name: Upload built artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-distribution-packages
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI (OIDC Trusted Publishing)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-distribution-packages
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
   create-release:
     name: Create GitHub Release
+    needs: [build, publish-pypi]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +66,6 @@ jobs:
         env:
           TAG_NAME: ${{ github.ref_name }}
         run: |
-          # Pull the ## vX.Y.Z section out of RELEASE_NOTES.md
           awk -v tag="$TAG_NAME" '
             $0 ~ "^## "tag" " { in_section = 1; next }
             in_section && /^## v[0-9]/ { exit }
@@ -32,9 +76,16 @@ jobs:
             echo "See RELEASE_NOTES.md — tag $TAG_NAME not found" > release-body.md
           fi
 
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-distribution-packages
+          path: dist/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           body_path: release-body.md
+          files: dist/*
           draft: false
           prerelease: false

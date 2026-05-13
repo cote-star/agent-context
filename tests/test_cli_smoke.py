@@ -38,7 +38,7 @@ def _run(args, cwd=None) -> subprocess.CompletedProcess:
 
 def _read_cli_version() -> str:
     import re
-    text = (REPO_ROOT / "bin" / "agent-context").read_text()
+    text = (REPO_ROOT / "agent_context" / "cli.py").read_text()
     return re.search(r'^__version__\s*=\s*"([^"]+)"', text, re.MULTILINE).group(1)
 
 
