@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-context"
+version = "0.4.0"
+description = "Portable system context for agents, checked into the repo."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+authors = [{ name = "cote-star" }]
+keywords = ["agents", "context", "ai", "llm", "claude", "cursor", "codex"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/cote-star/agent-context"
+Source = "https://github.com/cote-star/agent-context"
+Issues = "https://github.com/cote-star/agent-context/issues"
+
+[project.scripts]
+agent-context = "agent_context.cli:main_cli"
+
+[tool.setuptools.packages.find]
+include = ["agent_context*"]
+exclude = [
+    "tests*",
+    "docs*",
+    "scripts*",
+    "examples*",
+    "talk*",
+    "skills*",
+    "templates*",
+    "tools*",
+    "bin*",
+]
+
+[tool.setuptools.package-data]
+agent_context = [
+    "templates/*",
+    "tools/*",
+    "skill/**/*",
+    "skill/.gitkeep",
+]

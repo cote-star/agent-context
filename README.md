@@ -1,7 +1,7 @@
 # agent-context
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.3.1-green.svg)
+![Version](https://img.shields.io/badge/version-0.4.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
 **Portable system context for agents, checked into the repo.**
@@ -14,13 +14,14 @@ The **skill authors** the pack. The **CLI verifies** it, checks freshness, and m
 
 ## Quickstart
 
-Install the bundled skill once, then ask your coding agent to build the context pack.
+Two commands set up both the CLI and the bundled skill:
 
-| Agent | Setup |
-|---|---|
-| Claude Code | `git clone https://github.com/cote-star/agent-context.git && cp -r agent-context/skills/agent-context ~/.claude/skills/` |
-| Codex | register `skills/agent-context/agents/openai.yaml` with your Codex skill registry |
-| Cursor | open the target repo; Cursor reads `.cursorrules` after the pack exists |
+```bash
+uv tool install agent-context           # or: pipx install agent-context
+agent-context install-skill --agent claude
+```
+
+(For Codex, register `skills/agent-context/agents/openai.yaml` with your Codex skill registry. For Cursor, open the target repo; Cursor reads `.cursorrules` after the pack exists.)
 
 In the repo you want to improve, ask:
 
@@ -36,9 +37,9 @@ agent-context freshness . --base-ref origin/main
 Open a PR with `.agent-context/`, the managed routing blocks, and any CI/hook follow-up the skill recommends.
 
 <details>
-<summary>Advanced/manual/scripted setup</summary>
+<summary>Advanced/manual/scripted setup (from a clone)</summary>
 
-Use the CLI directly when no agent is in the loop, or when bootstrapping repos in scripts:
+Use the CLI from a clone when no agent is in the loop, or when bootstrapping repos in scripts:
 
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context

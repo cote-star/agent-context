@@ -6,7 +6,7 @@ description: >-
   higher-quality decisions. Use when setting up agent context for a new repo,
   updating context after agent work, or catching up context after human work.
 metadata:
-  version: "0.3.1"
+  version: "0.4.0"
 ---
 
 # Agent Context
