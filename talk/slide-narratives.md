@@ -241,7 +241,7 @@ So what should people actually do tomorrow?
 **Point:** Start with one repo and one painful workflow.
 
 **Talk track:**  
-Give the audience a small action: install the skill, ask the agent to build the pack, review the generated diff, run verify and freshness, then test it on one workflow that usually causes confusion. The call to action is intentionally concrete.
+Give the audience a small action with the actual commands on screen: `uv tool install agent-context-cli`, then `agent-context install-skill --agent claude`. After that it is one prompt to your coding agent — use the agent-context skill to build the pack — then review the generated diff, run verify and freshness, and test it on one workflow that usually causes confusion. As of this talk the package is live on PyPI; mention that briefly so the audience knows it is not vapor.
 
 **Transition:**  
 Close by restating the principle, not the tool.
