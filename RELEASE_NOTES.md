@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.4.1 — 2026-05-13
+
+PyPI README rendering fix. The v0.4.0 listing on PyPI showed broken images and 404 links because the README used relative paths (`docs/visuals/...`, `docs/evidence/...`, `examples/...`) that only resolve on GitHub. PyPI does not host the repo's `docs/` tree.
+
+### What's new
+
+- **README image and doc links converted to absolute GitHub URLs.** Image references now point to `raw.githubusercontent.com/cote-star/agent-context/main/...`; `.md` and directory links point to `github.com/cote-star/agent-context/blob/main/...` or `/tree/main/...`. Renders identically on GitHub and now also renders correctly on the PyPI project page.
+
+### Compatibility
+
+- No CLI or template change. Pure metadata refresh so the PyPI listing matches the GitHub README.
+
 ## v0.4.0 — 2026-05-13
 
 Installability release. `agent-context` is now a real Python package, distributed on PyPI as **`agent-context-cli`** (the bare `agent-context` PyPI name was already taken). Install via `uv tool install agent-context-cli` (or `pipx install agent-context-cli`) and the `agent-context` CLI is on PATH. A new `install-skill` subcommand copies the bundled skill into the agent's skills directory, so a brand-new user is fully set up in two commands.

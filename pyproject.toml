@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-context-cli"
-version = "0.4.0"
+version = "0.4.1"
 description = "Portable system context for agents, checked into the repo."
 readme = "README.md"
 license = { file = "LICENSE" }

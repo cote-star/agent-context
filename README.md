@@ -1,7 +1,7 @@
 # agent-context
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.4.0-green.svg)
+![Version](https://img.shields.io/badge/version-0.4.1-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
 **Portable system context for agents, checked into the repo.**
@@ -10,7 +10,7 @@ Agents start cold. They re-read the same tree, rediscover the same ownership bou
 
 The **skill authors** the pack. The **CLI verifies** it, checks freshness, and makes it safe to commit.
 
-![agent-context impact at a glance](docs/visuals/hero-stat-ribbon.svg)
+![agent-context impact at a glance](https://raw.githubusercontent.com/cote-star/agent-context/main/docs/visuals/hero-stat-ribbon.svg)
 
 ## Quickstart
 
@@ -134,9 +134,9 @@ Headline stories:
 - **Cursor Opus medium: 219s → 78s median duration** under structured context.
 - **Production-risk flags drop to zero** for Codex and Cursor Opus medium with structured context.
 
-Grading is **LLM-provisional** via independent Claude Code subagents, one fresh-context grader per cell. Treat the Q2 numbers as directional until reviewer spot-audit is complete. Anomalies are disclosed rather than hidden; see [metrics methodology](docs/evidence/metrics.md#methodology-and-disclosure).
+Grading is **LLM-provisional** via independent Claude Code subagents, one fresh-context grader per cell. Treat the Q2 numbers as directional until reviewer spot-audit is complete. Anomalies are disclosed rather than hidden; see [metrics methodology](https://github.com/cote-star/agent-context/blob/main/docs/evidence/metrics.md#methodology-and-disclosure).
 
-→ [Full Q2 results](docs/evidence/results.md#q2-2026-multi-agent-rerun-current-evidence) · [headline metrics](docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
+→ [Full Q2 results](https://github.com/cote-star/agent-context/blob/main/docs/evidence/results.md#q2-2026-multi-agent-rerun-current-evidence) · [headline metrics](https://github.com/cote-star/agent-context/blob/main/docs/evidence/metrics.md) · [evidence dashboard](https://cote-star.github.io/agent-recall/docs/)
 
 ### Historical reference
 
@@ -150,7 +150,7 @@ The March/April 2026 run set used **78+ reviewer-confirmed grades** across three
 | Dead ends | 2-3 per repo | 0 | **eliminated** |
 | Production-risk answers | 7 total | 0 | **eliminated** |
 
-![agent-context proof summary — per-agent + historical](docs/visuals/proof-results.svg)
+![agent-context proof summary — per-agent + historical](https://raw.githubusercontent.com/cote-star/agent-context/main/docs/visuals/proof-results.svg)
 
 ## Agent Architectures
 
@@ -166,7 +166,7 @@ Search-and-verify: Cursor, Codex, OpenCode with local model
 
 Claude-like agents can stop when the completeness contract is satisfied. Cursor/Codex-like agents still verify against source, but the pack tells them where to search and what evidence matters.
 
-![Explorable recall as a three-track system](docs/evidence/figures/three-tracks-importance-minimal.svg)
+![Explorable recall as a three-track system](https://raw.githubusercontent.com/cote-star/agent-context/main/docs/evidence/figures/three-tracks-importance-minimal.svg)
 
 ## Tested Repositories
 
@@ -199,8 +199,8 @@ Start small. Promote only when the repo needs more structure.
 
 | Example | Size | Why look at it |
 |---|---:|---|
-| [`examples/hello-service/`](examples/hello-service/) | 6 files | Read the whole pack in five minutes |
-| [`examples/agent-chorus-reference/`](examples/agent-chorus-reference/) | 155 files | Real dual Rust/Node CLI pack |
+| [`examples/hello-service/`](https://github.com/cote-star/agent-context/tree/main/examples/hello-service/) | 6 files | Read the whole pack in five minutes |
+| [`examples/agent-chorus-reference/`](https://github.com/cote-star/agent-context/tree/main/examples/agent-chorus-reference/) | 155 files | Real dual Rust/Node CLI pack |
 
 ## Comparison
 
@@ -217,13 +217,13 @@ For multi-agent session visibility and messaging, pair with [agent-chorus](https
 
 | Need | Document |
 |---|---|
-| First install | [Getting started](docs/getting-started.md) |
-| Architecture deep-dive | [Architecture guide](docs/architecture.md) |
-| Evidence | [Experiment results](docs/evidence/results.md) · [metrics summary](docs/evidence/metrics.md) |
-| Agent-driven creation | [SKILL.md](SKILL.md) |
-| CI setup | [CI adaptation](docs/ci-adaptation.md) |
-| Design rationale | [16 design principles](docs/design-principles.md) |
-| Roadmap | [Roadmap](docs/roadmap.md) |
+| First install | [Getting started](https://github.com/cote-star/agent-context/blob/main/docs/getting-started.md) |
+| Architecture deep-dive | [Architecture guide](https://github.com/cote-star/agent-context/blob/main/docs/architecture.md) |
+| Evidence | [Experiment results](https://github.com/cote-star/agent-context/blob/main/docs/evidence/results.md) · [metrics summary](https://github.com/cote-star/agent-context/blob/main/docs/evidence/metrics.md) |
+| Agent-driven creation | [SKILL.md](https://github.com/cote-star/agent-context/blob/main/SKILL.md) |
+| CI setup | [CI adaptation](https://github.com/cote-star/agent-context/blob/main/docs/ci-adaptation.md) |
+| Design rationale | [16 design principles](https://github.com/cote-star/agent-context/blob/main/docs/design-principles.md) |
+| Roadmap | [Roadmap](https://github.com/cote-star/agent-context/blob/main/docs/roadmap.md) |
 
 ## Project Scope
 
