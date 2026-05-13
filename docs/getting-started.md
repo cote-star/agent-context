@@ -5,7 +5,7 @@
 Two commands:
 
 ```bash
-uv tool install agent-context           # or: pipx install agent-context
+uv tool install agent-context-cli       # or: pipx install agent-context-cli
 agent-context install-skill --agent claude
 ```
 
