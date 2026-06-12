@@ -1,10 +1,11 @@
-# Cursor Meetup talk · May 2026
+# agent-context talk decks
 
 ## Live deck (read this first)
 
 | File | Purpose |
 |---|---|
-| [`index.html`](index.html) | Self-contained HTML deck — 22 slides, deep-navy theme. Byte-identical copy of `cursor-meetup-may-2026.html`; this filename is the GitHub Pages target. |
+| [`index.html`](index.html) | The GitHub Pages target. Currently a byte-identical copy of `claude-dev-day-jun-2026.html` (Claude Community Meetup Amsterdam, June 2026 — warm-dark/terracotta edition, 20 slides). |
+| [`claude-dev-day-jun-2026.html`](claude-dev-day-jun-2026.html) | The Claude Meetup edition source-of-truth — fork of the Cursor deck: Claude-first evidence ordering, merged per-agent slides, CLAUDE.md/Skills framing, hiring banner. |
 | [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | The deck source-of-truth. Hand-authored HTML + CSS (deep-navy `#0A0E1A` background; green `#10B981` = lift/structured wins; orange `#F97316` = bare/routing/`.agent-context/` artifact). 22 slides, strict 720px-per-slide budget, Rule-of-Three on per-agent panels. |
 | [`Amit Prusty - Agent-Context.pdf`](Amit%20Prusty%20-%20Agent-Context.pdf) | PDF render of the HTML deck — portable handout / projection backup. Rendered via `render-pdf.sh` (Chrome/Chromium/Edge headless). |
 | [`render-pdf.sh`](render-pdf.sh) | Re-renders `Amit Prusty - Agent-Context.pdf` from the HTML source. Picks the first available headless browser (Chrome / Chromium / Edge). Run from inside `talk/`. |
