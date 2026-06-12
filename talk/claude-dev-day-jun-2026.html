@@ -1,0 +1,1697 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Stop Re-Teaching Your Repo to Every Coding Agent · Claude Community Meetup, June 2026</title>
+<meta name="description" content="A concrete, checked-in workflow for portable agent context — Claude Code, Cursor, Codex, Gemini, OpenCode. Claude Community Meetup Amsterdam, June 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================
+   agent-context · Claude Community Meetup deck (forked from the
+   Cursor Meetup deck — that file is untouched).
+   Warm-dark Anthropic-style theme. Terracotta = lift / structured /
+   wins + the .agent-context/ artifact accent. Slate blue = bare / routing.
+   Strict 720px-per-slide budget · Rule-of-Three on per-agent.
+   ========================================================= */
+
+:root {
+  --bg:        #171210;
+  --bg-soft:   #1E1812;
+  --surface:   #231C15;
+  --surface-2: #2B2219;
+  --border:    #3B3226;
+  --border-soft:#2E2719;
+  --grid:      rgba(255,255,255,.022);
+
+  --fg:        #F0EEE6;
+  --fg-mid:    #D9D2C3;
+  --fg-dim:    #A99F8C;
+  --fg-faint:  #7C7263;
+
+  --green:      #D97757;        /* lift · structured · success */
+  --green-soft: rgba(217,119,87,.13);
+  --green-line: rgba(217,119,87,.42);
+
+  --orange:      #7EA6C4;       /* bare · routing · attention · .agent-context/ */
+  --orange-soft: rgba(126,166,196,.13);
+  --orange-line: rgba(126,166,196,.45);
+
+  --rose:      #FB7185;
+  --amber:     #F59E0B;
+
+  --radius:    14px;
+  --radius-sm: 8px;
+
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+a { color: var(--green); text-decoration: none; border-bottom: 1px solid var(--green-line); }
+a:hover { border-bottom-color: var(--green); }
+
+code, .mono { font-family: var(--mono); font-feature-settings: 'liga' 0; }
+
+/* ---------- Stage ---------- */
+.stage {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(1100px 600px at 80% -10%, rgba(217,119,87,.05), transparent 60%),
+    radial-gradient(900px 500px at -5% 110%, rgba(126,166,196,.05), transparent 60%),
+    var(--bg);
+  overflow: hidden;
+}
+.stage::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Slide (fixed-canvas, scale-to-fit) ---------- */
+.slide {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 1280px; height: 720px;
+  transform: translate(-50%, -50%) scale(var(--fit, 1));
+  transform-origin: center center;
+  background: linear-gradient(180deg, #221A12 0%, #171210 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 30px 80px rgba(0,0,0,.55);
+  padding: 44px 52px 48px;
+  display: none;
+  flex-direction: column;
+  z-index: 1;
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+.slide::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(800px 320px at 92% -20%, rgba(217,119,87,.04), transparent 60%);
+  pointer-events: none;
+}
+
+/* ---------- Eyebrow (act + section) ---------- */
+.eyebrow {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-transform: uppercase; letter-spacing: .14em;
+  color: var(--fg-dim);
+  margin-bottom: 22px;
+}
+.eyebrow .left { display: flex; align-items: center; gap: 12px; }
+.eyebrow .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 16px var(--green-line);
+}
+.eyebrow .act    { color: var(--green); }
+.eyebrow .crumb  { color: var(--fg-faint); }
+.eyebrow .crumb.on { color: var(--fg-mid); }
+.eyebrow .right  { color: var(--fg-faint); }
+
+/* ---------- Headings ---------- */
+h1, h2, h3 { margin: 0; letter-spacing: -0.015em; }
+h1 { font-family: 'Lora', Georgia, serif; font-size: 48px; font-weight: 600; line-height: 1.08; color: var(--fg); }
+h2 { font-size: 30px; font-weight: 700; line-height: 1.15; color: var(--fg); margin-bottom: 12px; }
+h2 .lede {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11.5px; font-weight: 500; letter-spacing: .14em;
+  color: var(--green);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+h3 { font-size: 17px; font-weight: 600; color: var(--fg-mid); }
+.title-xl { font-size: 60px; line-height: 1; letter-spacing: -0.02em; }
+
+/* ---------- Body text ---------- */
+p { margin: 0 0 8px; color: var(--fg-mid); font-size: 17px; }
+.lead-p { font-size: 20px; color: var(--fg); }
+strong { color: var(--fg); font-weight: 600; }
+em { color: var(--fg-mid); font-style: normal; }
+
+ul, ol { margin: 0; padding: 0; list-style: none; }
+ul li, ol li {
+  position: relative;
+  padding-left: 22px;
+  margin: 6px 0;
+  color: var(--fg-mid);
+  font-size: 16.5px; line-height: 1.45;
+}
+ul li::before {
+  content: '';
+  position: absolute; left: 0; top: .65em;
+  width: 8px; height: 1.5px;
+  background: var(--green);
+}
+ol { counter-reset: ol; }
+ol li { padding-left: 32px; counter-increment: ol; }
+ol li::before {
+  content: counter(ol, decimal-leading-zero);
+  position: absolute; left: 0; top: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  letter-spacing: .04em;
+}
+
+/* ---------- Cards / panels ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.card.green  { border-color: var(--green-line);  background: linear-gradient(180deg, var(--green-soft),  transparent 80%), var(--surface); }
+.card.orange { border-color: var(--orange-line); background: linear-gradient(180deg, var(--orange-soft), transparent 80%), var(--surface); }
+.card .k {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--fg-dim); margin-bottom: 4px;
+}
+.card .v { font-size: 15.5px; color: var(--fg); }
+.card.green .k  { color: var(--green); }
+.card.orange .k { color: var(--orange); }
+
+/* ---------- Code & terminal ---------- */
+pre, .terminal {
+  background: #140F0A;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--fg);
+  margin: 0;
+  position: relative;
+  overflow: auto;
+  white-space: pre;
+}
+pre code { background: transparent; padding: 0; color: inherit; }
+.terminal::before {
+  content: '';
+  position: absolute; left: 14px; top: 12px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: 18px 0 #febc2e, 36px 0 #28c840;
+}
+.terminal { padding-top: 36px; }
+.term-prompt  { color: var(--green); }
+.term-comment { color: var(--fg-faint); }
+.term-out     { color: var(--fg-mid); }
+.kw  { color: var(--orange); }
+.str { color: var(--green); }
+.ok  { color: var(--green); }
+
+:not(pre) > code {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.92em;
+  color: var(--fg);
+}
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  color: var(--fg-mid);
+}
+th, td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+th {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+}
+td.r, th.r { text-align: right; }
+
+/* Reference-table treatment for per-agent slides */
+.ref { font-size: 12.5px; color: var(--fg-dim); }
+.ref th { font-size: 10px; }
+.ref td { padding: 4.5px 10px; }
+.ref .bare    { color: var(--orange); opacity: .85; font-family: var(--mono); }
+.ref .struct  { color: var(--green);  font-family: var(--mono); }
+.ref .delta   { color: var(--fg-dim); font-family: var(--mono); }
+.ref .delta.win { color: var(--green); }
+.ref .label   { color: var(--fg-mid); }
+
+/* ---------- Hero stat (Rule of Three) ---------- */
+.hero-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+.hero-stat {
+  display: flex; flex-direction: column; gap: 4px;
+  background: linear-gradient(180deg, var(--green-soft), transparent 90%);
+  border: 1px solid var(--green-line);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px 14px;
+  min-height: 110px;
+}
+.hero-stat .label {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+  color: var(--green); text-transform: uppercase;
+}
+.hero-stat .num {
+  font-size: 44px; line-height: 1; font-weight: 800;
+  color: var(--green); letter-spacing: -.02em;
+  font-family: var(--mono); margin-top: 4px;
+}
+.hero-stat .num .unit { font-size: 22px; color: var(--green); margin-left: 2px; }
+.hero-stat .sub { font-size: 12.5px; color: var(--fg-dim); margin-top: 4px; font-family: var(--mono); }
+
+/* ---------- Highlight chips ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10.5px;
+  padding: 2px 8px; border-radius: 999px;
+  letter-spacing: .08em; text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg-mid);
+}
+.chip.green  { color: var(--green);  border-color: var(--green-line);  background: var(--green-soft); }
+.chip.orange { color: var(--orange); border-color: var(--orange-line); background: var(--orange-soft); }
+.chip.dim    { color: var(--fg-faint); }
+
+/* ---------- Speaker intro slide ---------- */
+.identity {
+  display: flex; align-items: flex-end; gap: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 10px;
+}
+.identity .photo {
+  width: 96px; height: 96px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--green-line) inset;
+}
+.identity .photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  display: block;
+}
+.identity .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.identity h1 {
+  margin: 0;
+  font-size: 38px; font-weight: 800; letter-spacing: -.015em;
+  color: var(--fg); line-height: 1;
+}
+.identity .subtitle {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--green); letter-spacing: .14em; text-transform: uppercase;
+  margin-top: 2px;
+}
+.identity .journey { font-size: 14px; color: var(--fg-dim); }
+.identity .journey b { color: var(--fg-mid); font-weight: 500; }
+.identity .contacts { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.identity .qr {
+  width: 72px; height: 72px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  padding: 4px;
+  display: flex;
+}
+.identity .qr img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.identity .li {
+  font-family: var(--mono); font-size: 11px; color: var(--green);
+  border-bottom: 1px solid var(--green-line);
+}
+.tagline {
+  font-size: 16px; color: var(--fg);
+  margin: 0 0 8px;
+  font-weight: 500;
+  line-height: 1.3;
+  max-width: 1000px;
+}
+.tagline em { color: var(--fg-mid); font-style: normal; }
+.split {
+  flex: 0 0 334px; min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.context-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px 10px;
+  display: flex; flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.context-card.work {
+  border-color: var(--orange-line);
+  background: linear-gradient(180deg, var(--orange-soft), transparent 70%), var(--surface);
+}
+.context-card.play {
+  border-color: var(--green-line);
+  background: linear-gradient(180deg, var(--green-soft), transparent 70%), var(--surface);
+}
+.context-card .cc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.context-card .cc-tag {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px;
+}
+.context-card.work .cc-tag { color: var(--orange); border: 1px solid var(--orange-line); background: var(--orange-soft); }
+.context-card.play .cc-tag { color: var(--green); border: 1px solid var(--green-line); background: var(--green-soft); }
+.context-card .cc-org {
+  font-family: var(--mono); font-size: 12px; color: var(--fg-dim);
+  letter-spacing: .04em;
+}
+.context-card .cc-lede {
+  font-size: 13.2px; color: var(--fg-mid); margin: 0 0 7px;
+  line-height: 1.35;
+}
+.context-card .cc-lede strong { color: var(--fg); font-weight: 600; }
+.stat-list { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-direction: column; gap: 5px; }
+.stat-list li {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 6px 9px;
+  background: rgba(255,255,255,.018);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+}
+.stat-list li::before { display: none; }
+.stat-list .num {
+  font-family: var(--mono); font-weight: 700;
+  font-size: 15.5px;
+  color: var(--fg); letter-spacing: -.01em;
+  min-width: 124px;
+}
+.context-card.work .stat-list .num { color: var(--orange); }
+.stat-list .lbl { font-size: 13px; color: var(--fg-mid); flex: 1; }
+.stat-list .lbl b { color: var(--fg); font-weight: 600; }
+.oss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.oss-entry {
+  padding: 9px 11px;
+  background: rgba(255,255,255,.018);
+  border: 1px solid var(--border-soft);
+  border-left: 2px solid var(--green-line);
+  border-radius: 6px;
+}
+.oss-entry .oss-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px; margin-bottom: 3px;
+}
+.oss-entry .oss-name {
+  font-family: var(--mono); font-size: 15px; font-weight: 700;
+  color: var(--green); letter-spacing: -.005em;
+}
+.oss-entry .oss-tag {
+  font-family: var(--mono); font-size: 9.5px;
+  color: var(--fg-faint); letter-spacing: .14em; text-transform: uppercase;
+}
+.oss-entry .oss-desc {
+  font-size: 12.2px; color: var(--fg-mid); line-height: 1.34;
+}
+.oss-entry .oss-desc b { color: var(--fg); font-weight: 600; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; padding-top: 6px; border-top: 1px dashed var(--border-soft); }
+.context-card.work .chip { color: var(--orange); border-color: var(--orange-line); background: var(--orange-soft); }
+.context-card.play .chip { color: var(--green); border-color: var(--green-line); background: var(--green-soft); }
+.bridge {
+  margin-top: 8px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(217,119,87,.06) 0%, rgba(126,166,196,.06) 100%);
+}
+.bridge .arrow {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--fg-faint); letter-spacing: .14em;
+}
+.bridge .line {
+  font-size: 15px; color: var(--fg);
+  text-align: center;
+  font-style: italic;
+}
+.bridge .line b { color: var(--green); font-style: normal; font-weight: 600; }
+
+/* ---------- Layout helpers ---------- */
+.body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+.body-row { flex: 1; min-height: 0; display: flex; flex-direction: row; gap: 18px; }
+.col  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+
+.muted { color: var(--fg-dim); }
+.faint { color: var(--fg-faint); }
+.small { font-size: 13.5px; line-height: 1.45; }
+.xs    { font-size: 12px;   line-height: 1.4;  color: var(--fg-dim); }
+.spacer { flex: 1; }
+.divider { height: 1px; background: var(--border-soft); margin: 4px 0; }
+.center { text-align: center; }
+
+/* ---------- Cursor-style file explorer (slide 7 — real repo) ---------- */
+.file-explorer {
+  background: #19130E;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--fg-mid);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.fe-tab {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #27201A;
+  border-bottom: 1px solid var(--border);
+  padding: 7px 14px;
+  color: var(--fg-dim);
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+.fe-tab .fe-folder { color: var(--orange); font-weight: 600; }
+.fe-tab .fe-tab-r { color: var(--fg-faint); font-size: 10.5px; }
+
+.fe-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 3px 14px 3px 14px;
+  color: var(--fg-mid);
+  border-left: 2px solid transparent;
+  position: relative;
+}
+.fe-row:hover { background: #211A14; }
+.fe-row.fe-dir { color: var(--fg); font-weight: 600; padding-left: 8px; }
+.fe-tw { width: 10px; color: var(--fg-faint); font-size: 10px; }
+.fe-children { padding-left: 24px; border-left: 1px dashed var(--border-soft); margin-left: 16px; }
+.fe-children .fe-row { padding: 2.5px 14px 2.5px 4px; }
+
+/* file-type icon bullets — pure CSS, no SVG */
+.fe-icon-folder, .fe-icon-md, .fe-icon-json, .fe-icon-sh, .fe-icon-py {
+  width: 14px; height: 14px; display: inline-block; flex-shrink: 0;
+  border-radius: 2px; position: relative;
+}
+.fe-icon-folder { background: var(--orange); opacity: .85; border-radius: 2px 2px 3px 3px; }
+.fe-icon-folder::before {
+  content: ''; position: absolute; left: 0; top: -2px; width: 5px; height: 3px;
+  background: var(--orange); border-radius: 1px 1px 0 0;
+}
+.fe-icon-md   { background: linear-gradient(135deg, #60A5FA, #3B82F6); }
+.fe-icon-json { background: linear-gradient(135deg, var(--amber), #8A6B3F); }
+.fe-icon-sh   { background: linear-gradient(135deg, var(--green), #A8492F); }
+.fe-icon-py   { background: linear-gradient(135deg, #38BDF8, #0EA5E9); }
+
+.fe-tag {
+  margin-left: auto;
+  font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 1px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--fg-dim);
+  border: 1px solid var(--border-soft);
+}
+.fe-tag.orange { color: var(--orange); border-color: var(--orange-line); background: var(--orange-soft); }
+.fe-tag.green  { color: var(--green);  border-color: var(--green-line);  background: var(--green-soft); }
+
+.fe-role {
+  margin-left: auto;
+  font-size: 9.5px; letter-spacing: .14em; color: var(--fg-faint);
+}
+
+/* ---------- Lead slide ---------- */
+.lead-slide {
+  background:
+    radial-gradient(900px 500px at 50% 0%, rgba(217,119,87,.10), transparent 60%),
+    radial-gradient(700px 400px at 50% 110%, rgba(126,166,196,.07), transparent 60%),
+    linear-gradient(180deg, #221A12 0%, #171210 100%);
+}
+.lead-slide .body { justify-content: center; gap: 22px; }
+.lead-slide h1 { font-size: 64px; line-height: 1; }
+.deck-mark {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--green);
+}
+
+/* ---------- Footer / progress / counter ---------- */
+.progress {
+  position: fixed; left: 0; right: 0; top: 0;
+  height: 2px; background: transparent; z-index: 10;
+}
+.progress > .bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--orange), var(--green));
+  transition: width .25s ease;
+}
+.counter {
+  position: fixed; right: 16px; bottom: 14px;
+  font-family: var(--mono); font-size: 12px; color: var(--fg-faint); z-index: 10;
+}
+.brand {
+  position: fixed; left: 16px; bottom: 14px;
+  font-family: var(--mono); font-size: 12px; color: var(--fg-faint); z-index: 10;
+}
+.brand b { color: var(--fg-mid); font-weight: 500; }
+
+.help-toggle, .help { position: fixed; z-index: 10; }
+.help-toggle {
+  right: 16px; top: 12px;
+  width: 28px; height: 28px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--fg-mid); border-radius: 999px;
+  font-family: var(--mono); font-size: 13px; cursor: pointer;
+}
+.help {
+  right: 16px; top: 50px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px; color: var(--fg-mid);
+  display: none; max-width: 280px;
+}
+.help.open { display: block; }
+.help div { margin: 3px 0; }
+.kbd {
+  font-family: var(--mono); font-size: 11px; padding: 1px 6px;
+  border: 1px solid var(--border); border-radius: 4px;
+  color: var(--fg-mid); background: var(--surface);
+}
+
+/* ---------- Print (handout / PDF export) ---------- */
+@media print {
+  @page { size: 1280px 720px; margin: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    overflow: visible;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .stage {
+    position: static; display: block;
+    background: var(--bg);
+    overflow: visible;
+  }
+  .stage::before { display: none; }
+  .progress, .counter, .brand, .help-toggle, .help { display: none !important; }
+  .slide {
+    display: flex !important;
+    position: relative; top: auto; left: auto;
+    transform: none;
+    page-break-after: always;
+    break-after: page;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0 !important;
+    width: 1280px;
+    height: 720px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .slide:last-of-type { page-break-after: auto; break-after: auto; }
+  /* keep all backgrounds, gradients, borders */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><div class="bar" id="progressBar"></div></div>
+<button class="help-toggle" id="helpToggle" aria-label="Keyboard shortcuts">?</button>
+<div class="help" id="help">
+  <div><span class="kbd">→</span> / <span class="kbd">Space</span> next</div>
+  <div><span class="kbd">←</span> previous</div>
+  <div><span class="kbd">Home</span> first · <span class="kbd">End</span> last</div>
+  <div><span class="kbd">F</span> fullscreen</div>
+  <div><span class="kbd">P</span> print / handout</div>
+</div>
+<div class="brand"><b>agent-context</b> · Claude Community Meetup AMS · June 2026</div>
+<div class="counter" id="counter">01 / 20</div>
+
+<main class="stage" id="stage">
+
+<!-- ============== SLIDE 01 — TITLE ============== -->
+<section class="slide active lead-slide">
+  <div class="eyebrow">
+    <div class="left">
+      <span class="dot"></span>
+      <span class="act">ACT 1</span>
+      <span class="crumb">/</span>
+      <span class="crumb on">TITLE</span>
+    </div>
+    <div class="right">CLAUDE MEETUP AMS · JUNE 2026 · 01 / 20</div>
+  </div>
+
+  <div class="body">
+    <div class="deck-mark">$ portable system context</div>
+    <h1 class="title-xl">Stop Re-Teaching<br/>Your Repo to Every<br/><span style="color:var(--green)">Coding Agent.</span></h1>
+
+    <p class="lead-p" style="max-width:920px;color:var(--fg-mid);">
+      Make context <strong>portable</strong>, <strong>reviewable</strong>, <strong>fresh</strong>, and <strong>testable</strong> before the agent edits.
+      The repo is today's venue; the pattern applies to any system an agent must understand before acting.
+    </p>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+      <span class="chip green">System navigation track</span>
+      <span class="chip orange">.agent-context/</span>
+      <span class="chip">288 graded answers</span>
+      <span class="chip">6 repos · 4 model variants</span>
+    </div>
+
+    <div style="margin-top:24px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Speaker</div>
+        <div style="font-size:22px;font-weight:600;color:var(--fg);margin-top:2px;">Amit Prusty</div>
+        <div class="small muted">Claude Community Meetup · Amsterdam · June 2026</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Repo</div>
+        <a href="https://github.com/cote-star/agent-context" style="font-family:var(--mono);font-size:16px;">github.com/cote-star/agent-context</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 02 — Who is talking ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left">
+      <span class="dot"></span>
+      <span class="act">ACT 1</span>
+      <span class="crumb">/</span>
+      <span class="crumb on">WHO IS TALKING TO YOU</span>
+    </div>
+    <div class="right">02 / 20</div>
+  </div>
+
+  <div class="identity">
+    <div class="photo">
+      <img src="amit_passport.jpeg" alt="Amit Prusty" />
+    </div>
+    <div class="who">
+      <h1>Amit Prusty</h1>
+      <div class="subtitle">Staff ML Engineer / AI Lead · Agent Systems · Evaluation · Applied GenAI</div>
+      <div class="journey">
+        <b>Edelman</b> · Amsterdam · Singapore
+      </div>
+    </div>
+    <div class="contacts">
+      <div class="qr"><img src="LinkedIN_QR.JPG" alt="LinkedIn QR code" /></div>
+      <span class="li">linkedin.com/in/amit-prusty</span>
+    </div>
+  </div>
+
+  <p class="tagline">
+    I build the <b style="color:var(--green);font-weight:600;">operating layer around AI agents</b> —
+    <em>context, evals, workflows, and production adoption.</em>
+    Today, coding agents are the venue because this is a developer room.
+  </p>
+
+  <div class="split">
+    <div class="context-card work">
+      <div class="cc-head">
+        <span class="cc-tag">At Work</span>
+        <span class="cc-org">Edelman</span>
+      </div>
+      <p class="cc-lede">
+        Building <strong>agentic platforms</strong> for communications:
+        listening and new media signals, agentic PR workflows, and
+        measurement that connects activity to outcomes.
+      </p>
+      <div class="chip-row">
+        <span class="chip">Agentic PR</span>
+        <span class="chip">Listening</span>
+        <span class="chip">Attribution</span>
+        <span class="chip">Platform systems</span>
+      </div>
+    </div>
+
+    <div class="context-card play">
+      <div class="cc-head">
+        <span class="cc-tag">OSS</span>
+        <span class="cc-org">github.com/cote-star</span>
+      </div>
+      <p class="cc-lede">
+        Two projects around <code style="font-family:var(--mono);color:var(--green);background:var(--green-soft);border:1px solid var(--green-line);padding:1px 6px;border-radius:4px;font-size:.92em;">agent-context</code>:
+        one for agent evidence, one for local control.
+      </p>
+      <div class="oss-list">
+        <div class="oss-entry">
+          <div class="oss-head">
+            <span class="oss-name">agent-chorus</span>
+            <span class="oss-tag">Session evidence layer</span>
+          </div>
+          <div class="oss-desc">
+            A <b>read / search / compare</b> surface across Claude, Codex, Cursor, and Gemini:
+            timelines, diffs, citations, and cross-agent QA.
+          </div>
+        </div>
+        <div class="oss-entry">
+          <div class="oss-head">
+            <span class="oss-name">latchkeyd</span>
+            <span class="oss-tag">Local control plane</span>
+          </div>
+          <div class="oss-desc">
+            A workstation control plane for trusted local agent workflows:
+            approvals, boundaries, and repeatable tool access.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bridge">
+    <span class="arrow">AT WORK →</span>
+    <span class="line">Both sides teach the same lesson: <b>AI gets useful after the demo.</b></span>
+    <span class="arrow">← OSS</span>
+  </div>
+
+  <div style="margin-top:8px;padding:9px 16px;border:1px solid var(--green-line);border-radius:8px;background:var(--green-soft);display:flex;align-items:baseline;justify-content:center;gap:14px;flex-wrap:wrap;">
+    <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">NOW HIRING · EDELMAN</span>
+    <span style="font-size:15px;color:var(--fg);"><strong>Senior ML Engineer</strong> · <strong>Senior Data Engineer</strong> · <strong>Senior QA Lead</strong></span>
+    <span class="small muted">any major EU city · or fully remote</span>
+  </div>
+</section>
+
+<!-- ============== SLIDE 03 — Hook ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">THE HOOK</span></div>
+    <div class="right">03 / 20</div>
+  </div>
+
+  <h2><span class="lede">The hook</span>The agent is new here every time.</h2>
+
+  <div class="body-row" style="align-items:stretch;">
+    <div class="col" style="flex:1.1;">
+      <p>Most coding agents enter a repo as a bright visitor with no durable map.</p>
+      <ul style="margin-top:6px;">
+        <li>They rediscover the tree.</li>
+        <li>They infer ownership from whatever file they open first.</li>
+        <li>They miss the invariant that decides whether an answer is safe.</li>
+        <li>They repeat the same exploration in the next session, editor, or model.</li>
+      </ul>
+      <div style="margin-top:14px;padding:12px 14px;border-left:2px solid var(--green);background:var(--green-soft);border-radius:0 6px 6px 0;">
+        <p style="margin:0;color:var(--fg);font-size:16px;"><strong>A cold session</strong> — unknown files, unclear risks, expensive search — gets converted into <strong style="color:var(--green);">bounded work</strong> only when the repo carries its own map.</p>
+      </div>
+    </div>
+
+    <div class="col" style="flex:.95;justify-content:center;">
+      <svg viewBox="0 0 480 320" style="width:100%;height:auto;max-height:380px;" aria-label="Agent context loop">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%"   stop-color="#D97757" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#D97757" stop-opacity="0"/>
+          </linearGradient>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#D97757"/>
+          </marker>
+          <marker id="arrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#7EA6C4"/>
+          </marker>
+        </defs>
+        <g>
+          <rect x="20" y="40" width="170" height="80" rx="10" fill="#231C15" stroke="#7EA6C4" stroke-opacity=".4"/>
+          <text x="105" y="68" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#7EA6C4">COLD SESSION</text>
+          <text x="105" y="92" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">unknown files</text>
+          <text x="105" y="110" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">unclear risks</text>
+        </g>
+        <g>
+          <rect x="290" y="200" width="170" height="80" rx="10" fill="url(#g1)" stroke="#D97757" stroke-opacity=".55"/>
+          <text x="375" y="228" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#D97757">BOUNDED WORK</text>
+          <text x="375" y="252" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">read order</text>
+          <text x="375" y="270" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">verified output</text>
+        </g>
+        <g>
+          <rect x="170" y="135" width="140" height="50" rx="8" fill="#2B2219" stroke="#7EA6C4" stroke-opacity=".55"/>
+          <text x="240" y="155" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#7EA6C4">.AGENT-CONTEXT/</text>
+          <text x="240" y="172" text-anchor="middle" font-family="Inter" font-size="12" fill="#D9D2C3">the repo's map</text>
+        </g>
+        <path d="M 105,124 Q 105,160 175,160" stroke="#7EA6C4" stroke-width="1.3" fill="none" marker-end="url(#arrowOrange)"/>
+        <path d="M 305,160 Q 375,160 375,200" stroke="#D97757" stroke-width="1.3" fill="none" marker-end="url(#arrow)"/>
+        <text x="240" y="305" text-anchor="middle" font-family="JetBrains Mono" font-size="10" letter-spacing="2" fill="#7C7263">READ THE MAP BEFORE EDITING THE REPO</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 03 — Reframe ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">REFRAME</span></div>
+    <div class="right">04 / 20</div>
+  </div>
+
+  <h2><span class="lede">It's not the model</span>The failure is missing system evidence.</h2>
+
+  <div class="body">
+    <p class="lead-p">Software teams already check in tests, docs, schemas, CI, runbooks, and migration history.</p>
+    <p style="font-size:17px;color:var(--fg);">
+      <strong>Agent context should be another reviewable system artifact:</strong>
+      the map of what is true, risky, connected, and out-of-bounds.
+    </p>
+
+    <div class="grid-3" style="margin-top:8px;">
+      <div class="card green"><div class="k">Portable</div><div class="v">Markdown / JSON, not vendor memory.</div></div>
+      <div class="card green"><div class="k">Reviewable</div><div class="v">Lives in git. Reviewed like code changes.</div></div>
+      <div class="card green"><div class="k">Fresh</div><div class="v">Drift is a failing preflight, not a quiet footnote.</div></div>
+    </div>
+
+    <div class="spacer"></div>
+    <div style="text-align:center;margin-top:8px;">
+      <span class="chip green">The standard is simple</span>
+      <span style="font-size:22px;color:var(--fg);font-weight:500;margin-left:14px;">Read the system map <em style="color:var(--green);">before</em> acting on the system.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 04 — Generalize ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">GENERALIZE</span></div>
+    <div class="right">05 / 20</div>
+  </div>
+
+  <h2><span class="lede">Not just repo recall</span>Every serious system needs a navigation layer.</h2>
+
+  <div class="body">
+    <p>Code makes the problem visible. Portable context makes it general. This is not repo recall; it is a portable context pattern for any system with state, rules, risk, and work to do.</p>
+
+    <div class="grid-4" style="margin-top:6px;">
+      <div class="card"><div class="k">01</div><div class="v">Data platforms</div></div>
+      <div class="card"><div class="k">02</div><div class="v">Customer accounts</div></div>
+      <div class="card"><div class="k">03</div><div class="v">Ops runbooks</div></div>
+      <div class="card green"><div class="k">04 ← TODAY</div><div class="v"><strong>Code repositories</strong></div></div>
+    </div>
+
+    <div class="spacer"></div>
+    <p class="lead-p" style="text-align:center;">For this developer room, the system is a repo; the pattern travels anywhere an agent must explore, verify, and act.</p>
+  </div>
+</section>
+
+<!-- ============== SLIDE 05 — Three-track keystone (with jargon gloss) ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">THREE-TRACK</span></div>
+    <div class="right">06 / 20</div>
+  </div>
+
+  <h2><span class="lede">The architecture</span>Explorable system recall as a three-track pattern.</h2>
+
+  <div class="body">
+    <p style="color:var(--fg-mid);font-size:14.5px;margin-bottom:6px;">
+      <strong style="color:var(--orange);font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;">Gloss · </strong>
+      <em>Explorable recall</em> = an agent can re-discover the same map any time, on its own, from reviewable system artifacts.
+    </p>
+    <p>agent-context works when <strong>navigation</strong>, <strong>operating loop</strong>, and <strong>engineering</strong> are treated as separate controls.</p>
+
+    <div class="grid-3" style="margin-top:6px;">
+      <div class="card green" style="display:flex;flex-direction:column;gap:6px;">
+        <div class="chip green" style="align-self:flex-start;">Navigation</div>
+        <div style="font-size:14.5px;color:var(--fg);"><strong>What should load, what should not, when should it stop?</strong></div>
+        <div class="small muted">control surface — read order / risky paths</div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:6px;">
+        <div class="chip" style="align-self:flex-start;">Operating Loop</div>
+        <div style="font-size:14.5px;color:var(--fg);"><strong>How does this agent consume repo context during real work?</strong></div>
+        <div class="small muted">agent behavior — trust route / verify route</div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:6px;">
+        <div class="chip" style="align-self:flex-start;">Engineering</div>
+        <div style="font-size:14.5px;color:var(--fg);"><strong>What makes prior work durable, inspectable, reusable?</strong></div>
+        <div class="small muted">systems layer — manifest / tests / CI</div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding:10px 16px;border:1px solid var(--green-line);border-radius:8px;background:var(--green-soft);text-align:center;">
+      <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">OUTCOMES WHEN ALL THREE LINE UP</span>
+      <div style="font-size:17px;color:var(--fg);margin-top:2px;"><strong>bounded loading</strong> · <strong>provenance</strong> · <strong>faster verified answers</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 06 — Today = Navigation track ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">TODAY = NAVIGATION</span></div>
+    <div class="right">07 / 20</div>
+  </div>
+
+  <h2><span class="lede">Today's session</span>The Navigation track only.</h2>
+
+  <div class="body">
+    <p class="lead-p"><strong>Navigation = the control surface.</strong> What the agent loads, doesn't load, and when it stops.</p>
+
+    <div style="margin:8px 0 4px;padding:10px 14px;border-left:2px solid var(--green);background:var(--green-soft);border-radius:0 6px 6px 0;">
+      <p style="margin:0;color:var(--fg);font-size:15.5px;">
+        <strong>Human version:</strong> senior engineers navigate by landmarks: likely owner file, generated folders, real tests, colleague pointers. Agents need those landmarks too.
+      </p>
+    </div>
+
+    <div class="grid-3" style="margin-top:4px;">
+      <div class="card">
+        <div class="k" style="color:var(--green);">What to load</div>
+        <div class="v">Completeness contracts that name every file family that must change together.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--green);">What not to load</div>
+        <div class="v">Search scopes that bound where the agent grep-walks.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--green);">When to stop</div>
+        <div class="v">Stop rules + verification shortcuts that say "you have enough to answer."</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div style="border-top:1px dashed var(--border);padding-top:10px;">
+      <span class="chip dim">OUT OF SCOPE TODAY</span>
+      <span class="small muted" style="margin-left:10px;">Operating Loop and Engineering appear where needed; the main track is Navigation.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 07 — The artifact .agent-context/ ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">THE ARTIFACT</span></div>
+    <div class="right">08 / 20</div>
+  </div>
+
+  <h2><span class="lede">The artifact · real repo</span><code style="font-family:var(--mono);color:var(--orange);background:var(--orange-soft);border-color:var(--orange-line);padding:2px 10px;border-radius:6px;">.agent-context/</code> — a committed folder.</h2>
+
+  <div class="body-row" style="align-items:stretch;">
+    <div class="col" style="flex:1.15;">
+      <p style="font-size:15.5px;margin-bottom:4px;">No hosted service. No hidden memory. No editor lock-in. <span class="muted">Numbered files give the agent a deterministic read order.</span></p>
+
+      <!-- Cursor-style file explorer mock — real repo contents -->
+      <div class="file-explorer">
+        <div class="fe-tab"><span class="fe-folder">.agent-context</span><span class="fe-tab-r">cote-star/agent-context</span></div>
+        <div class="fe-row fe-dir open">
+          <span class="fe-tw">▾</span><span class="fe-icon-folder"></span><span>current</span>
+          <span class="fe-role">CONTENT · AUTHORITY · NAVIGATION</span>
+        </div>
+        <div class="fe-children">
+          <div class="fe-row md"><span class="fe-icon-md"></span>00_START_HERE.md<span class="fe-tag">routing</span></div>
+          <div class="fe-row md"><span class="fe-icon-md"></span>10_SYSTEM_OVERVIEW.md<span class="fe-tag">content</span></div>
+          <div class="fe-row md"><span class="fe-icon-md"></span>20_CODE_MAP.md<span class="fe-tag">content</span></div>
+          <div class="fe-row md"><span class="fe-icon-md"></span>30_BEHAVIORAL_INVARIANTS.md<span class="fe-tag">content</span></div>
+          <div class="fe-row md"><span class="fe-icon-md"></span>40_OPERATIONS_AND_RELEASE.md<span class="fe-tag">content</span></div>
+          <div class="fe-row md"><span class="fe-icon-md"></span>acceptance_tests.md<span class="fe-tag green">quality</span></div>
+          <div class="fe-row json"><span class="fe-icon-json"></span>completeness_contract.json<span class="fe-tag orange">authority</span></div>
+          <div class="fe-row json"><span class="fe-icon-json"></span>manifest.json<span class="fe-tag green">quality</span></div>
+          <div class="fe-row json"><span class="fe-icon-json"></span>reporting_rules.json<span class="fe-tag">policy</span></div>
+          <div class="fe-row json"><span class="fe-icon-json"></span>routes.json<span class="fe-tag orange">authority</span></div>
+          <div class="fe-row json"><span class="fe-icon-json"></span>search_scope.json<span class="fe-tag orange">navigation</span></div>
+        </div>
+        <div class="fe-row fe-dir open"><span class="fe-tw">▾</span><span class="fe-icon-folder"></span><span>tools</span><span class="fe-role">QUALITY</span></div>
+        <div class="fe-children">
+          <div class="fe-row sh"><span class="fe-icon-sh"></span>check_freshness.sh<span class="fe-tag green">quality</span></div>
+          <div class="fe-row py"><span class="fe-icon-py"></span>verify_agent_context.py<span class="fe-tag green">quality</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col" style="flex:.9;">
+      <div class="card orange"><div class="k">Content</div><div class="v"><code>00_*</code> through <code>40_*</code> · markdown map.</div></div>
+      <div class="card orange"><div class="k">Authority</div><div class="v"><code>routes.json</code> · <code>completeness_contract.json</code>.</div></div>
+      <div class="card orange"><div class="k">Navigation</div><div class="v"><code>search_scope.json</code> + verification shortcuts.</div></div>
+      <div class="card orange"><div class="k">Quality</div><div class="v"><code>manifest.json</code> · <code>acceptance_tests.md</code> · <code>tools/</code>.</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span class="chip green">Claude</span><span class="chip green">Cursor</span><span class="chip green">Codex</span><span class="chip green">Gemini</span><span class="chip green">OpenCode</span>
+      </div>
+      <div class="card" style="margin-top:auto;font-size:12.5px;color:var(--fg-dim);">
+        <strong style="color:var(--green);">Tier 1</strong> = code map + search scope, 2 files.
+        <strong style="color:var(--green);">Tier 3</strong> = full pack, 11 files. Start tier 1; promote when the repo has cross-cutting invariants.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 08 — Same nav, opposite loops ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">AGENT LOOPS</span></div>
+    <div class="right">09 / 20</div>
+  </div>
+
+  <h2><span class="lede">Behavior</span>Same navigation design, opposite agent loops.</h2>
+
+  <div class="body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="card green" style="padding:18px 20px;">
+        <div class="chip green" style="margin-bottom:6px;">Trust-and-Follow</div>
+        <div style="font-size:18px;color:var(--fg);font-weight:600;margin-bottom:4px;">Claude · Gemini</div>
+        <p style="margin:0 0 8px;color:var(--fg-mid);font-size:14.5px;">Reads the pack as authoritative. Stops when the contract says done.</p>
+        <div class="divider"></div>
+        <div style="display:flex;align-items:baseline;gap:14px;margin-top:8px;">
+          <div class="mono" style="font-size:38px;color:var(--green);font-weight:700;letter-spacing:-.02em;">4.5 → 2.7</div>
+          <div class="small muted">files opened / task<br/><em>claude bare → structured</em></div>
+        </div>
+        <p class="small muted" style="margin-top:6px;">Compressed search → fewer files opened.</p>
+      </div>
+
+      <div class="card" style="padding:18px 20px;">
+        <div class="chip" style="margin-bottom:6px;">Search-and-Verify</div>
+        <div style="font-size:18px;color:var(--fg);font-weight:600;margin-bottom:4px;">Cursor · Codex</div>
+        <p style="margin:0 0 8px;color:var(--fg-mid);font-size:14.5px;">Bounds its grep to scoped directories and cross-checks verification shortcuts.</p>
+        <div class="divider"></div>
+        <div style="display:flex;align-items:baseline;gap:14px;margin-top:8px;">
+          <div class="mono" style="font-size:38px;color:var(--fg);font-weight:700;letter-spacing:-.02em;">0.8 → 1.4</div>
+          <div class="small muted">hops near the answer<br/><em>cursor — deliberate verification depth</em></div>
+        </div>
+        <p class="small muted" style="margin-top:6px;">Expanded proof burden → more verification, fewer dead ends.</p>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div style="border-top:1px solid var(--border-soft);padding-top:10px;">
+      <p style="font-size:15.5px;color:var(--fg);margin:0;">
+        <strong>Model-agnostic by construction.</strong> The routing block — <code>CLAUDE.md</code> / <code>AGENTS.md</code> / <code>.cursorrules</code> — points tools at <code style="color:var(--orange);">.agent-context/</code> before source exploration.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 09 — Engineering pipeline ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">WORKFLOW</span></div>
+    <div class="right">10 / 20</div>
+  </div>
+
+  <h2><span class="lede">A repeatable loop</span>The workflow: ask, author, self-test, verify, review.</h2>
+
+  <div class="body-row" style="align-items:stretch;">
+    <div class="col" style="flex:1;">
+      <ol style="margin-top:2px;">
+        <li><strong>Ask agent</strong> — type the skill request into Claude, Codex, Cursor, or OpenCode.</li>
+        <li><strong>Skill authors pack</strong> — inventories subsystems, may scaffold with <code>init</code>, fills templates.</li>
+        <li><strong>Research-style self-test</strong> — asks pack-only questions, verifies with grep, improves weak routes.</li>
+        <li><strong>CLI checks</strong> — after authoring, run <code>verify</code> and <code>freshness</code>.</li>
+        <li><strong>PR diff</strong> — review the generated context like code.</li>
+      </ol>
+
+      <div class="card green" style="margin-top:auto;padding:12px 14px;">
+        <div class="k">Takeaway</div>
+        <div class="v" style="font-size:16px;"><strong>A repeatable operating loop, not a magic prompt.</strong> First run includes its own quality trial.</div>
+      </div>
+    </div>
+
+    <div class="col" style="flex:1.05;">
+      <div class="card orange" style="padding:14px 16px;">
+        <div class="k">What happens in practice</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 1</div>
+            <div style="flex:1;">
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Agent request</strong></div>
+              <div class="small muted">Ask the coding agent to use the skill and build context for the repo.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 2</div>
+            <div style="flex:1;">
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Pack authoring</strong></div>
+              <div class="small muted">The skill inventories the repo, scaffolds when needed, and fills reviewable files.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 3</div>
+            <div style="flex:1;">
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Acceptance loop</strong></div>
+              <div class="small muted">Lookup, impact, cross-cutting, and diagnosis tests answer from the pack, then grep-check reality.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div class="mono" style="font-size:11px;color:var(--orange);min-width:54px;letter-spacing:.08em;">STEP 4</div>
+            <div style="flex:1;">
+              <div style="font-size:14.5px;color:var(--fg);"><strong>Machine checks</strong></div>
+              <div class="small muted">Run verify and freshness before the generated context lands in a PR.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal" style="font-size:12.2px;line-height:1.42;">
+<span class="term-comment"># 1. in your coding agent</span>
+&gt; Use the agent-context skill to build context for this repo.
+
+<span class="term-comment"># 2. agent authors + self-tests the pack</span>
+<span class="term-comment">#    pack-only answer → grep verification → patch weak sections</span>
+<span class="term-comment">#    stronger flow: sub-agents pressure-test routes</span>
+
+<span class="term-comment"># 3. after the agent opens the context diff</span>
+<span class="term-prompt">$</span> agent-context verify .
+<span class="term-prompt">$</span> agent-context freshness .
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 10 — What a reviewer checks ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">REVIEW</span></div>
+    <div class="right">11 / 20</div>
+  </div>
+
+  <h2><span class="lede">Quality gate</span>What a reviewer actually checks.</h2>
+
+  <div class="body">
+    <p>The review target is the context <strong style="color:var(--green);">diff</strong>, not the model's private memory.</p>
+
+    <div class="grid-3" style="margin-top:4px;">
+      <div class="card"><div class="k">File families</div><div class="v">Does the pack name every file family that must change together?</div></div>
+      <div class="card"><div class="k">Negative guidance</div><div class="v">Does it say which plausible files are deprecated, generated, or near-misses?</div></div>
+      <div class="card"><div class="k">Silent failures</div><div class="v">Does it call out the thing that can break without a compile error?</div></div>
+    </div>
+
+    <div class="card orange" style="padding:14px 16px;">
+      <div class="mono" style="font-size:11.5px;color:var(--orange);letter-spacing:.12em;">// .agent-context/current/30_BEHAVIORAL_INVARIANTS.md</div>
+      <pre style="margin-top:6px;background:transparent;border:none;padding:0;font-size:12.5px;color:var(--fg-mid);"><span style="color:var(--rose);"># DO NOT TOUCH</span> — auth/session.ts uses a non-obvious cookie schema.
+Changing this without updating cookie/v2 will fail silently in prod
+(no compile error; sessions invalidate overnight). See <span style="color:var(--green);">routes.json#auth.session</span>.</pre>
+    </div>
+
+    <div class="spacer"></div>
+    <p class="small muted">Pull-request-style review of the context diff is the durable quality gate.</p>
+  </div>
+</section>
+
+<!-- ============== SLIDE 11 — How to test (methodology preview) ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">METHOD</span></div>
+    <div class="right">12 / 20</div>
+  </div>
+
+  <h2><span class="lede">Test protocol</span>How to test whether it works.</h2>
+
+  <div class="body">
+    <p>There are two test layers: the pack tests itself first, then we run the external experiment.</p>
+
+    <div class="grid-2" style="margin-top:6px;">
+      <div class="card green">
+        <div class="k">Pack self-test</div>
+        <div class="v small">Pack-only questions → grep verification → patch weak routes → rerun. Captured in <code>acceptance_tests.md</code>.</div>
+      </div>
+      <div class="card">
+        <div class="k">External rerun</div>
+        <div class="v small">Same repo and task, comparing bare clone against <code>structured_fresh</code>.</div>
+      </div>
+    </div>
+
+    <table style="margin-top:6px;font-size:14px;">
+      <thead><tr><th style="width:40%;">Protocol piece</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Pack-only questions</strong></td><td>Catch weak routes before the pack is treated as usable context.</td></tr>
+        <tr><td><strong>Hard multi-hop tasks</strong></td><td>Synthesis exposes wrong turns better than simple lookup.</td></tr>
+        <tr><td><strong>Grep-backed ground truth</strong></td><td>Every expected file family is mechanically checkable.</td></tr>
+        <tr><td><strong>Fixed-rubric grading</strong></td><td>Answers are scored against expected paths and risk criteria.</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:auto;padding:12px 16px;border-left:2px solid var(--orange);background:var(--orange-soft);border-radius:0 6px 6px 0;">
+      <p style="margin:0;color:var(--fg);"><strong>Freshness is a hard experiment gate.</strong> If the pack is stale, the run fails before agents start.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 12 — Quantified evidence headline grid ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">EVIDENCE</span></div>
+    <div class="right">13 / 20</div>
+  </div>
+
+  <h2><span class="lede">Q2 2026 multi-agent rerun</span>Quantified evidence.</h2>
+
+  <div class="body">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <span class="chip green">288 graded answers</span>
+      <span class="chip">48 cells</span>
+      <span class="chip">6 repos</span>
+      <span class="chip">4 model variants</span>
+      <span class="chip orange">bare</span>
+      <span class="chip green">structured_fresh</span>
+    </div>
+
+    <table style="margin-top:6px;">
+      <thead>
+        <tr><th style="width:38%;">Agent / Model</th><th class="r">Bare</th><th class="r">Structured</th><th class="r">Δ</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Claude Opus 4.7</strong> <span class="small faint">Trust-and-Follow</span></td>
+          <td class="r ref"><span class="bare">80% (4.80/6)</span></td>
+          <td class="r"><span class="struct ref" style="font-weight:600;">100% (6.00/6)</span></td>
+          <td class="r ref"><span class="delta win">+20pp</span></td>
+        </tr>
+        <tr>
+          <td><strong>Cursor</strong> <code>claude-opus-4-7-medium</code></td>
+          <td class="r ref"><span class="bare">89% (5.33/6)</span></td>
+          <td class="r"><span class="struct ref" style="font-weight:600;">97% (5.83/6)</span></td>
+          <td class="r ref"><span class="delta win">+8pp</span></td>
+        </tr>
+        <tr>
+          <td><strong>Cursor</strong> <code>composer-2-fast</code> <span class="small faint">default</span></td>
+          <td class="r ref"><span class="bare">61% (3.67/6)</span></td>
+          <td class="r"><span class="struct ref" style="font-weight:600;">81% (4.83/6)</span></td>
+          <td class="r ref"><span class="delta win">+20pp</span></td>
+        </tr>
+        <tr>
+          <td><strong>Codex CLI</strong> <code>0.130.0</code></td>
+          <td class="r ref"><span class="bare">72% (4.33/6)</span></td>
+          <td class="r"><span class="struct ref" style="font-weight:600;">78% (4.67/6)</span></td>
+          <td class="r ref"><span class="delta win">+6pp</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid-4" style="margin-top:6px;gap:10px;">
+      <div class="card green"><div class="k">Claude Opus + structured</div><div class="v"><strong style="color:var(--green);">6/6 perfect</strong> across all 6 repos.</div></div>
+      <div class="card green"><div class="k">composer-2-fast</div><div class="v"><strong style="color:var(--green);">+20pp</strong> — biggest absolute lift.</div></div>
+      <div class="card green"><div class="k">Risk → 0</div><div class="v">Codex (0.33→0.00) · Cursor Opus med (0.50→0.00).</div></div>
+      <div class="card green"><div class="k">Cursor Opus med</div><div class="v"><strong style="color:var(--green);">−65% duration</strong> (219s→78s).</div></div>
+    </div>
+
+    <p class="xs" style="margin-top:auto;">* <strong style="color:var(--rose);">Risk-flag</strong> = the agent confidently cites the wrong file or misses an invariant; acting on the answer would break production. · May 2026 rerun grading is LLM-provisional; historical audited rows remain marked in docs.</p>
+  </div>
+</section>
+
+<!-- ============== SLIDE 13 — Per-agent: Claude Opus 4.7 — Rule of Three ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CLAUDE OPUS 4.7</span></div>
+    <div class="right">14 / 20</div>
+  </div>
+
+  <h2><span class="lede">Per-agent · Trust-and-Follow</span>Claude Opus 4.7 — <em style="color:var(--green);">6/6 perfect under structured.</em></h2>
+
+  <div class="body">
+    <div class="hero-row">
+      <div class="hero-stat">
+        <span class="label">Correctness</span>
+        <div class="num">+20<span class="unit">pp</span></div>
+        <div class="sub">80% → <span style="color:var(--green);">100%</span></div>
+      </div>
+      <div class="hero-stat">
+        <span class="label">Tool calls / correct</span>
+        <div class="num">−38<span class="unit">%</span></div>
+        <div class="sub">14.2 → <span style="color:var(--green);">8.8</span></div>
+      </div>
+      <div class="hero-stat">
+        <span class="label">Files opened / task</span>
+        <div class="num">−40<span class="unit">%</span></div>
+        <div class="sub">4.5 → <span style="color:var(--green);">2.7</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:10px 14px;">
+      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Claude consumes the pack as authoritative — opens fewer files; the top-level Grep tool is not invoked. Tool-call efficiency gain is the strongest of any lane.</div>
+    </div>
+
+    <table class="ref">
+      <thead><tr><th>Reference</th><th class="r">Bare</th><th class="r">Structured</th><th class="r">Δ</th></tr></thead>
+      <tbody>
+        <tr><td class="label">Risk-flag rate / 6 tasks</td><td class="r bare">0.20</td><td class="r struct">0.17</td><td class="r delta">small</td></tr>
+        <tr><td class="label">Median duration / task</td><td class="r bare">65s</td><td class="r struct">56s</td><td class="r delta win">−14%</td></tr>
+        <tr><td class="label">Re-read rate <span class="faint">same file twice</span></td><td class="r bare">0.015</td><td class="r struct">0.004</td><td class="r delta win">−73%</td></tr>
+        <tr><td class="label">Citations / task</td><td class="r bare">8.9</td><td class="r struct">9.3</td><td class="r delta">flat</td></tr>
+        <tr><td class="label">Judge quality score</td><td class="r bare">8.8</td><td class="r struct">9.0</td><td class="r delta">up</td></tr>
+        <tr><td class="label">Dead ends / post-hit</td><td class="r bare">0 / 0</td><td class="r struct">0 / 0</td><td class="r delta">perfect</td></tr>
+      </tbody>
+    </table>
+
+    <p class="xs" style="margin-top:auto;">6 cells / 36 graded tasks · agent-chorus/bare ran on Haiku (5h-session fallback) — reported separately.</p>
+  </div>
+</section>
+
+<!-- ============== MERGED — Per-agent: the search-and-verify lanes ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">SEARCH-AND-VERIFY LANES</span></div>
+    <div class="right">15 / 20</div>
+  </div>
+
+  <h2><span class="lede">Per-agent · the other three lanes</span>Search-and-verify, three temperaments.</h2>
+
+  <div class="body">
+    <div class="grid-3" style="align-items:stretch;">
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;">
+        <div class="chip" style="align-self:flex-start;">Cursor · opus-4-7-medium</div>
+        <div class="mono" style="font-size:30px;color:var(--green);font-weight:700;">−65% <span style="font-size:14px;">duration</span></div>
+        <div class="small muted">219s → 78s — recon becomes targeted verification.</div>
+        <div class="divider"></div>
+        <div class="small"><span class="mono" style="color:var(--green);">risk 0.50 → 0</span> · correctness 89% → 97%</div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;">
+        <div class="chip" style="align-self:flex-start;">Cursor · composer-2-fast</div>
+        <div class="mono" style="font-size:30px;color:var(--green);font-weight:700;">+20<span style="font-size:14px;">pp</span> <span style="font-size:14px;">correct</span></div>
+        <div class="small muted">61% → 81% — biggest lift goes to the default fast model.</div>
+        <div class="divider"></div>
+        <div class="small"><span class="mono" style="color:var(--orange);">risk 0.67 → 0.50</span> · still the riskiest lane — review stays.</div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;">
+        <div class="chip" style="align-self:flex-start;">Codex CLI · 0.130.0</div>
+        <div class="mono" style="font-size:30px;color:var(--green);font-weight:700;">97% <span style="font-size:14px;">pack read</span></div>
+        <div class="small muted">Reads nearly the whole pack · highest shortcut use (19%).</div>
+        <div class="divider"></div>
+        <div class="small"><span class="mono" style="color:var(--green);">risk 0.33 → 0</span> · <span class="mono" style="color:var(--orange);">55s → 126s</span> slower, honestly.</div>
+      </div>
+    </div>
+
+    <div class="card green" style="padding:12px 16px;">
+      <div class="k">Pattern</div>
+      <div class="v" style="font-size:16px;">The pack doesn’t make every lane faster — it makes every lane <strong>more controlled</strong>: bounded search, verified answers, risk flags down across the board.</div>
+    </div>
+
+    <p class="xs" style="margin-top:auto;">18 cells / 108 graded tasks across these three lanes · full per-lane reference tables in the repo docs and the Cursor-meetup edition of this deck.</p>
+  </div>
+</section>
+
+<!-- ============== SLIDE 17 — Methodology disclosure ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">DISCLOSURE</span></div>
+    <div class="right">16 / 20</div>
+  </div>
+
+  <h2><span class="lede">Trust the numbers</span>Measurement protocol. Scope, grading, limits.</h2>
+
+  <div class="body">
+    <div class="grid-2">
+      <div class="card">
+        <div class="k" style="color:var(--green);">Scope</div>
+        <div class="v small">288 graded tasks · 48 cells · 6 repos × 4 model variants × 2 conditions × 6 tasks. Same template across all repos.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--green);">Grading</div>
+        <div class="v small">Outputs were graded against grep-backed ground truth with a fixed rubric. The May 2026 rerun is LLM-provisional; historical Claude rows include prior human audit.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--green);">Protocol</div>
+        <div class="v small">Fresh-pack isolated. Every <code>structured_fresh</code> clone passed <code>agent-context verify</code> + <code>check_freshness.sh</code> before the agent started. Pack content authored at v0.2.0; validated at v0.3.1.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--green);">Telemetry caveats</div>
+        <div class="v small">Cursor sessions in opaque SQLite — tokens/cost null in this rerun. Codex tokens are <code>cell_replicated</code> (per-cell session totals).</div>
+      </div>
+    </div>
+
+    <div class="card orange" style="padding:12px 16px;">
+      <div class="k">Anomalies preserved · not masked</div>
+      <div class="v small">One repo was excluded after setup review. Retry/fallback anomalies are preserved in the run notes and excluded from headline claims where appropriate. <strong style="color:var(--orange);">Working slate is 6 repos.</strong></div>
+    </div>
+
+    <p class="xs" style="margin-top:auto;">Use headline claims as directional until reviewer-confirmed rows are marked in docs; historical audited rows remain part of the evidence base.</p>
+  </div>
+</section>
+
+<!-- ============== SLIDE 18 — Prior art ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">PRIOR ART</span></div>
+    <div class="right">17 / 20</div>
+  </div>
+
+  <h2><span class="lede">"Isn't this just CLAUDE.md?"</span>How agent-context fits what you already do.</h2>
+
+  <div class="body">
+    <table style="font-size:13.5px;">
+      <thead>
+        <tr><th style="width:34%;">You already have…</th><th>agent-context</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong><code>CLAUDE.md</code> / <code>AGENTS.md</code> / <code>.cursorrules</code></strong><br/><span class="small faint">single-file routing</span></td>
+          <td>Uses these as <strong>routing blocks</strong> pointing into the structured pack. <strong>Not a replacement.</strong></td>
+        </tr>
+        <tr>
+          <td><strong>MCP servers</strong><br/><span class="small faint">runtime tool access (web, DB, internal APIs)</span></td>
+          <td>Different layer. agent-context is the <em>navigation map</em>; MCP is <em>access</em>.</td>
+        </tr>
+        <tr>
+          <td><strong>Vector search</strong><br/><span class="small faint">semantic recall over chunks</span></td>
+          <td>Pack is <em>structural recall</em>: deterministic file lists, contracts, verification shortcuts. <strong style="color:var(--green);">Use each where it fits.</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Claude Code memory directory</strong><br/><span class="small faint">what one agent learned, per project</span></td>
+          <td>Personal vs shared: memory is one agent's private notes; the pack is the <strong>reviewed, team-shared map</strong> in git. They complement.</td>
+        </tr>
+        <tr>
+          <td><strong>Skills</strong><br/><span class="small faint">repeatable tasks, org knowledge, taste</span></td>
+          <td>The skill creates and maintains the map. The checked-in pack is the repo-specific navigation future sessions read.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:auto;padding:12px 16px;border-left:2px solid var(--green);background:var(--green-soft);border-radius:0 6px 6px 0;">
+      <p style="margin:0;color:var(--fg);font-size:15.5px;">
+        <strong>For Claude Code users specifically:</strong> <code>CLAUDE.md</code> stays a 100–300 token routing block pointing into <code style="color:var(--orange);">.agent-context/</code>. The agent-context <strong>skill</strong> builds and maintains the pack; the pack is what every future session reads. Claude’s trust-and-follow loop is exactly the lane that scored 6/6.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 19 — Tradeoffs ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">TRADEOFFS</span></div>
+    <div class="right">18 / 20</div>
+  </div>
+
+  <h2><span class="lede">Not magic</span>Tradeoffs.</h2>
+
+  <div class="body">
+    <div class="grid-3">
+      <div class="card"><div class="k">Maintenance cost</div><div class="v small">The pack must change when relevant code changes.</div></div>
+      <div class="card"><div class="k">Overfitting risk</div><div class="v small">Packs should route and bound search, not quote every answer.</div></div>
+      <div class="card"><div class="k">Repo-size fit</div><div class="v small">Small repos may only need tier 1. Full packs scale to monorepos.</div></div>
+      <div class="card"><div class="k">Telemetry gaps</div><div class="v small">Cursor stores sessions in opaque SQLite; tokens/cost stay null without reverse-engineering.</div></div>
+      <div class="card"><div class="k">Human review remains</div><div class="v small">Context improves first drafts; it does not replace code review.</div></div>
+      <div class="card"><div class="k">Bad context risk</div><div class="v small">Stale or overconfident maps can route agents wrong; freshness and review are the guard.</div></div>
+    </div>
+
+    <div style="margin-top:auto;padding:12px 16px;border:1px solid var(--green-line);background:var(--green-soft);border-radius:8px;text-align:center;">
+      <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">THE BARGAIN</span>
+      <div style="font-size:17px;color:var(--fg);margin-top:2px;">Spend a little context-maintenance effort to <strong>stop every agent from rediscovering the same map.</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 20 — Try-this CTA ============== -->
+<section class="slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">TRY THIS</span></div>
+    <div class="right">19 / 20</div>
+  </div>
+
+  <h2><span class="lede">Try this on one repo</span>Tomorrow.</h2>
+
+  <div class="body-row" style="align-items:stretch;">
+    <div class="col" style="flex:1.1;">
+      <ol style="margin-top:2px;">
+        <li><strong>Install</strong> — one <code>uv tool install</code> away (live on PyPI).</li>
+        <li><strong>Ask your agent</strong> — use the <code>agent-context</code> skill to build the pack.</li>
+        <li><strong>Review the generated diff</strong> — inspect the new <code>.agent-context/</code> pack.</li>
+        <li><strong>Run checks</strong> — <code>verify</code> and <code>freshness</code>.</li>
+        <li><strong>Pick one painful workflow</strong> — use it to test the pack's value.</li>
+      </ol>
+      <p class="small muted" style="margin-top:10px;">The fastest path is not hand-authoring files. Let the agent create the pack; use the CLI to make it reviewable.</p>
+    </div>
+
+    <div class="col" style="flex:1;">
+      <div class="terminal" style="font-size:12.2px;line-height:1.42;">
+<span class="term-comment"># install once (PyPI)</span>
+<span class="term-prompt">$</span> uv tool install agent-context-cli
+<span class="term-prompt">$</span> agent-context install-skill --agent claude
+
+<span class="term-comment"># in your repo, ask your coding agent</span>
+&gt; Use the agent-context skill to build context for this repo.
+
+<span class="term-prompt">$</span> agent-context verify .
+<span class="term-prompt">$</span> agent-context freshness .
+<span class="term-comment"># open a PR for the generated context diff</span>
+      </div>
+      <div class="card green">
+        <div class="k">Any agent that reads <code>AGENTS.md</code></div>
+        <div class="v">…or runs in a repo can pick up the pack — Cursor, Claude Code, Codex, Gemini, OpenCode, plus JetBrains / VS Code Copilot.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SLIDE 22 — Closing ============== -->
+<section class="slide lead-slide">
+  <div class="eyebrow">
+    <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">CLOSE</span></div>
+    <div class="right">20 / 20</div>
+  </div>
+
+  <div class="body">
+    <div class="deck-mark">$ make context part of the system</div>
+    <h1 class="title-xl">Make context<br/><span style="color:var(--green);">part of the system.</span></h1>
+
+    <p class="lead-p" style="max-width:880px;">Not a prompt trick. Not a vendor feature.<br/>For developers, it starts in the repo. For teams, it becomes a reviewable system standard.</p>
+
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <span class="chip orange"><code>skill authors</code></span>
+      <span class="chip orange"><code>verify</code></span>
+      <span class="chip orange"><code>freshness</code></span>
+      <span class="chip green"><code>reviewable PR</code></span>
+    </div>
+
+    <div style="margin-top:6px;padding:14px 18px;border:1px solid var(--green-line);background:var(--green-soft);border-radius:10px;max-width:920px;">
+      <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">DO THIS WEEK</span>
+      <div style="font-size:21px;color:var(--fg);margin-top:4px;font-weight:600;">Pick one repo. Ask your agent to build the context pack. Verify it. Open a PR.</div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Today's track</div>
+        <div style="font-size:17px;color:var(--fg);margin-top:2px;">Navigation. Operating Loop & Engineering = next conversations.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Repo · contact</div>
+        <a href="https://github.com/cote-star/agent-context" style="font-family:var(--mono);font-size:16px;">github.com/cote-star/agent-context</a>
+        <div class="small muted" style="margin-top:2px;">— <em>Amit Prusty</em></div>
+        <div class="xs" style="margin-top:4px;">hiring: Senior MLE · Senior Data Eng · Senior QA Lead — EU cities / remote</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function () {
+  const stage   = document.getElementById('stage');
+  const slides  = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('counter');
+  const bar     = document.getElementById('progressBar');
+  const help    = document.getElementById('help');
+  const helpToggle = document.getElementById('helpToggle');
+
+  const total = slides.length;
+  const pad = n => String(n).padStart(2, '0');
+
+  // Scale-to-fit canvas (1280x720 always, scale to viewport)
+  const SLIDE_W = 1280, SLIDE_H = 720;
+  function fit() {
+    const margin = 32;
+    const sx = (window.innerWidth  - margin * 2) / SLIDE_W;
+    const sy = (window.innerHeight - margin * 2) / SLIDE_H;
+    const s  = Math.min(sx, sy, 1.4);
+    document.documentElement.style.setProperty('--fit', s);
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  document.addEventListener('fullscreenchange', fit);
+
+  function show(i) {
+    i = Math.max(0, Math.min(total - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    counter.textContent = `${pad(i + 1)} / ${pad(total)}`;
+    bar.style.width = `${((i + 1) / total) * 100}%`;
+    history.replaceState(null, '', `#${i + 1}`);
+    current = i;
+  }
+
+  let current = 0;
+  const fromHash = parseInt(location.hash.slice(1), 10);
+  if (!Number.isNaN(fromHash) && fromHash >= 1 && fromHash <= total) current = fromHash - 1;
+  show(current);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'PageDown':
+      case ' ':
+        e.preventDefault(); show(current + 1); break;
+      case 'ArrowLeft':
+      case 'PageUp':
+        e.preventDefault(); show(current - 1); break;
+      case 'Home': e.preventDefault(); show(0); break;
+      case 'End':  e.preventDefault(); show(total - 1); break;
+      case 'f': case 'F':
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+        break;
+      case 'p': case 'P': window.print(); break;
+      case '?': help.classList.toggle('open'); break;
+    }
+  });
+
+  // click-zone navigation
+  stage.addEventListener('click', (e) => {
+    if (e.target.closest('a,button,input,textarea')) return;
+    const x = e.clientX / window.innerWidth;
+    if (x < 0.33) show(current - 1); else show(current + 1);
+  });
+
+  helpToggle.addEventListener('click', () => help.classList.toggle('open'));
+
+  // touch swipe
+  let tx = null;
+  stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+  stage.addEventListener('touchend', e => {
+    if (tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+    tx = null;
+  });
+})();
+</script>
+</body>
+</html>
