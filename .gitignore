@@ -57,3 +57,14 @@ agent-context-rethink-title.png
 # Local-only artifacts inside it stay ignored:
 scripts/experiments/__pycache__/
 scripts/experiments/*.pyc
+
+# Talk media artifacts (recordings, audio mastering work) — large binaries,
+# never part of the repo. Deck PDFs stay tracked.
+talk/*.mp4
+talk/*.mp3
+talk/*.wav
+talk/*.flac
+talk/audio_work/
+
+# presenter-only material — never published
+talk/claude-dev-day-notes.md
