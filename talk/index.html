@@ -3,40 +3,41 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Stop Re-Teaching Your Systems to Every Coding Agent · Cursor Meetup, May 2026</title>
-<meta name="description" content="A concrete, checked-in workflow for portable agent context — Cursor, Claude, Codex, Gemini, OpenCode. Cursor Meetup Amsterdam, May 2026." />
+<title>Stop Re-Teaching Your Repo to Every Coding Agent · Claude Community Meetup, June 2026</title>
+<meta name="description" content="A concrete, checked-in workflow for portable agent context — Claude Code, Cursor, Codex, Gemini, OpenCode. Claude Community Meetup Amsterdam, June 2026." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 /* =========================================================
-   agent-context · Cursor Meetup deck v2
-   Deep-navy theme. Green = lift / structured / wins.
-   Orange = bare / routing / .agent-context/ artifact.
+   agent-context · Claude Community Meetup deck (forked from the
+   Cursor Meetup deck — that file is untouched).
+   Warm-dark Anthropic-style theme. Terracotta = lift / structured /
+   wins + the .agent-context/ artifact accent. Slate blue = bare / routing.
    Strict 720px-per-slide budget · Rule-of-Three on per-agent.
    ========================================================= */
 
 :root {
-  --bg:        #0A0E1A;
-  --bg-soft:   #0E1422;
-  --surface:   #131826;
-  --surface-2: #1A2030;
-  --border:    #2A3142;
-  --border-soft:#1F2533;
+  --bg:        #171210;
+  --bg-soft:   #1E1812;
+  --surface:   #231C15;
+  --surface-2: #2B2219;
+  --border:    #3B3226;
+  --border-soft:#2E2719;
   --grid:      rgba(255,255,255,.022);
 
-  --fg:        #F8FAFC;
-  --fg-mid:    #D1D5DB;
-  --fg-dim:    #94A3B8;
-  --fg-faint:  #64748B;
+  --fg:        #F0EEE6;
+  --fg-mid:    #D9D2C3;
+  --fg-dim:    #A99F8C;
+  --fg-faint:  #7C7263;
 
-  --green:      #10B981;        /* lift · structured · success */
-  --green-soft: rgba(16,185,129,.13);
-  --green-line: rgba(16,185,129,.42);
+  --green:      #D97757;        /* lift · structured · success */
+  --green-soft: rgba(217,119,87,.13);
+  --green-line: rgba(217,119,87,.42);
 
-  --orange:      #F97316;       /* bare · routing · attention · .agent-context/ */
-  --orange-soft: rgba(249,115,22,.13);
-  --orange-line: rgba(249,115,22,.45);
+  --orange:      #7EA6C4;       /* bare · routing · attention · .agent-context/ */
+  --orange-soft: rgba(126,166,196,.13);
+  --orange-line: rgba(126,166,196,.45);
 
   --rose:      #FB7185;
   --amber:     #F59E0B;
@@ -71,8 +72,8 @@ code, .mono { font-family: var(--mono); font-feature-settings: 'liga' 0; }
 .stage {
   position: fixed; inset: 0;
   background:
-    radial-gradient(1100px 600px at 80% -10%, rgba(16,185,129,.05), transparent 60%),
-    radial-gradient(900px 500px at -5% 110%, rgba(249,115,22,.05), transparent 60%),
+    radial-gradient(1100px 600px at 80% -10%, rgba(217,119,87,.05), transparent 60%),
+    radial-gradient(900px 500px at -5% 110%, rgba(126,166,196,.05), transparent 60%),
     var(--bg);
   overflow: hidden;
 }
@@ -94,7 +95,7 @@ code, .mono { font-family: var(--mono); font-feature-settings: 'liga' 0; }
   width: 1280px; height: 720px;
   transform: translate(-50%, -50%) scale(var(--fit, 1));
   transform-origin: center center;
-  background: linear-gradient(180deg, #10162A 0%, #0A0E1A 100%);
+  background: linear-gradient(180deg, #221A12 0%, #171210 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 30px 80px rgba(0,0,0,.55);
@@ -108,7 +109,7 @@ code, .mono { font-family: var(--mono); font-feature-settings: 'liga' 0; }
 .slide::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(800px 320px at 92% -20%, rgba(16,185,129,.04), transparent 60%);
+  background: radial-gradient(800px 320px at 92% -20%, rgba(217,119,87,.04), transparent 60%);
   pointer-events: none;
 }
 
@@ -133,7 +134,7 @@ code, .mono { font-family: var(--mono); font-feature-settings: 'liga' 0; }
 
 /* ---------- Headings ---------- */
 h1, h2, h3 { margin: 0; letter-spacing: -0.015em; }
-h1 { font-size: 48px; font-weight: 800; line-height: 1.05; color: var(--fg); }
+h1 { font-family: 'Lora', Georgia, serif; font-size: 48px; font-weight: 600; line-height: 1.08; color: var(--fg); }
 h2 { font-size: 30px; font-weight: 700; line-height: 1.15; color: var(--fg); margin-bottom: 12px; }
 h2 .lede {
   display: block;
@@ -196,7 +197,7 @@ ol li::before {
 
 /* ---------- Code & terminal ---------- */
 pre, .terminal {
-  background: #0A0F1D;
+  background: #140F0A;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px 16px;
@@ -464,7 +465,7 @@ td.r, th.r { text-align: right; }
   padding: 6px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: linear-gradient(180deg, rgba(16,185,129,.06) 0%, rgba(249,115,22,.06) 100%);
+  background: linear-gradient(180deg, rgba(217,119,87,.06) 0%, rgba(126,166,196,.06) 100%);
 }
 .bridge .arrow {
   font-family: var(--mono); font-size: 11px;
@@ -496,7 +497,7 @@ td.r, th.r { text-align: right; }
 
 /* ---------- Cursor-style file explorer (slide 7 — real repo) ---------- */
 .file-explorer {
-  background: #0E1322;
+  background: #19130E;
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0;
@@ -510,7 +511,7 @@ td.r, th.r { text-align: right; }
 }
 .fe-tab {
   display: flex; justify-content: space-between; align-items: center;
-  background: #181E30;
+  background: #27201A;
   border-bottom: 1px solid var(--border);
   padding: 7px 14px;
   color: var(--fg-dim);
@@ -527,7 +528,7 @@ td.r, th.r { text-align: right; }
   border-left: 2px solid transparent;
   position: relative;
 }
-.fe-row:hover { background: #131A2C; }
+.fe-row:hover { background: #211A14; }
 .fe-row.fe-dir { color: var(--fg); font-weight: 600; padding-left: 8px; }
 .fe-tw { width: 10px; color: var(--fg-faint); font-size: 10px; }
 .fe-children { padding-left: 24px; border-left: 1px dashed var(--border-soft); margin-left: 16px; }
@@ -544,8 +545,8 @@ td.r, th.r { text-align: right; }
   background: var(--orange); border-radius: 1px 1px 0 0;
 }
 .fe-icon-md   { background: linear-gradient(135deg, #60A5FA, #3B82F6); }
-.fe-icon-json { background: linear-gradient(135deg, var(--amber), #B45309); }
-.fe-icon-sh   { background: linear-gradient(135deg, var(--green), #047857); }
+.fe-icon-json { background: linear-gradient(135deg, var(--amber), #8A6B3F); }
+.fe-icon-sh   { background: linear-gradient(135deg, var(--green), #A8492F); }
 .fe-icon-py   { background: linear-gradient(135deg, #38BDF8, #0EA5E9); }
 
 .fe-tag {
@@ -566,9 +567,9 @@ td.r, th.r { text-align: right; }
 /* ---------- Lead slide ---------- */
 .lead-slide {
   background:
-    radial-gradient(900px 500px at 50% 0%, rgba(16,185,129,.10), transparent 60%),
-    radial-gradient(700px 400px at 50% 110%, rgba(249,115,22,.07), transparent 60%),
-    linear-gradient(180deg, #10162A 0%, #0A0E1A 100%);
+    radial-gradient(900px 500px at 50% 0%, rgba(217,119,87,.10), transparent 60%),
+    radial-gradient(700px 400px at 50% 110%, rgba(126,166,196,.07), transparent 60%),
+    linear-gradient(180deg, #221A12 0%, #171210 100%);
 }
 .lead-slide .body { justify-content: center; gap: 22px; }
 .lead-slide h1 { font-size: 64px; line-height: 1; }
@@ -672,8 +673,8 @@ td.r, th.r { text-align: right; }
   <div><span class="kbd">F</span> fullscreen</div>
   <div><span class="kbd">P</span> print / handout</div>
 </div>
-<div class="brand"><b>agent-context</b> · Cursor Meetup AMS · May 2026</div>
-<div class="counter" id="counter">01 / 22</div>
+<div class="brand"><b>agent-context</b> · Claude Community Meetup AMS · June 2026</div>
+<div class="counter" id="counter">01 / 20</div>
 
 <main class="stage" id="stage">
 
@@ -686,7 +687,7 @@ td.r, th.r { text-align: right; }
       <span class="crumb">/</span>
       <span class="crumb on">TITLE</span>
     </div>
-    <div class="right">CURSOR MEETUP AMS · MAY 2026 · 01 / 22</div>
+    <div class="right">CLAUDE MEETUP AMS · JUNE 2026 · 01 / 20</div>
   </div>
 
   <div class="body">
@@ -709,7 +710,7 @@ td.r, th.r { text-align: right; }
       <div>
         <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Speaker</div>
         <div style="font-size:22px;font-weight:600;color:var(--fg);margin-top:2px;">Amit Prusty</div>
-        <div class="small muted">Cursor Meetup · Amsterdam · May 2026</div>
+        <div class="small muted">Claude Community Meetup · Amsterdam · June 2026</div>
       </div>
       <div style="text-align:right;">
         <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Repo</div>
@@ -728,7 +729,7 @@ td.r, th.r { text-align: right; }
       <span class="crumb">/</span>
       <span class="crumb on">WHO IS TALKING TO YOU</span>
     </div>
-    <div class="right">02 / 22</div>
+    <div class="right">02 / 20</div>
   </div>
 
   <div class="identity">
@@ -765,11 +766,6 @@ td.r, th.r { text-align: right; }
         listening and new media signals, agentic PR workflows, and
         measurement that connects activity to outcomes.
       </p>
-      <ul class="stat-list">
-        <li><span class="num">Comms futures</span><span class="lbl">listening, new media, and agentic PR</span></li>
-        <li><span class="num">Attribution</span><span class="lbl">earned media to outcomes and brand lift</span></li>
-        <li><span class="num">Platforms</span><span class="lbl">context, evaluation, controls, workflows</span></li>
-      </ul>
       <div class="chip-row">
         <span class="chip">Agentic PR</span>
         <span class="chip">Listening</span>
@@ -817,13 +813,19 @@ td.r, th.r { text-align: right; }
     <span class="line">Both sides teach the same lesson: <b>AI gets useful after the demo.</b></span>
     <span class="arrow">← OSS</span>
   </div>
+
+  <div style="margin-top:8px;padding:9px 16px;border:1px solid var(--green-line);border-radius:8px;background:var(--green-soft);display:flex;align-items:baseline;justify-content:center;gap:14px;flex-wrap:wrap;">
+    <span class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--green);">NOW HIRING · EDELMAN</span>
+    <span style="font-size:15px;color:var(--fg);"><strong>Senior ML Engineer</strong> · <strong>Senior Data Engineer</strong> · <strong>Senior QA Lead</strong></span>
+    <span class="small muted">any major EU city · or fully remote</span>
+  </div>
 </section>
 
 <!-- ============== SLIDE 03 — Hook ============== -->
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">THE HOOK</span></div>
-    <div class="right">03 / 22</div>
+    <div class="right">03 / 20</div>
   </div>
 
   <h2><span class="lede">The hook</span>The agent is new here every time.</h2>
@@ -846,36 +848,36 @@ td.r, th.r { text-align: right; }
       <svg viewBox="0 0 480 320" style="width:100%;height:auto;max-height:380px;" aria-label="Agent context loop">
         <defs>
           <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%"   stop-color="#10B981" stop-opacity=".25"/>
-            <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+            <stop offset="0%"   stop-color="#D97757" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#D97757" stop-opacity="0"/>
           </linearGradient>
           <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0,0 L10,5 L0,10 z" fill="#10B981"/>
+            <path d="M0,0 L10,5 L0,10 z" fill="#D97757"/>
           </marker>
           <marker id="arrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0,0 L10,5 L0,10 z" fill="#F97316"/>
+            <path d="M0,0 L10,5 L0,10 z" fill="#7EA6C4"/>
           </marker>
         </defs>
         <g>
-          <rect x="20" y="40" width="170" height="80" rx="10" fill="#131826" stroke="#F97316" stroke-opacity=".4"/>
-          <text x="105" y="68" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#F97316">COLD SESSION</text>
-          <text x="105" y="92" text-anchor="middle" font-family="Inter" font-size="14" fill="#F8FAFC">unknown files</text>
-          <text x="105" y="110" text-anchor="middle" font-family="Inter" font-size="14" fill="#F8FAFC">unclear risks</text>
+          <rect x="20" y="40" width="170" height="80" rx="10" fill="#231C15" stroke="#7EA6C4" stroke-opacity=".4"/>
+          <text x="105" y="68" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#7EA6C4">COLD SESSION</text>
+          <text x="105" y="92" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">unknown files</text>
+          <text x="105" y="110" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">unclear risks</text>
         </g>
         <g>
-          <rect x="290" y="200" width="170" height="80" rx="10" fill="url(#g1)" stroke="#10B981" stroke-opacity=".55"/>
-          <text x="375" y="228" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#10B981">BOUNDED WORK</text>
-          <text x="375" y="252" text-anchor="middle" font-family="Inter" font-size="14" fill="#F8FAFC">read order</text>
-          <text x="375" y="270" text-anchor="middle" font-family="Inter" font-size="14" fill="#F8FAFC">verified output</text>
+          <rect x="290" y="200" width="170" height="80" rx="10" fill="url(#g1)" stroke="#D97757" stroke-opacity=".55"/>
+          <text x="375" y="228" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#D97757">BOUNDED WORK</text>
+          <text x="375" y="252" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">read order</text>
+          <text x="375" y="270" text-anchor="middle" font-family="Inter" font-size="14" fill="#F0EEE6">verified output</text>
         </g>
         <g>
-          <rect x="170" y="135" width="140" height="50" rx="8" fill="#1A2030" stroke="#F97316" stroke-opacity=".55"/>
-          <text x="240" y="155" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#F97316">.AGENT-CONTEXT/</text>
-          <text x="240" y="172" text-anchor="middle" font-family="Inter" font-size="12" fill="#CBD5E1">the repo's map</text>
+          <rect x="170" y="135" width="140" height="50" rx="8" fill="#2B2219" stroke="#7EA6C4" stroke-opacity=".55"/>
+          <text x="240" y="155" text-anchor="middle" font-family="JetBrains Mono" font-size="11" letter-spacing="1.5" fill="#7EA6C4">.AGENT-CONTEXT/</text>
+          <text x="240" y="172" text-anchor="middle" font-family="Inter" font-size="12" fill="#D9D2C3">the repo's map</text>
         </g>
-        <path d="M 105,124 Q 105,160 175,160" stroke="#F97316" stroke-width="1.3" fill="none" marker-end="url(#arrowOrange)"/>
-        <path d="M 305,160 Q 375,160 375,200" stroke="#10B981" stroke-width="1.3" fill="none" marker-end="url(#arrow)"/>
-        <text x="240" y="305" text-anchor="middle" font-family="JetBrains Mono" font-size="10" letter-spacing="2" fill="#64748B">READ THE MAP BEFORE EDITING THE REPO</text>
+        <path d="M 105,124 Q 105,160 175,160" stroke="#7EA6C4" stroke-width="1.3" fill="none" marker-end="url(#arrowOrange)"/>
+        <path d="M 305,160 Q 375,160 375,200" stroke="#D97757" stroke-width="1.3" fill="none" marker-end="url(#arrow)"/>
+        <text x="240" y="305" text-anchor="middle" font-family="JetBrains Mono" font-size="10" letter-spacing="2" fill="#7C7263">READ THE MAP BEFORE EDITING THE REPO</text>
       </svg>
     </div>
   </div>
@@ -885,7 +887,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">REFRAME</span></div>
-    <div class="right">04 / 22</div>
+    <div class="right">04 / 20</div>
   </div>
 
   <h2><span class="lede">It's not the model</span>The failure is missing system evidence.</h2>
@@ -915,7 +917,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 1</span><span class="crumb">/</span><span class="crumb on">GENERALIZE</span></div>
-    <div class="right">05 / 22</div>
+    <div class="right">05 / 20</div>
   </div>
 
   <h2><span class="lede">Not just repo recall</span>Every serious system needs a navigation layer.</h2>
@@ -939,7 +941,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">THREE-TRACK</span></div>
-    <div class="right">06 / 22</div>
+    <div class="right">06 / 20</div>
   </div>
 
   <h2><span class="lede">The architecture</span>Explorable system recall as a three-track pattern.</h2>
@@ -980,7 +982,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">TODAY = NAVIGATION</span></div>
-    <div class="right">07 / 22</div>
+    <div class="right">07 / 20</div>
   </div>
 
   <h2><span class="lede">Today's session</span>The Navigation track only.</h2>
@@ -1021,7 +1023,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">THE ARTIFACT</span></div>
-    <div class="right">08 / 22</div>
+    <div class="right">08 / 20</div>
   </div>
 
   <h2><span class="lede">The artifact · real repo</span><code style="font-family:var(--mono);color:var(--orange);background:var(--orange-soft);border-color:var(--orange-line);padding:2px 10px;border-radius:6px;">.agent-context/</code> — a committed folder.</h2>
@@ -1064,7 +1066,7 @@ td.r, th.r { text-align: right; }
       <div class="card orange"><div class="k">Navigation</div><div class="v"><code>search_scope.json</code> + verification shortcuts.</div></div>
       <div class="card orange"><div class="k">Quality</div><div class="v"><code>manifest.json</code> · <code>acceptance_tests.md</code> · <code>tools/</code>.</div></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <span class="chip green">Cursor</span><span class="chip green">Claude</span><span class="chip green">Codex</span><span class="chip green">Gemini</span><span class="chip green">OpenCode</span>
+        <span class="chip green">Claude</span><span class="chip green">Cursor</span><span class="chip green">Codex</span><span class="chip green">Gemini</span><span class="chip green">OpenCode</span>
       </div>
       <div class="card" style="margin-top:auto;font-size:12.5px;color:var(--fg-dim);">
         <strong style="color:var(--green);">Tier 1</strong> = code map + search scope, 2 files.
@@ -1078,7 +1080,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">AGENT LOOPS</span></div>
-    <div class="right">09 / 22</div>
+    <div class="right">09 / 20</div>
   </div>
 
   <h2><span class="lede">Behavior</span>Same navigation design, opposite agent loops.</h2>
@@ -1091,8 +1093,8 @@ td.r, th.r { text-align: right; }
         <p style="margin:0 0 8px;color:var(--fg-mid);font-size:14.5px;">Reads the pack as authoritative. Stops when the contract says done.</p>
         <div class="divider"></div>
         <div style="display:flex;align-items:baseline;gap:14px;margin-top:8px;">
-          <div class="mono" style="font-size:38px;color:var(--green);font-weight:700;letter-spacing:-.02em;">14 → 4</div>
-          <div class="small muted">files opened<br/><em>claude bare → structured</em></div>
+          <div class="mono" style="font-size:38px;color:var(--green);font-weight:700;letter-spacing:-.02em;">4.5 → 2.7</div>
+          <div class="small muted">files opened / task<br/><em>claude bare → structured</em></div>
         </div>
         <p class="small muted" style="margin-top:6px;">Compressed search → fewer files opened.</p>
       </div>
@@ -1103,8 +1105,8 @@ td.r, th.r { text-align: right; }
         <p style="margin:0 0 8px;color:var(--fg-mid);font-size:14.5px;">Bounds its grep to scoped directories and cross-checks verification shortcuts.</p>
         <div class="divider"></div>
         <div style="display:flex;align-items:baseline;gap:14px;margin-top:8px;">
-          <div class="mono" style="font-size:38px;color:var(--fg);font-weight:700;letter-spacing:-.02em;">3 → 12</div>
-          <div class="small muted">files opened<br/><em>cursor — each verified against shortcut</em></div>
+          <div class="mono" style="font-size:38px;color:var(--fg);font-weight:700;letter-spacing:-.02em;">0.8 → 1.4</div>
+          <div class="small muted">hops near the answer<br/><em>cursor — deliberate verification depth</em></div>
         </div>
         <p class="small muted" style="margin-top:6px;">Expanded proof burden → more verification, fewer dead ends.</p>
       </div>
@@ -1123,7 +1125,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">WORKFLOW</span></div>
-    <div class="right">10 / 22</div>
+    <div class="right">10 / 20</div>
   </div>
 
   <h2><span class="lede">A repeatable loop</span>The workflow: ask, author, self-test, verify, review.</h2>
@@ -1199,7 +1201,7 @@ td.r, th.r { text-align: right; }
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 2</span><span class="crumb">/</span><span class="crumb on">REVIEW</span></div>
-    <div class="right">11 / 22</div>
+    <div class="right">11 / 20</div>
   </div>
 
   <h2><span class="lede">Quality gate</span>What a reviewer actually checks.</h2>
@@ -1229,7 +1231,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">METHOD</span></div>
-    <div class="right">12 / 22</div>
+    <div class="right">12 / 20</div>
   </div>
 
   <h2><span class="lede">Test protocol</span>How to test whether it works.</h2>
@@ -1268,7 +1270,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">EVIDENCE</span></div>
-    <div class="right">13 / 22</div>
+    <div class="right">13 / 20</div>
   </div>
 
   <h2><span class="lede">Q2 2026 multi-agent rerun</span>Quantified evidence.</h2>
@@ -1330,7 +1332,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CLAUDE OPUS 4.7</span></div>
-    <div class="right">14 / 22</div>
+    <div class="right">14 / 20</div>
   </div>
 
   <h2><span class="lede">Per-agent · Trust-and-Follow</span>Claude Opus 4.7 — <em style="color:var(--green);">6/6 perfect under structured.</em></h2>
@@ -1374,147 +1376,46 @@ Changing this without updating cookie/v2 will fail silently in prod
   </div>
 </section>
 
-<!-- ============== SLIDE 14 — Per-agent: Cursor opus medium — Rule of Three ============== -->
+<!-- ============== MERGED — Per-agent: the search-and-verify lanes ============== -->
 <section class="slide">
   <div class="eyebrow">
-    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CURSOR · OPUS-MEDIUM</span></div>
-    <div class="right">15 / 22</div>
+    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">SEARCH-AND-VERIFY LANES</span></div>
+    <div class="right">15 / 20</div>
   </div>
 
-  <h2><span class="lede">Per-agent · Search-and-Verify</span>Cursor <code>claude-opus-4-7-medium</code></h2>
+  <h2><span class="lede">Per-agent · the other three lanes</span>Search-and-verify, three temperaments.</h2>
 
   <div class="body">
-    <div class="hero-row">
-      <div class="hero-stat">
-        <span class="label">Median duration</span>
-        <div class="num">−65<span class="unit">%</span></div>
-        <div class="sub">219s → <span style="color:var(--green);">78s</span></div>
+    <div class="grid-3" style="align-items:stretch;">
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;">
+        <div class="chip" style="align-self:flex-start;">Cursor · opus-4-7-medium</div>
+        <div class="mono" style="font-size:30px;color:var(--green);font-weight:700;">−65% <span style="font-size:14px;">duration</span></div>
+        <div class="small muted">219s → 78s — recon becomes targeted verification.</div>
+        <div class="divider"></div>
+        <div class="small"><span class="mono" style="color:var(--green);">risk 0.50 → 0</span> · correctness 89% → 97%</div>
       </div>
-      <div class="hero-stat">
-        <span class="label">Risk-flag rate</span>
-        <div class="num">0.50→0</div>
-        <div class="sub" style="color:var(--green);">eliminated</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;">
+        <div class="chip" style="align-self:flex-start;">Cursor · composer-2-fast</div>
+        <div class="mono" style="font-size:30px;color:var(--green);font-weight:700;">+20<span style="font-size:14px;">pp</span> <span style="font-size:14px;">correct</span></div>
+        <div class="small muted">61% → 81% — biggest lift goes to the default fast model.</div>
+        <div class="divider"></div>
+        <div class="small"><span class="mono" style="color:var(--orange);">risk 0.67 → 0.50</span> · still the riskiest lane — review stays.</div>
       </div>
-      <div class="hero-stat">
-        <span class="label">Correctness</span>
-        <div class="num">+8<span class="unit">pp</span></div>
-        <div class="sub">89% → <span style="color:var(--green);">97%</span></div>
-      </div>
-    </div>
-
-    <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Bare Opus medium is the slowest lane — heavy <code>glob</code>+<code>grep</code> recon before reads. Hop-count up = a feature: structured Opus reads more files near the answer to verify pack vs source.</div>
-    </div>
-
-    <table class="ref">
-      <thead><tr><th>Reference</th><th class="r">Bare</th><th class="r">Structured</th><th class="r">Δ</th></tr></thead>
-      <tbody>
-        <tr><td class="label">Tool calls per correct</td><td class="r bare">8.3</td><td class="r struct">7.9</td><td class="r delta">small</td></tr>
-        <tr><td class="label">Files opened / task</td><td class="r bare">4.8</td><td class="r struct">3.9</td><td class="r delta win">−19%</td></tr>
-        <tr><td class="label">Hops to first correct file <span class="faint">verification depth</span></td><td class="r bare">0.83</td><td class="r struct">1.42</td><td class="r delta">↑ feature</td></tr>
-        <tr><td class="label">Search-vs-read ratio</td><td class="r bare">0.89</td><td class="r struct">0.57</td><td class="r delta">dropped</td></tr>
-        <tr><td class="label">Verification-shortcut hit rate</td><td class="r bare">n/a</td><td class="r struct">0.15</td><td class="r delta">new</td></tr>
-        <tr><td class="label">Dead ends / post-hit</td><td class="r bare">0.1 / 0</td><td class="r struct">0 / 0</td><td class="r delta win">eliminated</td></tr>
-      </tbody>
-    </table>
-
-    <p class="xs" style="margin-top:auto;">6 cells / 36 graded tasks · daemon-reference/bare hallucinated writes on first attempt; recovered on retry, 6/6 final.</p>
-  </div>
-</section>
-
-<!-- ============== SLIDE 15 — Per-agent: Cursor composer-2-fast — Rule of Three ============== -->
-<section class="slide">
-  <div class="eyebrow">
-    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CURSOR · COMPOSER-2-FAST</span></div>
-    <div class="right">16 / 22</div>
-  </div>
-
-  <h2><span class="lede">Per-agent · default model</span>Cursor <code>composer-2-fast</code> — <em style="color:var(--green);">the pack lifts the faster model.</em></h2>
-
-  <div class="body">
-    <div class="hero-row">
-      <div class="hero-stat">
-        <span class="label">Correctness</span>
-        <div class="num">+20<span class="unit">pp</span></div>
-        <div class="sub">61% → <span style="color:var(--green);">81%</span></div>
-      </div>
-      <div class="hero-stat">
-        <span class="label">Tool calls / correct</span>
-        <div class="num">−18<span class="unit">%</span></div>
-        <div class="sub">5.6 → <span style="color:var(--green);">4.6</span></div>
-      </div>
-      <div class="hero-stat" style="border-color:var(--orange-line);background:linear-gradient(180deg,var(--orange-soft),transparent 90%);">
-        <span class="label" style="color:var(--orange);">Risk-flag rate</span>
-        <div class="num" style="color:var(--orange);">0.67→0.50</div>
-        <div class="sub" style="color:var(--orange);">still riskiest</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;">
+        <div class="chip" style="align-self:flex-start;">Codex CLI · 0.130.0</div>
+        <div class="mono" style="font-size:30px;color:var(--green);font-weight:700;">97% <span style="font-size:14px;">pack read</span></div>
+        <div class="small muted">Reads nearly the whole pack · highest shortcut use (19%).</div>
+        <div class="divider"></div>
+        <div class="small"><span class="mono" style="color:var(--green);">risk 0.33 → 0</span> · <span class="mono" style="color:var(--orange);">55s → 126s</span> slower, honestly.</div>
       </div>
     </div>
 
-    <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Smallest duration lift (none) but largest correctness lift. Still the riskiest lane in both conditions — structured doesn't eliminate composer risk flags entirely. Lower citation count throughout — composer cites less by design.</div>
+    <div class="card green" style="padding:12px 16px;">
+      <div class="k">Pattern</div>
+      <div class="v" style="font-size:16px;">The pack doesn’t make every lane faster — it makes every lane <strong>more controlled</strong>: bounded search, verified answers, risk flags down across the board.</div>
     </div>
 
-    <table class="ref">
-      <thead><tr><th>Reference</th><th class="r">Bare</th><th class="r">Structured</th><th class="r">Δ</th></tr></thead>
-      <tbody>
-        <tr><td class="label">Median duration / task</td><td class="r bare">111s</td><td class="r struct">112s</td><td class="r delta">flat</td></tr>
-        <tr><td class="label">Files opened / task</td><td class="r bare">2.9</td><td class="r struct">2.6</td><td class="r delta">small</td></tr>
-        <tr><td class="label">Search-vs-read ratio</td><td class="r bare">0.52</td><td class="r struct">0.44</td><td class="r delta">down</td></tr>
-        <tr><td class="label">Verification-shortcut hit rate</td><td class="r bare">n/a</td><td class="r struct">0.17</td><td class="r delta">new</td></tr>
-        <tr><td class="label">Citations / task</td><td class="r bare">5.3</td><td class="r struct">5.6</td><td class="r delta">flat</td></tr>
-        <tr><td class="label">Dead ends / post-hit</td><td class="r bare">0.2 / 0</td><td class="r struct">0.1 / 0</td><td class="r delta win">down</td></tr>
-      </tbody>
-    </table>
-
-    <p class="xs" style="margin-top:auto;">6 cells / 36 graded tasks · polyglot-monorepo/structured hit a transient provider error on first attempt; recovered on retry, 6/6 final.</p>
-  </div>
-</section>
-
-<!-- ============== SLIDE 16 — Per-agent: Codex CLI — Rule of Three ============== -->
-<section class="slide">
-  <div class="eyebrow">
-    <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">CODEX CLI 0.130.0</span></div>
-    <div class="right">17 / 22</div>
-  </div>
-
-  <h2><span class="lede">Per-agent · Search-and-Verify</span>Codex CLI <code>0.130.0</code> — <em style="color:var(--green);">trades wall-clock for correctness.</em></h2>
-
-  <div class="body">
-    <div class="hero-row">
-      <div class="hero-stat">
-        <span class="label">Pack utilization</span>
-        <div class="num">97<span class="unit">%</span></div>
-        <div class="sub">0.14 → <span style="color:var(--green);">0.97</span> · no skimming</div>
-      </div>
-      <div class="hero-stat">
-        <span class="label">Risk-flag rate</span>
-        <div class="num">0.33→0</div>
-        <div class="sub" style="color:var(--green);">eliminated</div>
-      </div>
-      <div class="hero-stat" style="border-color:var(--orange-line);background:linear-gradient(180deg,var(--orange-soft),transparent 90%);">
-        <span class="label" style="color:var(--orange);">Median duration</span>
-        <div class="num" style="color:var(--orange);">55→126s</div>
-        <div class="sub" style="color:var(--orange);">slower (honest)</div>
-      </div>
-    </div>
-
-    <div class="card" style="padding:10px 14px;">
-      <div class="small" style="color:var(--fg);"><strong>Interpretation.</strong> Codex is <em>slower</em> under structured — trades wall-clock for correctness. Pack utilization 97% means codex reads almost every file in <code style="color:var(--orange);">.agent-context/current/</code>. Verification-shortcut hit rate is the highest of any agent (19%).</div>
-    </div>
-
-    <table class="ref">
-      <thead><tr><th>Reference</th><th class="r">Bare</th><th class="r">Structured</th><th class="r">Δ</th></tr></thead>
-      <tbody>
-        <tr><td class="label">Correctness yes-rate</td><td class="r bare">72%</td><td class="r struct">78%</td><td class="r delta win">+6pp</td></tr>
-        <tr><td class="label">Tool calls per correct</td><td class="r bare">11.4</td><td class="r struct">9.2</td><td class="r delta win">−19%</td></tr>
-        <tr><td class="label">Files opened / task</td><td class="r bare">6.2</td><td class="r struct">5.1</td><td class="r delta win">−18%</td></tr>
-        <tr><td class="label">Verification-shortcut hit rate</td><td class="r bare">n/a</td><td class="r struct">0.19</td><td class="r delta">highest</td></tr>
-        <tr><td class="label">Hops to first correct file <span class="faint">verification depth</span></td><td class="r bare">1.0</td><td class="r struct">1.33</td><td class="r delta">↑ feature</td></tr>
-        <tr><td class="label">Judge quality score</td><td class="r bare">8.9</td><td class="r struct">9.3</td><td class="r delta win">up</td></tr>
-      </tbody>
-    </table>
-
-    <p class="xs" style="margin-top:auto;">6 cells / 36 graded tasks · all codex tokens are <code>cell_replicated</code> (per-cell session totals, not per-task).</p>
+    <p class="xs" style="margin-top:auto;">18 cells / 108 graded tasks across these three lanes · full per-lane reference tables in the repo docs and the Cursor-meetup edition of this deck.</p>
   </div>
 </section>
 
@@ -1522,7 +1423,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 3</span><span class="crumb">/</span><span class="crumb on">DISCLOSURE</span></div>
-    <div class="right">18 / 22</div>
+    <div class="right">16 / 20</div>
   </div>
 
   <h2><span class="lede">Trust the numbers</span>Measurement protocol. Scope, grading, limits.</h2>
@@ -1560,10 +1461,10 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">PRIOR ART</span></div>
-    <div class="right">19 / 22</div>
+    <div class="right">17 / 20</div>
   </div>
 
-  <h2><span class="lede">"Isn't this just .cursorrules?"</span>How agent-context fits what you already do.</h2>
+  <h2><span class="lede">"Isn't this just CLAUDE.md?"</span>How agent-context fits what you already do.</h2>
 
   <div class="body">
     <table style="font-size:13.5px;">
@@ -1572,7 +1473,7 @@ Changing this without updating cookie/v2 will fail silently in prod
       </thead>
       <tbody>
         <tr>
-          <td><strong><code>.cursorrules</code> / <code>AGENTS.md</code> / <code>CLAUDE.md</code></strong><br/><span class="small faint">single-file routing</span></td>
+          <td><strong><code>CLAUDE.md</code> / <code>AGENTS.md</code> / <code>.cursorrules</code></strong><br/><span class="small faint">single-file routing</span></td>
           <td>Uses these as <strong>routing blocks</strong> pointing into the structured pack. <strong>Not a replacement.</strong></td>
         </tr>
         <tr>
@@ -1584,8 +1485,8 @@ Changing this without updating cookie/v2 will fail silently in prod
           <td>Pack is <em>structural recall</em>: deterministic file lists, contracts, verification shortcuts. <strong style="color:var(--green);">Use each where it fits.</strong></td>
         </tr>
         <tr>
-          <td><strong>Cursor project memory</strong> / "rules for AI"</td>
-          <td>Pack supplements, doesn't replace. Pack lives in git; IDE memory may not.</td>
+          <td><strong>Claude Code memory directory</strong><br/><span class="small faint">what one agent learned, per project</span></td>
+          <td>Personal vs shared: memory is one agent's private notes; the pack is the <strong>reviewed, team-shared map</strong> in git. They complement.</td>
         </tr>
         <tr>
           <td><strong>Skills</strong><br/><span class="small faint">repeatable tasks, org knowledge, taste</span></td>
@@ -1596,7 +1497,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 
     <div style="margin-top:auto;padding:12px 16px;border-left:2px solid var(--green);background:var(--green-soft);border-radius:0 6px 6px 0;">
       <p style="margin:0;color:var(--fg);font-size:15.5px;">
-        <strong>For Cursor users specifically:</strong> <code>.cursorrules</code> already exists in your repo. agent-context adds the rest of the contract — completeness, search scope, verification shortcuts — and Cursor reads it natively.
+        <strong>For Claude Code users specifically:</strong> <code>CLAUDE.md</code> stays a 100–300 token routing block pointing into <code style="color:var(--orange);">.agent-context/</code>. The agent-context <strong>skill</strong> builds and maintains the pack; the pack is what every future session reads. Claude’s trust-and-follow loop is exactly the lane that scored 6/6.
       </p>
     </div>
   </div>
@@ -1606,7 +1507,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">TRADEOFFS</span></div>
-    <div class="right">20 / 22</div>
+    <div class="right">18 / 20</div>
   </div>
 
   <h2><span class="lede">Not magic</span>Tradeoffs.</h2>
@@ -1632,7 +1533,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">TRY THIS</span></div>
-    <div class="right">21 / 22</div>
+    <div class="right">19 / 20</div>
   </div>
 
   <h2><span class="lede">Try this on one repo</span>Tomorrow.</h2>
@@ -1674,7 +1575,7 @@ Changing this without updating cookie/v2 will fail silently in prod
 <section class="slide lead-slide">
   <div class="eyebrow">
     <div class="left"><span class="dot"></span><span class="act">ACT 4</span><span class="crumb">/</span><span class="crumb on">CLOSE</span></div>
-    <div class="right">22 / 22</div>
+    <div class="right">20 / 20</div>
   </div>
 
   <div class="body">
@@ -1704,6 +1605,7 @@ Changing this without updating cookie/v2 will fail silently in prod
         <div class="xs" style="letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);">Repo · contact</div>
         <a href="https://github.com/cote-star/agent-context" style="font-family:var(--mono);font-size:16px;">github.com/cote-star/agent-context</a>
         <div class="small muted" style="margin-top:2px;">— <em>Amit Prusty</em></div>
+        <div class="xs" style="margin-top:4px;">hiring: Senior MLE · Senior Data Eng · Senior QA Lead — EU cities / remote</div>
       </div>
     </div>
   </div>
