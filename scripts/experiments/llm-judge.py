@@ -19,8 +19,9 @@ Inputs:
 Backend: Claude API. Set ANTHROPIC_API_KEY in env.
 Model: claude-opus-4-7 by default (override with --model).
 
-Privacy: Anthropic Enterprise plan keeps content private. See
-docs/experiments/q2-2026-rerun/METHODOLOGY.md for the disclosure.
+Privacy: Anthropic Enterprise plan keeps content private. Keep any run-specific
+methodology, prompts, and reviewer notes in local-only ignored storage until
+they are scrubbed and intentionally promoted.
 
 Stdlib-only, Python 3.8+.
 """

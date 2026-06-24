@@ -30,7 +30,7 @@ import sys
 from typing import Optional, Tuple
 
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 
 # ---------------------------------------------------------------------------
@@ -386,6 +386,16 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         print("  jq:              NOT FOUND (optional, used for JSON inspection)")
     print(f"  cwd:             {root}")
     print(f"  bundled data:    {_package_data_dir()}")
+    package_checks = {
+        "templates": _templates_dir(),
+        "tools": _tools_dir(),
+        "skill": _skill_dir(),
+    }
+    missing_data = [name for name, path in package_checks.items() if not path.is_dir()]
+    if missing_data:
+        print(f"  package data:    missing {', '.join(missing_data)}")
+    else:
+        print("  package data:    OK (templates, tools, skill)")
 
     current = root / ".agent-context" / "current"
     if current.is_dir():
@@ -405,6 +415,26 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         else:
             tier = 1
         print(f"  agent-context:   present ({file_count} files, tier {tier})")
+        verifier = _tools_dir() / "verify_agent_context.py"
+        if verifier.is_file():
+            try:
+                verify_out = subprocess.run(
+                    [sys.executable, str(verifier), "--repo-root", str(root)],
+                    cwd=str(root),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                verify_lines = [
+                    line for line in verify_out.stdout.strip().splitlines()
+                    if line.startswith(("OK:", "FAIL:"))
+                ]
+                verify_line = verify_lines[0] if verify_lines else (
+                    "OK" if verify_out.returncode == 0 else "failed"
+                )
+                print(f"  verify:          {verify_line}")
+            except Exception as exc:  # noqa: BLE001
+                print(f"  verify:          indeterminate ({exc})")
         freshness_script = _tools_dir() / "check_freshness.sh"
         if freshness_script.is_file():
             try:
@@ -415,7 +445,11 @@ def cmd_doctor(args: argparse.Namespace) -> int:
                     text=True,
                     check=False,
                 )
-                status_line = out.stdout.strip().splitlines()[-1] if out.stdout.strip() else ""
+                freshness_lines = [
+                    line for line in out.stdout.strip().splitlines()
+                    if line.startswith(("OK:", "ERROR:"))
+                ]
+                status_line = freshness_lines[0] if freshness_lines else ""
                 print(f"  freshness:       {status_line or 'indeterminate'}")
             except Exception as exc:  # noqa: BLE001
                 print(f"  freshness:       indeterminate ({exc})")

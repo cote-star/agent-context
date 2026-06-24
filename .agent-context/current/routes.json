@@ -43,7 +43,7 @@
       "description": "Cut a new agent-context release (vX.Y.Z).",
       "steps": [
         "Read 30_BEHAVIORAL_INVARIANTS.md → 'Bump CLI version' row of the Update Checklist",
-        "Edit bin/agent-context (__version__), SKILL.md (frontmatter metadata.version), skills/agent-context/SKILL.md (frontmatter metadata.version), and README.md (badge URL badge/version-X.Y.Z-...) — all four are test-enforced by tests/test_version_drift.py",
+        "Edit agent_context/cli.py (__version__), pyproject.toml ([project] version), SKILL.md (frontmatter metadata.version), skills/agent-context/SKILL.md (frontmatter metadata.version), and README.md (badge URL badge/version-X.Y.Z-...) — all five are test-enforced by tests/test_version_drift.py",
         "Add a RELEASE_NOTES.md entry under the new version heading (convention, not test-enforced)",
         "Run python3 -m unittest tests.test_version_drift — must pass",
         "Tag vX.Y.Z and push (tag triggers .github/workflows/release.yml)"
@@ -59,9 +59,9 @@
       ]
     },
     "add_cli_subcommand": {
-      "description": "Add a new top-level subcommand to bin/agent-context.",
+      "description": "Add a new top-level subcommand to agent_context/cli.py.",
       "steps": [
-        "Edit bin/agent-context (subparser, handler function)",
+        "Edit agent_context/cli.py (subparser, handler function)",
         "Update SKILL.md and skills/agent-context/SKILL.md if the subcommand changes the operator/agent flow",
         "Add coverage in tests/test_cli_smoke.py",
         "If user-facing: update README.md CLI section"
@@ -79,12 +79,12 @@
       ]
     },
     "edit_deck": {
-      "description": "Change content or design of the meetup deck. The deck is hand-authored HTML — edit it directly, no separate slide compiler.",
+      "description": "Change content or design of the completed live talk HTML pages. Both talks are complete; prefer typo/link fixes only.",
       "steps": [
-        "Edit talk/cursor-meetup-may-2026.html (canonical, hand-authored HTML+CSS, deep-navy theme)",
-        "Refresh GitHub Pages target: cp talk/cursor-meetup-may-2026.html talk/index.html",
-        "Re-render PDF: (cd talk && ./render-pdf.sh) — picks up Chrome / Chromium / Edge automatically",
-        "Commit all three artifacts together (cursor-meetup-may-2026.html + index.html + cursor-meetup-may-2026.pdf)"
+        "For current public page fixes, edit talk/claude-dev-day-jun-2026.html",
+        "Refresh GitHub Pages target: cp talk/claude-dev-day-jun-2026.html talk/index.html",
+        "Edit talk/cursor-meetup-may-2026.html only when fixing that completed public edition directly",
+        "Keep PDFs, speaker guides, render scripts, demo orchestration, recordings, and audio work in ignored talk/_archive-local/"
       ]
     },
     "update_public_story": {
@@ -93,7 +93,7 @@
         "Read 20_CODE_MAP.md rows for README/getting-started, docs/evidence, and talk/cursor-meetup-may-2026.html",
         "Keep the workflow skill-first: users invoke the agent-context skill to author or refresh the pack; CLI commands scaffold, verify, check freshness, and install hooks",
         "If evidence numbers or exclusions change, update docs/evidence/metrics.md and docs/evidence/results.md before repeating the claim in README or deck",
-        "If the deck changes, refresh talk/index.html and talk/cursor-meetup-may-2026.pdf in the same commit"
+        "If the current live page changes, refresh talk/index.html from talk/claude-dev-day-jun-2026.html in the same commit"
       ]
     },
     "add_agent_extractor": {

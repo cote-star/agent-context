@@ -4,15 +4,15 @@ Run during pack creation against this repo. Each test compares a pack-only answe
 
 ## Test 1: Lookup
 
-**Question:** "Where are the routing-block constants (TIER1 / TIER2 / TIER3) defined?"
+**Question:** "Where are the tier template lists and routing-block templates defined?"
 
-**Pack-only answer:** `bin/agent-context` — per `20_CODE_MAP.md` row 1 ("Holds `__version__` and the TIER1 / TIER2 / TIER3 routing-block constants") and `search_scope.json` task family `cli_work` verification shortcut (file: `bin/agent-context`, look_for: `TIER1`).
+**Pack-only answer:** `agent_context/cli.py` — per `20_CODE_MAP.md` row 1 ("Holds `__version__`, tier template lists, routing block templates, and package-data lookup") and `search_scope.json` task family `cli_work` verification shortcut (file: `agent_context/cli.py`, look_for: `TIER_1_TEMPLATES`).
 
 **Grep verification:**
 
 ```
-$ git grep -l "TIER1" -- bin tools templates skills tests scripts
-bin/agent-context
+$ git grep -l "TIER_1_TEMPLATES" -- agent_context bin tools templates skills tests scripts
+agent_context/cli.py
 ```
 
 Single hit, matches the pack's claim.
@@ -20,17 +20,18 @@ Single hit, matches the pack's claim.
 | Metric | Value |
 |---|---|
 | Pack pointed to correct files? | yes |
-| Files opened to verify | 1 (`bin/agent-context`) |
+| Files opened to verify | 1 (`agent_context/cli.py`) |
 
 ---
 
 ## Test 2: Impact Analysis
 
-**Question:** "Bump the CLI release version from 0.3.1 to 0.3.2. Which files must change?"
+**Question:** "Bump the CLI release version from 0.4.2 to 0.4.3. Which files must change?"
 
 **Pack-only answer (files that must change, from `30_BEHAVIORAL_INVARIANTS.md` Update Checklist + `routes.json` `bump_release_version` + `completeness_contract.json` `bump_cli_version`):**
 
-- `bin/agent-context` (`__version__`)
+- `agent_context/cli.py` (`__version__`)
+- `pyproject.toml` (`[project] version`)
 - `SKILL.md` (frontmatter `metadata.version`)
 - `skills/agent-context/SKILL.md` (frontmatter `metadata.version`)
 - `README.md` (version badge URL)
@@ -39,8 +40,9 @@ Single hit, matches the pack's claim.
 **Grep verification (files that `tests/test_version_drift.py` actually checks):**
 
 ```
-$ grep -nE 'agent-context|SKILL|README|version_drift' tests/test_version_drift.py
-bin/agent-context (__version__)
+$ grep -nE 'agent_context/cli.py|pyproject|SKILL|README|version_drift' tests/test_version_drift.py
+agent_context/cli.py (__version__)
+pyproject.toml ([project] version)
 SKILL.md (frontmatter metadata.version)
 skills/agent-context/SKILL.md (frontmatter metadata.version)
 README.md (badge URL)
@@ -48,9 +50,9 @@ README.md (badge URL)
 
 | Metric | Value |
 |---|---|
-| Files identified by pack | 5 (4 test-enforced + RELEASE_NOTES.md convention) |
-| Files actually test-enforced | 4 |
-| Coverage ratio (test-enforced) | 4/4 = 100% |
+| Files identified by pack | 6 (5 test-enforced + RELEASE_NOTES.md convention) |
+| Files actually test-enforced | 5 |
+| Coverage ratio (test-enforced) | 5/5 = 100% |
 | False positives | 0 (RELEASE_NOTES.md is correctly labeled "convention") |
 | False negatives | 0 |
 | Pass (≥80%)? | yes |
@@ -149,3 +151,11 @@ Investigation steps (in this order):
 2. After publishing the v2 hand-authored HTML deck, old slide-compiler references in the pack became stale. Updated `00_START_HERE.md`, `10_SYSTEM_OVERVIEW.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `40_OPERATIONS_AND_RELEASE.md`, and replaced Test 4's diagnosis question with skill-sync drift. Test 4 then passed against the new diagnosis path.
 
 3. After the README/deck makeover for the May 2026 talk, the public workflow became explicitly skill-first and the evidence headline standardized on 288 graded tasks across 48 cells. Removed deleted talk working-artifact references, updated file counts, added public-story routing/search guidance, and expanded freshness scope so README/deck/evidence changes trigger pack review.
+
+4. After the roadmap pass for maintenance correctness and adoption
+   ergonomics, updated the pack to include `agent_context/cli.py` doctor
+   diagnostics, verbose freshness output, and expanded CI guidance. Added
+   `ci_work` and experiment-script routing/contract coverage so future
+   changes include the docs, tools, bundled skill copy, tests, and experiment
+   scripts they affect, while private plans, harness drafts, raw runs, and
+   reviewer-only ground truth stay local-only.

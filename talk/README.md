@@ -1,4 +1,4 @@
-# agent-context talk decks
+# agent-context talk pages
 
 ## Live deck (read this first)
 
@@ -6,33 +6,30 @@
 |---|---|
 | [`index.html`](index.html) | The GitHub Pages target. Currently a byte-identical copy of `claude-dev-day-jun-2026.html` (Claude Community Meetup Amsterdam, June 2026 — warm-dark/terracotta edition, 20 slides). |
 | [`claude-dev-day-jun-2026.html`](claude-dev-day-jun-2026.html) | The Claude Meetup edition source-of-truth — fork of the Cursor deck: Claude-first evidence ordering, merged per-agent slides, CLAUDE.md/Skills framing, hiring banner. |
-| [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | The deck source-of-truth. Hand-authored HTML + CSS (deep-navy `#0A0E1A` background; green `#10B981` = lift/structured wins; orange `#F97316` = bare/routing/`.agent-context/` artifact). 22 slides, strict 720px-per-slide budget, Rule-of-Three on per-agent panels. |
-| [`Amit Prusty - Agent-Context.pdf`](Amit%20Prusty%20-%20Agent-Context.pdf) | PDF render of the HTML deck — portable handout / projection backup. Rendered via `render-pdf.sh` (Chrome/Chromium/Edge headless). |
-| [`render-pdf.sh`](render-pdf.sh) | Re-renders `Amit Prusty - Agent-Context.pdf` from the HTML source. Picks the first available headless browser (Chrome / Chromium / Edge). Run from inside `talk/`. |
-| [`speaker-guide.html`](speaker-guide.html) | Rehearsal-first speaker guide generated from `slide-narratives.md`, with slide shortcuts, point cards, talk tracks, and transitions. |
-| [`Amit Prusty - Agent-Context Speaker Guide.pdf`](Amit%20Prusty%20-%20Agent-Context%20Speaker%20Guide.pdf) | Printable/tablet-friendly PDF version of the speaker guide. |
-| [`render-speaker-guide.py`](render-speaker-guide.py) | Re-renders `speaker-guide.html` from `slide-narratives.md`; print the HTML to PDF with headless Chrome. |
+| [`cursor-meetup-may-2026.html`](cursor-meetup-may-2026.html) | The completed Cursor Meetup edition — hand-authored HTML + CSS (deep-navy `#0A0E1A` background; green `#10B981` = lift/structured wins; orange `#F97316` = bare/routing/`.agent-context/` artifact). |
+| [`LinkedIN_QR.JPG`](LinkedIN_QR.JPG), [`amit_passport.jpeg`](amit_passport.jpeg) | Public image assets referenced by both deck pages. Keep these paths stable; the HTML loads them directly. |
 
-Fresh Codex/Cursor evidence is produced with the isolated rerun harness.
-The public deck is `talk/index.html`; local research notes and generated
-working artifacts stay untracked and ignored.
+Both talks are complete. The public surface is the live HTML pages above
+plus their referenced image assets. PDFs, speaker guides, render scripts,
+demo orchestration notes, recordings, and audio-mastering work are local
+archive material under ignored `talk/_archive-local/`.
 
 ## Rendering
 
-The HTML deck is **already rendered and committed** at `index.html` and
-`cursor-meetup-may-2026.html` — no build step required to view. Open
-locally:
+The HTML pages are already committed. No build step is required to view
+or deploy them. Open locally:
 
 ```bash
 # from the repo root
 open talk/index.html
-# or, to serve over http (recommended — relative SVG asset paths)
+# or, to serve over http (recommended — relative asset paths)
 python3 -m http.server 8000
 # then visit http://localhost:8000/talk/
 ```
 
-Local serving is recommended over `file://` because the deck loads SVG
-assets via relative paths (`../docs/visuals/`, `../docs/demos/`).
+Local serving is recommended over `file://` because the pages load assets
+via relative paths (`../docs/visuals/`, `../docs/demos/`, and local talk
+images).
 
 ## GitHub Pages URL
 
@@ -41,7 +38,7 @@ below), the live deck will be at:
 
 > `https://cote-star.github.io/agent-context/talk/`
 
-The deck links to SVG assets under `../docs/{visuals,demos}/...`, which
+The pages link to SVG assets under `../docs/{visuals,demos}/...`, which
 resolve to `/agent-context/docs/...` — Pages serves the whole repo, so
 the relative paths work.
 
@@ -58,33 +55,23 @@ every push to `main`, but the repo settings need to be enabled once:
 After the first successful run, the live URL appears in the Pages
 settings panel and on the workflow run summary.
 
-## Updating the deck
+## Updating Live Pages
 
-Edit `cursor-meetup-may-2026.html` directly. Then refresh both
-derivative artifacts in one pass:
+The talks are archived as complete, so prefer typo/link fixes only. If the
+current public page changes, edit `claude-dev-day-jun-2026.html` and refresh
+the Pages target:
 
 ```bash
 # from the repo root
-cp talk/cursor-meetup-may-2026.html talk/index.html
-(cd talk && ./render-pdf.sh)
+cp talk/claude-dev-day-jun-2026.html talk/index.html
 ```
 
-After edits, commit `cursor-meetup-may-2026.html`, `index.html`, and
-`Amit Prusty - Agent-Context.pdf` together; push to `main`; Pages re-deploys
-automatically.
+The completed Cursor edition remains available at
+`talk/cursor-meetup-may-2026.html`. Edit it only if fixing the archived
+public page directly.
 
-After editing `slide-narratives.md`, refresh the speaker guide:
+## Local Archive
 
-```bash
-./talk/render-speaker-guide.py
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
-  --headless --disable-gpu \
-  --print-to-pdf="talk/Amit Prusty - Agent-Context Speaker Guide.pdf" \
-  "file://$PWD/talk/speaker-guide.html"
-```
-
-## Format conversion
-
-PowerPoint export is not auto-generated. To produce a `.pptx`, open the
-PDF in PowerPoint or Keynote and export, or hand-port slides from the
-HTML source.
+Completed-talk support files live locally under `talk/_archive-local/`
+and are intentionally ignored by git. Use that directory for PDFs,
+speaker guides, runbooks, recordings, audio work, and one-off scripts.

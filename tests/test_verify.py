@@ -45,6 +45,8 @@ class DoctorTests(unittest.TestCase):
         result = _run(["doctor"])
         self.assertEqual(result.returncode, 0)
         self.assertIn("agent-context doctor", result.stdout)
+        self.assertIn("package data:", result.stdout)
+        self.assertIn("verify:", result.stdout)
 
 
 class InitThenVerifyTests(unittest.TestCase):

@@ -46,6 +46,94 @@ Rules:
 - Exclude generated output, vendored dependencies, and caches.
 - Prefer a narrow set that matches the repo over generic defaults.
 
+## Common Layouts
+
+### Single App
+
+Use the app's source, tests, migrations, and workflow/config paths:
+
+```yaml
+env:
+  CONTEXT_RELEVANT_PATHS: app/ tests/ migrations/ .github/workflows/
+```
+
+This should usually be a hard gate once the initial pack is reviewed.
+
+### Monorepo
+
+Start with the package roots that the pack claims to cover. Do not gate
+uncovered workspaces until the pack says how agents should navigate them.
+
+```yaml
+env:
+  CONTEXT_RELEVANT_PATHS: services/api/ apps/web/ packages/shared/ .github/workflows/
+```
+
+If each workspace owns its own pack, run the verifier from that workspace
+and pass paths relative to that workspace:
+
+```yaml
+- name: Verify API agent context
+  working-directory: services/api
+  env:
+    CONTEXT_RELEVANT_PATHS: app/ tests/ migrations/
+  run: |
+    python3 .agent-context/tools/verify_agent_context.py
+    sh .agent-context/tools/check_freshness.sh --base-ref origin/${{ github.base_ref }}
+```
+
+### Generated Or Vendored Code
+
+Generated and vendored paths should be excluded from freshness unless the
+pack explicitly teaches agents to edit the generator or vendoring policy.
+
+Prefer gating the source of truth:
+
+```yaml
+env:
+  CONTEXT_RELEVANT_PATHS: proto/ generators/ src/ tests/
+```
+
+Avoid gating generated outputs:
+
+```yaml
+# Usually wrong: generated files create noisy freshness failures.
+CONTEXT_RELEVANT_PATHS: generated/ vendor/ dist/
+```
+
+### Multiple Runtime Roots
+
+When one repo has separate runtime surfaces, include the shared contracts
+and the operational glue that connects them:
+
+```yaml
+env:
+  CONTEXT_RELEVANT_PATHS: api/ web/ workers/ packages/contracts/ .github/workflows/
+```
+
+If the pack covers only one runtime root, freshness should be advisory for
+the uncovered roots until a pack update includes them.
+
+## Blocking Versus Advisory Freshness
+
+Use freshness as a **blocking** gate when:
+
+- The pack is reviewed and merged through the normal code-review path.
+- `CONTEXT_RELEVANT_PATHS` matches the pack's declared scope.
+- The repo has stable source roots and low generated-file churn.
+- The team expects agents to rely on the pack for impact analysis.
+
+Keep freshness **advisory** when:
+
+- The pack is new, incomplete, or being trialed.
+- Source roots are still moving.
+- Generated or vendored paths cannot be cleanly separated yet.
+- The workflow cannot reliably compare against the PR base ref.
+
+Advisory mode should still print the changed context paths. Treat the
+warning as a review prompt: either update `.agent-context/current/`, narrow
+`CONTEXT_RELEVANT_PATHS`, or record why the change is outside pack scope.
+
 ## What To Record In 40_OPERATIONS_AND_RELEASE.md
 
 - The workflow file patched or created
@@ -59,3 +147,42 @@ Rules:
 - Best: existing PR workflow patched, verifier step added, freshness hard-gated
 - Acceptable: existing PR workflow patched, integrity gated, freshness documented as follow-up
 - Fallback: dedicated workflow added because no safe existing PR workflow exists
+
+## Copyable GitHub Actions Variants
+
+Patch one of these into the selected PR workflow.
+
+### Hard Gate
+
+```yaml
+- name: Verify agent context
+  run: python3 .agent-context/tools/verify_agent_context.py
+
+- name: Check agent-context freshness
+  env:
+    BASE_REF: origin/${{ github.base_ref }}
+    CONTEXT_RELEVANT_PATHS: app/ src/ lib/ tests/ .github/workflows/
+  run: sh .agent-context/tools/check_freshness.sh
+```
+
+### Advisory Freshness
+
+```yaml
+- name: Verify agent context
+  run: python3 .agent-context/tools/verify_agent_context.py
+
+- name: Check agent-context freshness (advisory)
+  env:
+    BASE_REF: origin/${{ github.base_ref }}
+    CONTEXT_RELEVANT_PATHS: app/ src/ lib/ tests/ .github/workflows/
+  run: sh .agent-context/tools/check_freshness.sh || true
+```
+
+### Integrity Only
+
+Use this while a repo is still deciding its freshness paths:
+
+```yaml
+- name: Verify agent context
+  run: python3 .agent-context/tools/verify_agent_context.py
+```

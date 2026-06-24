@@ -86,6 +86,9 @@ class FreshnessTests(unittest.TestCase):
             self.assertEqual(result.returncode, 1)
             self.assertIn("ERROR", result.stdout)
             self.assertIn(".agent-context/", result.stdout)
+            self.assertIn("checked paths:", result.stdout)
+            self.assertIn("src/app.py", result.stdout)
+            self.assertIn("next: update .agent-context/current/", result.stdout)
 
     def test_paths_override_targets_custom_directory(self) -> None:
         """A repo whose code lives outside the default paths still gets gated."""
@@ -106,6 +109,24 @@ class FreshnessTests(unittest.TestCase):
             override = _run_in(repo, "--base-ref", "HEAD~1", "--paths", "domain/")
             self.assertEqual(override.returncode, 1)
             self.assertIn("ERROR", override.stdout)
+            self.assertIn("domain/handlers.py", override.stdout)
+
+    def test_success_lists_code_and_pack_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo = pathlib.Path(tmpdir)
+            init_git_repo(repo)
+            write_file(repo, "src/app.py", "v1\n")
+            write_file(repo, ".agent-context/current/20_CODE_MAP.md", "# v1\n")
+            commit_all(repo, "base")
+
+            write_file(repo, "src/app.py", "v2\n")
+            write_file(repo, ".agent-context/current/20_CODE_MAP.md", "# v2\n")
+            commit_all(repo, "code + pack updated")
+
+            result = _run_in(repo, "--base-ref", "HEAD~1")
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            self.assertIn("src/app.py", result.stdout)
+            self.assertIn(".agent-context/current/20_CODE_MAP.md", result.stdout)
 
     def test_unknown_argument_returns_2(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

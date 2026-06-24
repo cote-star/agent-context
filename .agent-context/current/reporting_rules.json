@@ -60,18 +60,20 @@
   ],
   "never_enumerate_individually": [
     {
-      "glob": "talk/cursor-meetup-may-2026.pdf",
-      "reason": "Rendered from talk/cursor-meetup-may-2026.html via talk/render-pdf.sh (headless Chrome); never edit directly."
+      "glob": "talk/_archive-local/**",
+      "reason": "Ignored local archive for completed-talk support artifacts; never part of public repo reporting."
     },
     {
       "glob": "talk/index.html",
-      "reason": "Byte-identical copy of talk/cursor-meetup-may-2026.html for GitHub Pages; refreshed via cp."
+      "reason": "GitHub Pages target. It should mirror talk/claude-dev-day-jun-2026.html unless intentionally changed."
     }
   ],
   "global_rules": {
     "authoritative_vs_derived_paths": {
       "authoritative": [
+        "agent_context/cli.py",
         "bin/agent-context",
+        "pyproject.toml",
         "tools/verify_agent_context.py",
         "tools/check_freshness.sh",
         "tools/pre-push-hook.sh",
@@ -86,8 +88,8 @@
         "docs/evidence/metrics.md",
         "docs/evidence/results.md",
         "talk/README.md",
+        "talk/claude-dev-day-jun-2026.html",
         "talk/cursor-meetup-may-2026.html",
-        "talk/render-pdf.sh",
         ".github/workflows/ci.yml",
         ".github/workflows/release.yml",
         ".github/workflows/deploy-pages.yml"
@@ -96,7 +98,6 @@
         "skills/agent-context/templates/",
         "skills/agent-context/tools/",
         "skills/agent-context/SKILL.md",
-        "talk/cursor-meetup-may-2026.pdf",
         "talk/index.html"
       ]
     }

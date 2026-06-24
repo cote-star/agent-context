@@ -28,7 +28,20 @@ PACK_CHANGED=$(git diff --name-only "$BASE_REF"...HEAD -- .agent-context/ | wc -
 
 if [ "$CODE_CHANGED" -gt 0 ] && [ "$PACK_CHANGED" -eq 0 ]; then
   echo "ERROR: $CODE_CHANGED context-relevant files changed but .agent-context/ was not updated"
+  echo "  base ref: $BASE_REF"
+  echo "  checked paths: $CONTEXT_RELEVANT_PATHS"
+  echo "  changed context-relevant files:"
+  git diff --name-only "$BASE_REF"...HEAD -- $CONTEXT_RELEVANT_PATHS | sed 's/^/    - /'
+  echo "  next: update .agent-context/current/ or narrow CONTEXT_RELEVANT_PATHS if these files are outside the pack scope"
   exit 1
 fi
 
-echo "OK: freshness check passed"
+echo "OK: freshness check passed ($CODE_CHANGED context-relevant changes, $PACK_CHANGED pack changes)"
+if [ "$CODE_CHANGED" -gt 0 ]; then
+  echo "  changed context-relevant files:"
+  git diff --name-only "$BASE_REF"...HEAD -- $CONTEXT_RELEVANT_PATHS | sed 's/^/    - /'
+fi
+if [ "$PACK_CHANGED" -gt 0 ]; then
+  echo "  changed pack files:"
+  git diff --name-only "$BASE_REF"...HEAD -- .agent-context/ | sed 's/^/    - /'
+fi

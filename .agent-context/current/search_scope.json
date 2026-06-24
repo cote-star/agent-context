@@ -5,6 +5,7 @@
     "cli_work": {
       "description": "Editing the agent-context CLI (subcommands, tier defaults, routing-block constants, version pin).",
       "search_directories": [
+        "agent_context",
         "bin",
         "tests"
       ],
@@ -17,13 +18,13 @@
       ],
       "verification_shortcuts": [
         {
-          "check": "TIER constants (TIER1/TIER2/TIER3 routing-block templates) are defined here",
-          "file": "bin/agent-context",
-          "look_for": "TIER1"
+          "check": "Tier template lists are defined here",
+          "file": "agent_context/cli.py",
+          "look_for": "TIER_1_TEMPLATES"
         },
         {
           "check": "Version is pinned via __version__",
-          "file": "bin/agent-context",
+          "file": "agent_context/cli.py",
           "look_for": "__version__"
         }
       ]
@@ -99,7 +100,7 @@
       ]
     },
     "deck_work": {
-      "description": "Editing the meetup deck. talk/cursor-meetup-may-2026.html is the hand-authored source. talk/index.html and talk/cursor-meetup-may-2026.pdf are derived — refresh together after every edit.",
+      "description": "Editing completed live talk HTML pages. talk/index.html is the GitHub Pages target; both completed editions remain directly addressable.",
       "search_directories": [
         "talk",
         "docs/visuals",
@@ -116,9 +117,9 @@
       ],
       "verification_shortcuts": [
         {
-          "check": "PDF render script targets the canonical HTML",
-          "file": "talk/render-pdf.sh",
-          "look_for": "cursor-meetup-may-2026.html"
+          "check": "Pages target is the Claude Community Meetup edition",
+          "file": "talk/index.html",
+          "look_for": "Claude Community Meetup"
         }
       ]
     },
@@ -157,9 +158,11 @@
       ]
     },
     "ci_work": {
-      "description": "Editing GitHub Actions workflows (CI matrix, release packaging, Pages deploy).",
+      "description": "Editing GitHub Actions workflows or agent-context CI/freshness adoption guidance.",
       "search_directories": [
         ".github/workflows",
+        "docs",
+        "docs/references",
         "tests"
       ],
       "exclude_from_search": [
@@ -174,9 +177,38 @@
           "check": "CI workflow exists",
           "file": ".github/workflows/ci.yml",
           "look_for": "name:"
+        },
+        {
+          "check": "CI adaptation docs cover advisory freshness",
+          "file": "docs/ci-adaptation.md",
+          "look_for": "Advisory Freshness"
         }
       ]
-    }
+    },
+      "experiment_scripts_work": {
+        "description": "Editing public reusable experiment scripts or schema. Private plans, harness drafts, raw runs, and reviewer-only ground truth stay local-only.",
+        "search_directories": [
+          "scripts/experiments",
+          "tests"
+        ],
+      "exclude_from_search": [
+        "bin",
+        "tools",
+        "templates",
+        "skills",
+        "examples",
+        "talk",
+        "docs/visuals",
+        "docs/demos"
+        ],
+        "verification_shortcuts": [
+          {
+            "check": "Result schema carries the experiment result contract",
+            "file": "scripts/experiments/result.schema.json",
+            "look_for": "tool_call_events"
+          }
+        ]
+      }
   },
   "_rules": {
     "search_directories": "Every directory must exist on disk. Include test directories when the task involves testing.",

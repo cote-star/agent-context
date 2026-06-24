@@ -1,5 +1,19 @@
 # Release Notes
 
+## v0.4.2 — 2026-06-24
+
+Diagnostics and adoption-guidance release. No CLI flags or pack-format changes; `doctor`, freshness reporting, and the CI adaptation guide become more actionable.
+
+### What's new
+
+- **`doctor` reports package-data and verifier health.** The audit now shows whether bundled package data (templates, tools, skill) resolves and runs the structural verifier, surfacing install/packaging problems that previously only appeared at `verify` time.
+- **Freshness diagnostics list the changed files.** `freshness` now reports which context-relevant source paths and which pack files changed, instead of only a pass/warn verdict.
+- **Expanded CI adaptation guide.** `docs/ci-adaptation.md` now covers single apps, monorepos, generated/vendored paths, multi-root repos, and blocking-vs-advisory freshness, with copyable GitHub Actions variants.
+
+### Compatibility
+
+- No CLI, template, or pack-schema change. Stdlib-only, no new runtime dependencies.
+
 ## v0.4.1 — 2026-05-13
 
 PyPI README rendering fix. The v0.4.0 listing on PyPI showed broken images and 404 links because the README used relative paths (`docs/visuals/...`, `docs/evidence/...`, `examples/...`) that only resolve on GitHub. PyPI does not host the repo's `docs/` tree.

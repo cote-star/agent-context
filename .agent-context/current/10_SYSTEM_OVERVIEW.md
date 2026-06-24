@@ -5,11 +5,11 @@
 `agent-context` is an authoring + verification toolchain for *checked-in* system evidence that any coding agent (Cursor, Claude Code, Codex CLI, Gemini, OpenCode) can consume before acting. The developer venue emphasizes repo navigation, but the product framing is broader: portable context packs for systems whose operators need reliable recall, routes, contracts, and verification. It ships six surfaces from one source-of-truth:
 
 1. An **installable agent-context skill** (`SKILL.md` + `skills/agent-context/`) — the preferred authoring workflow: ask an agent to build or refresh the pack, then review the diff.
-2. A **CLI** (`bin/agent-context`) — Python 3 stdlib, no runtime deps. Subcommands: `init`, `verify`, `freshness`, `doctor`, `install-hook`. The CLI scaffolds, verifies, checks freshness, and installs hooks; it is not the primary authoring interface for filled content.
+2. A **CLI** (`agent_context/cli.py`, with `bin/agent-context` as a clone-use shim and `pyproject.toml` console-script entry point) — Python 3 stdlib, no runtime deps. Subcommands: `init`, `verify`, `freshness`, `doctor`, `install-hook`, `install-skill`. The CLI scaffolds, verifies, checks freshness, installs hooks, and installs the bundled skill; it is not the primary authoring interface for filled content.
 3. **Canonical templates** (`templates/`, 11 files for tier 3) that `init` copies into the target repo's `.agent-context/current/`.
 4. An **experiments harness** (`scripts/experiments/`) for the Q2 2026 multi-agent rerun: bare vs `structured_fresh` clones × 4 agent/model lanes × 6 repos × 6 tasks = 288 graded tasks, with extractors, derived-metrics, ground-truth parser, and an LLM-judge dispatcher.
 5. **Public docs/evidence** (`README.md`, `docs/getting-started.md`, `docs/evidence/`) that carry the skill-first onboarding path and Q2 2026 results.
-6. A **meetup deck** (`talk/cursor-meetup-may-2026.html`, hand-authored HTML + CSS, deep-navy theme) with a one-command PDF renderer (`talk/render-pdf.sh`).
+6. **Completed meetup talk pages** (`talk/index.html`, `talk/claude-dev-day-jun-2026.html`, `talk/cursor-meetup-may-2026.html`) served by GitHub Pages; non-page support artifacts live only in ignored `talk/_archive-local/`.
 
 ## Runtime Architecture
 
@@ -40,7 +40,7 @@
 
 | Subsystem | Entry point | Main implementation | Data / external dep |
 |---|---|---|---|
-| CLI | `bin/agent-context` | argparse subcommands; copies templates; invokes verifier and freshness | Python stdlib |
+| CLI | `agent_context/cli.py`; `bin/agent-context` shim | argparse subcommands; copies templates; invokes verifier and freshness; installs bundled skill | Python stdlib |
 | Verifier | `tools/verify_agent_context.py` | structural checks · JSON schema · glob existence · template-marker scan | json / glob (stdlib) |
 | Freshness gate | `tools/check_freshness.sh` | `git diff <base>..HEAD` vs `CONTEXT_RELEVANT_PATHS`; advisory exit | bash, git |
 | Pre-push hook | `tools/pre-push-hook.sh` | advisory wrapper around freshness for pre-push | bash |
@@ -50,7 +50,7 @@
 | Experiments harness | `scripts/experiments/{*.py,*.sh}` + `result.schema.json` | bare vs `structured_fresh` runs, schema-v3 extractors, derived-metrics, judge dispatcher | bash + python stdlib |
 | Tests | `tests/test_*.py` (13 files) + `_helpers.py` | unittest, no third-party deps | unittest (stdlib) |
 | Public docs/story | `README.md`, `docs/getting-started.md`, `docs/evidence/{metrics,results}.md`, `talk/README.md` | skill-first onboarding, experiment methodology/results, talk support notes | markdown |
-| Talk | `talk/cursor-meetup-may-2026.html` (hand-authored HTML+CSS, deep-navy theme) + `talk/render-pdf.sh` → `.pdf` / `index.html` (cp) | 22-slide deck + public speaker assets | headless Chrome (PDF render only) |
+| Talk | `talk/index.html`, `talk/claude-dev-day-jun-2026.html`, `talk/cursor-meetup-may-2026.html`, `talk/README.md`, speaker image assets | Completed live HTML pages + public speaker assets; support files archived locally under ignored `talk/_archive-local/` | GitHub Pages |
 | CI | `.github/workflows/{ci,release,deploy-pages}.yml` | unit suite + verify on examples + GitHub Pages deploy | github actions |
 
 ## Silent Failure Modes
@@ -58,12 +58,12 @@
 | Failure | Symptom | Root cause |
 |---|---|---|
 | Template drift | `tests/test_skill_sync.py` fails; `init` copies a stale template | Edit to `templates/` not mirrored to `skills/agent-context/templates/` (forgot `scripts/sync-from-canonical.sh`) |
-| Version drift | `tests/test_version_drift.py` fails | Bumped one of the 4 test-enforced surfaces (`bin/agent-context` `__version__`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, `README.md` badge URL) without the others |
+| Version drift | `tests/test_version_drift.py` fails | Bumped one of the 5 test-enforced surfaces (`agent_context/cli.py` `__version__`, `pyproject.toml`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, `README.md` badge URL) without the others |
 | Verifier passes but pack is wrong | CI green; agents still fail tasks | `acceptance_tests.md` not iterated — verifier checks structure, not semantic correctness |
 | Freshness false-positive | Every commit triggers a stale-pack warning | `CONTEXT_RELEVANT_PATHS` declared too broad in operator's freshness invocation |
 | Schema/extractor drift | `derived-metrics.py` returns `null` for a metric across all cells | New field added to `result.schema.json` but not populated by the relevant extractor |
-| Deck/index drift | `talk/index.html` and `talk/cursor-meetup-may-2026.html` show different content | After editing the canonical HTML, forgot to `cp talk/cursor-meetup-may-2026.html talk/index.html`. Always refresh both together. |
-| Stale deck PDF | `talk/cursor-meetup-may-2026.pdf` lags the HTML | Forgot to run `talk/render-pdf.sh` after an HTML edit. The script picks the first available headless browser (Chrome / Chromium / Edge). |
+| Deck/index drift | `talk/index.html` and `talk/claude-dev-day-jun-2026.html` show different content unintentionally | After editing the current live HTML, forgot to `cp talk/claude-dev-day-jun-2026.html talk/index.html`. Always refresh both together for live-page fixes. |
+| Archived artifact drift | Local PDFs, speaker guides, demo notes, or recordings no longer match the live HTML | Completed-talk support artifacts are local archive material under ignored `talk/_archive-local/`; do not treat them as public source-of-truth. |
 
 ## Command / API Surface
 
@@ -84,7 +84,7 @@
 | `templates/` | 11 | canonical tier-3 scaffold |
 | `skills/agent-context/templates/` | 11 | mirror of `templates/` for the installable skill |
 | `examples/agent-chorus-reference/` | 11 | reference filled tier-3 pack |
-| `talk/` | 7 | hand-authored HTML deck + PDF + index.html + render-pdf.sh + public talk README + speaker assets |
+| `talk/` | 6 | live HTML pages + public talk README + speaker assets; support artifacts are local-only under ignored `talk/_archive-local/` |
 | `examples/hello-service/.agent-context/current/` | 8 | demo pack used by the CI verify smoke |
 | `docs/` (top-level *.md) | 6 | architecture · ci-adaptation · design-principles · getting-started · roadmap · SYNC |
 | `docs/evidence/` | 2 | public methodology/results summary for the 288-task Q2 2026 rerun |
@@ -95,5 +95,6 @@
 | `tools/` | 3 | canonical verifier + freshness + pre-push hook |
 | `skills/agent-context/tools/` | 3 | mirror of `tools/` |
 | `.github/workflows/` | 3 | ci.yml · release.yml · deploy-pages.yml |
-| `bin/` | 1 | the CLI |
+| `bin/` | 1 | clone-use shim for the CLI |
+| `agent_context/` | 5 | installable Python package module + bundled package-data links |
 | `SKILL.md` | 1 | top-level skill instructions (also installed under `skills/agent-context/SKILL.md`) |

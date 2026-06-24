@@ -16,6 +16,8 @@
 #   - Sanity-checking file family counts against actual repo counts
 #
 # Customize CONTEXT_RELEVANT_PATHS to match the repo's actual source roots.
+# See docs/ci-adaptation.md for monorepo, generated/vendor, multi-root,
+# hard-gate, and advisory variants.
 
   agent-context-verify:
     name: Agent Context Verification
@@ -41,3 +43,10 @@
           CONTEXT_RELEVANT_PATHS: app/ src/ lib/ migrations/
         run: |
           sh .agent-context/tools/check_freshness.sh
+
+      # To trial freshness before making it a hard gate, use:
+      # - name: Check freshness (advisory)
+      #   env:
+      #     BASE_REF: origin/${{ github.base_ref }}
+      #     CONTEXT_RELEVANT_PATHS: app/ src/ lib/ migrations/
+      #   run: sh .agent-context/tools/check_freshness.sh || true

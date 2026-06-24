@@ -45,10 +45,8 @@ node_modules/
 # dotfiles like .env.example should still be tracked for the example
 !examples/hello-service/.env.example
 
-# Private/local artifacts (per-machine research, browser captures, etc.) — not
-# part of the public product repo.
-docs/experiments/
-/experiments/
+# Private/local artifacts (per-machine browser captures, etc.) — not part of
+# the public product repo.
 .playwright-mcp/
 agent-context-rethink-title.png
 
@@ -58,8 +56,10 @@ agent-context-rethink-title.png
 scripts/experiments/__pycache__/
 scripts/experiments/*.pyc
 
-# Talk media artifacts (recordings, audio mastering work) — large binaries,
-# never part of the repo. Deck PDFs stay tracked.
+# Talk media and completed-talk support artifacts — large binaries, speaker
+# guides, demo orchestration, and render helpers stay local. The public repo
+# keeps only the live GH Pages HTML decks and assets they reference.
+talk/_archive-local/
 talk/*.mp4
 talk/*.mp3
 talk/*.wav
@@ -68,3 +68,12 @@ talk/audio_work/
 
 # presenter-only material — never published
 talk/claude-dev-day-notes.md
+
+# Local-only working artifacts — benchmark plans, harness, runs, experiments.
+# Tracked here (not only in .git/info/exclude) so the protection is portable
+# across clones and machines. The content stays private; the rule names
+# disclose nothing.
+/.local-work/
+/local-runs/
+/experiments/
+/docs/experiments/

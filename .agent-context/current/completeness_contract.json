@@ -3,9 +3,10 @@
   "description": "Files that MUST appear in impact analysis answers for common change types in the agent-context toolchain.",
   "contracts": {
     "bump_cli_version": {
-      "description": "Cut a new agent-context release (vX.Y.Z). The four test-enforced surfaces below MUST agree (validated by tests/test_version_drift.py). RELEASE_NOTES.md is convention.",
+      "description": "Cut a new agent-context release (vX.Y.Z). The five test-enforced surfaces below MUST agree (validated by tests/test_version_drift.py). RELEASE_NOTES.md is convention.",
       "contractually_required_files": [
-        "bin/agent-context",
+        "agent_context/cli.py",
+        "pyproject.toml",
         "SKILL.md",
         "skills/agent-context/SKILL.md",
         "README.md",
@@ -62,7 +63,7 @@
     "add_cli_subcommand": {
       "description": "Add a new subcommand to the agent-context CLI.",
       "contractually_required_files": [
-        "bin/agent-context"
+        "agent_context/cli.py"
       ],
       "required_file_families": [
         "tests/test_cli_smoke.py"
@@ -100,12 +101,13 @@
       ]
     },
     "edit_deck": {
-      "description": "Change deck content or design. talk/cursor-meetup-may-2026.html is the canonical hand-authored source. Refresh the index.html copy and re-render the PDF in the same commit.",
+      "description": "Change completed live talk HTML pages. The public repo tracks the Pages target, both completed editions, and image assets; support artifacts stay local under ignored talk/_archive-local/.",
       "contractually_required_files": [
+        "talk/claude-dev-day-jun-2026.html",
         "talk/cursor-meetup-may-2026.html",
-        "talk/cursor-meetup-may-2026.pdf",
         "talk/index.html",
-        "talk/render-pdf.sh"
+        "talk/LinkedIN_QR.JPG",
+        "talk/amit_passport.jpeg"
       ]
     },
     "edit_public_story": {
@@ -122,6 +124,28 @@
       "description": "Change CI behaviour (unit suite, verify-on-examples, release packaging, Pages deploy).",
       "required_file_families": [
         ".github/workflows/*.yml"
+      ]
+    },
+    "edit_ci_guidance": {
+      "description": "Change CI or freshness adoption guidance for downstream repos.",
+      "contractually_required_files": [
+        "docs/ci-adaptation.md",
+        "docs/references/ci-example.yml"
+      ],
+      "required_file_families": [
+        "tools/check_freshness.sh",
+        "skills/agent-context/tools/check_freshness.sh",
+        "tests/test_freshness.py"
+      ]
+    },
+    "edit_experiment_scripts": {
+      "description": "Change public reusable experiment scripts or schema. Private plans, harness drafts, raw runs, and reviewer-only ground truth stay local-only and are not tracked public surfaces.",
+      "contractually_required_files": [
+        "scripts/experiments/result.schema.json"
+      ],
+      "required_file_families": [
+        "scripts/experiments/*.py",
+        "tests/test_*.py"
       ]
     }
   },
