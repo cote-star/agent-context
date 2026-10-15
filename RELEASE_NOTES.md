@@ -1,5 +1,29 @@
 # Release Notes
 
+## v0.5.0 — 2026-10-15
+
+One canonical instruction contract across agents, with safe adoption for existing packs.
+
+### What's new
+
+- New setups default to a shared `AGENTS.md` and a `CLAUDE.md` containing a literal `@AGENTS.md` import. The route is tier-aware, preserves bootstrap/invariant checks and follows the selected task route before scoped source inspection.
+- New `agent-context routing [path]` updates only managed entry blocks, preserving filled pack contents and handwritten notes. It infers manifest-free tier 1 and rejects invalid tier metadata, incomplete packs, ambiguous linked destinations and malformed managed markers before writing.
+- Canonical mode refreshes an existing `.cursorrules` adapter and any `GEMINI.md` that already carries a managed block, so a migrated repository does not keep a legacy per-agent policy in one file. A handwritten `GEMINI.md` is left alone and a new one is created only with `--include-gemini`; nothing is deleted.
+- Managed-block updates preserve the file's existing line endings (CRLF files stay CRLF) and read and write UTF-8 explicitly.
+- The bundled skill, onboarding and start-here template now use the same shared design. Verification recognizes literal imports without treating fenced examples or prose pointers as Claude imports.
+- Release publication is gated on the supported-Python test matrix and a clean installed-wheel smoke test that covers the default scaffold and a legacy filled pack. The CLI remains Python 3.8+ with no runtime dependencies.
+- **One pack shape.** The full pack (tier 3) is now the only generation target. `init --tier 1` and `init --tier 2` still work but print a deprecation warning and will be removed in 0.6.0. Rationale: a code map plus search scope gives a current agent little beyond grep, and tier 2 still lacks the routed authority layer (routes, completeness contracts, reporting rules) that makes a pack worth loading; a small repo just fills fewer routes. Of the 52 filled packs surveyed on the maintainer's workstation, none used tier 1 and two used tier 2.
+- Legacy packs route correctly. `routing` now infers the tier with the same rule as the verifier: tier 3 requires the authority files plus the overview and operations files; a pre-0.5 eight-file pack (such as `examples/hello-service`) is tier 2 and gets a route that only references files it ships. A recorded tier 3 that is missing an authority file still fails closed before any write.
+
+### Migration and compatibility
+
+- **Default behavior changes:** use `--layout per-agent` to retain the earlier provider-specific generation.
+- **Tier deprecation:** existing tier 1-2 packs keep working with `routing` and `verify`. The deprecated `init --tier 2` still copies the shared `00_START_HERE.md` template, whose read order describes the full pack first and the legacy tier-2 path second; the generated `AGENTS.md` route for that pack references only the files it ships. This wart goes away with the tiers in 0.6.0. To promote one, add the missing templates from `templates/` by hand (or ask the skill), fill them, then run `agent-context routing .` and `verify .`. `init --force` is destructive to filled content and is not the promotion path.
+- Installing/upgrading the package does not change any repository. In a repository you maintain, run `agent-context routing .`, inspect the diff and run `agent-context verify .`. Do not use `init --force` to migrate a filled pack.
+- Substantive unmanaged policy differences remain for the repository maintainer to reconcile. Unowned/shared repositories are not automatically migrated.
+- Host discovery and actual loaded context still need host-specific validation; the structural verifier does not prove runtime loading.
+- Includes the previously unreleased 0.4.2 diagnostics and adoption-guidance changes below.
+
 ## v0.4.2 — 2026-06-24
 
 Diagnostics and adoption-guidance release. No CLI flags or pack-format changes; `doctor`, freshness reporting, and the CI adaptation guide become more actionable.

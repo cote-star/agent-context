@@ -6,8 +6,41 @@ on:
       - "v*"
 
 jobs:
+  test:
+    name: Verify release (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.10", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check tag matches package version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os
+          from agent_context.cli import __version__
+          assert os.environ["RELEASE_TAG"] == "v" + __version__, "Tag/version mismatch"
+          PY
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Verify worked example
+        run: python bin/agent-context verify examples/hello-service
+
   build:
     name: Build sdist + wheel
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,6 +61,22 @@ jobs:
         run: |
           ls -l dist/
           python -m zipfile -l dist/*.whl
+
+      - name: Smoke-test installed wheel outside the checkout
+        run: |
+          python -m venv /tmp/agent-context-release-smoke
+          /tmp/agent-context-release-smoke/bin/python -m pip install --no-deps dist/*.whl
+          cd /tmp
+          /tmp/agent-context-release-smoke/bin/agent-context --version
+          # Default scaffold (tier 3, canonical layout) and a no-op re-route.
+          /tmp/agent-context-release-smoke/bin/agent-context init /tmp/agent-context-release-example
+          /tmp/agent-context-release-smoke/bin/agent-context routing /tmp/agent-context-release-example
+          # Legacy filled pack (tier 2 content plus overview/operations, no authority files):
+          # routing must infer tier 2 and the result must verify.
+          cp -R "$GITHUB_WORKSPACE/examples/hello-service" /tmp/agent-context-release-legacy
+          /tmp/agent-context-release-smoke/bin/agent-context routing /tmp/agent-context-release-legacy
+          /tmp/agent-context-release-smoke/bin/agent-context verify /tmp/agent-context-release-legacy
+          /tmp/agent-context-release-smoke/bin/agent-context install-skill --dest /tmp/agent-context-release-skill
 
       - name: Upload built artifacts
         uses: actions/upload-artifact@v4

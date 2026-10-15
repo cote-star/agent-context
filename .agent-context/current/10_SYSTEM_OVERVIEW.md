@@ -5,7 +5,7 @@
 `agent-context` is an authoring + verification toolchain for *checked-in* system evidence that any coding agent (Cursor, Claude Code, Codex CLI, Gemini, OpenCode) can consume before acting. The developer venue emphasizes repo navigation, but the product framing is broader: portable context packs for systems whose operators need reliable recall, routes, contracts, and verification. It ships six surfaces from one source-of-truth:
 
 1. An **installable agent-context skill** (`SKILL.md` + `skills/agent-context/`) — the preferred authoring workflow: ask an agent to build or refresh the pack, then review the diff.
-2. A **CLI** (`agent_context/cli.py`, with `bin/agent-context` as a clone-use shim and `pyproject.toml` console-script entry point) — Python 3 stdlib, no runtime deps. Subcommands: `init`, `verify`, `freshness`, `doctor`, `install-hook`, `install-skill`. The CLI scaffolds, verifies, checks freshness, installs hooks, and installs the bundled skill; it is not the primary authoring interface for filled content.
+2. A **CLI** (`agent_context/cli.py`, with `bin/agent-context` as a clone-use shim and `pyproject.toml` console-script entry point) — Python 3 stdlib, no runtime deps. Subcommands: `init`, `routing`, `verify`, `freshness`, `doctor`, `install-hook`, `install-skill`. The CLI scaffolds, verifies, checks freshness, installs hooks, and installs the bundled skill; it is not the primary authoring interface for filled content.
 3. **Canonical templates** (`templates/`, 11 files for tier 3) that `init` copies into the target repo's `.agent-context/current/`.
 4. An **experiments harness** (`scripts/experiments/`) for the Q2 2026 multi-agent rerun: bare vs `structured_fresh` clones × 4 agent/model lanes × 6 repos × 6 tasks = 288 graded tasks, with extractors, derived-metrics, ground-truth parser, and an LLM-judge dispatcher.
 5. **Public docs/evidence** (`README.md`, `docs/getting-started.md`, `docs/evidence/`) that carry the skill-first onboarding path and Q2 2026 results.
@@ -21,7 +21,7 @@
 │                                                                                │
 │  2. optional scaffold: bin/agent-context init --tier 3 <repo>                  │
 │     └── copies templates/ → <repo>/.agent-context/current/                    │
-│     └── writes routing block in CLAUDE.md / AGENTS.md / GEMINI.md / .cursorrules│
+│     └── writes canonical AGENTS.md and a CLAUDE.md import; optional adapters│
 │                                                                                │
 │  3. agent: reads SKILL.md → enumerates subsystems via git ls-files →           │
 │            fills 11 templates → verifies globs against real files              │
@@ -45,8 +45,8 @@
 | Freshness gate | `tools/check_freshness.sh` | `git diff <base>..HEAD` vs `CONTEXT_RELEVANT_PATHS`; advisory exit | bash, git |
 | Pre-push hook | `tools/pre-push-hook.sh` | advisory wrapper around freshness for pre-push | bash |
 | Skill (top-level) | `SKILL.md` | 10-step instructions for the agent fill flow | n/a |
-| Skill (installable) | `skills/agent-context/SKILL.md` + `skills/agent-context/{templates,tools,agents}/` | mirror of top-level for `~/.claude/skills/` install | synced from canonical via `scripts/sync-from-canonical.sh` |
-| Templates (canonical) | `templates/*.md`, `templates/*.json` | 11-file tier-3 scaffold | source-of-truth for both copies |
+| Skill (installable) | `skills/agent-context/SKILL.md` + `skills/agent-context/{templates,tools,agents}/` | mirror of top-level for `~/.claude/skills/` install | byte-copied from the public root files (`cp`); equality enforced by `tests/test_skill_sync.py` |
+| Templates (canonical) | `templates/*.md`, `templates/*.json` | 11-file full-pack scaffold (tier 3, the only generation target; tiers 1-2 deprecated for `init`) | source-of-truth for both copies |
 | Experiments harness | `scripts/experiments/{*.py,*.sh}` + `result.schema.json` | bare vs `structured_fresh` runs, schema-v3 extractors, derived-metrics, judge dispatcher | bash + python stdlib |
 | Tests | `tests/test_*.py` (13 files) + `_helpers.py` | unittest, no third-party deps | unittest (stdlib) |
 | Public docs/story | `README.md`, `docs/getting-started.md`, `docs/evidence/{metrics,results}.md`, `talk/README.md` | skill-first onboarding, experiment methodology/results, talk support notes | markdown |
@@ -57,7 +57,7 @@
 
 | Failure | Symptom | Root cause |
 |---|---|---|
-| Template drift | `tests/test_skill_sync.py` fails; `init` copies a stale template | Edit to `templates/` not mirrored to `skills/agent-context/templates/` (forgot `scripts/sync-from-canonical.sh`) |
+| Template drift | `tests/test_skill_sync.py` fails; `init` copies a stale template | Edit to `templates/` not copied over `skills/agent-context/templates/` (forgot the mirror `cp`) |
 | Version drift | `tests/test_version_drift.py` fails | Bumped one of the 5 test-enforced surfaces (`agent_context/cli.py` `__version__`, `pyproject.toml`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, `README.md` badge URL) without the others |
 | Verifier passes but pack is wrong | CI green; agents still fail tasks | `acceptance_tests.md` not iterated — verifier checks structure, not semantic correctness |
 | Freshness false-positive | Every commit triggers a stale-pack warning | `CONTEXT_RELEVANT_PATHS` declared too broad in operator's freshness invocation |
@@ -69,7 +69,7 @@
 
 | Command | Purpose |
 |---|---|
-| `agent-context init [--tier {1,2,3}] [--force] [--install-hook] <path>` | Copy templates into `<path>/.agent-context/current/`; write routing blocks in CLAUDE/AGENTS/GEMINI/.cursorrules |
+| `agent-context init [--tier {1,2,3}] [--force] [--install-hook] <path>` | Copy templates into `<path>/.agent-context/current/` (tier 3 default; `--tier 1\|2` warn as deprecated, removed in 0.6.0); write canonical AGENTS.md plus a CLAUDE.md import (legacy layout is explicit) |
 | `agent-context verify <path>` | Run `tools/verify_agent_context.py`: structure + JSON schema + glob existence + template-marker scan |
 | `agent-context freshness <path> [--base-ref REF]` | Advisory `git diff` of `CONTEXT_RELEVANT_PATHS` vs the pack's commit anchor |
 | `agent-context doctor` | Print Python version, CLI version, artifact status, environment notes |

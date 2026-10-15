@@ -1,6 +1,6 @@
 # agent-context — Agent Context
 
-**MANDATORY before starting work.** Do NOT open repo source files until steps 1-3 are complete.
+**MANDATORY before starting work.** Complete the applicable read order before opening repo source files.
 
 ## Fast Facts
 
@@ -10,8 +10,8 @@
 | Languages | Python 3 (CLI + verifier — stdlib only, no runtime deps), Bash (freshness gate, hooks, experiments lane runners) |
 | Package manager | None (Python stdlib + Bash). The public `talk/` surface is hand-authored HTML served by GitHub Pages; completed-talk PDFs, render scripts, runbooks, and recordings live only in ignored `talk/_archive-local/`. |
 | Quality gate | `python3 -m unittest discover -s tests -v`; `bin/agent-context verify <repo>` against the bundled examples; `tools/check_freshness.sh` (advisory) |
-| Core risk | Drift between canonical `templates/` + `tools` + `SKILL.md` and their bundled/package copies — `scripts/sync-from-canonical.sh` keeps mirrors aligned, `tests/test_skill_sync.py` enforces. Version drift across `agent_context/cli.py` `__version__`, `pyproject.toml`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, and the `README.md` version badge URL is enforced by `tests/test_version_drift.py`. |
-| Version | Pinned in `agent_context/cli.py` (`__version__`), `pyproject.toml`, `SKILL.md` frontmatter (`metadata.version`), `skills/agent-context/SKILL.md` frontmatter, and `README.md` (`![Version]...badge/version-X.Y.Z-...`). Currently 0.4.2. `RELEASE_NOTES.md` carries the human-facing release log (convention, not test-enforced). |
+| Core risk | Drift between canonical `templates/` + `tools` + `SKILL.md` and their bundled/package copies — copying public root files into `skills/agent-context/` keeps mirrors aligned, `tests/test_skill_sync.py` enforces. Version drift across `agent_context/cli.py` `__version__`, `pyproject.toml`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, and the `README.md` version badge URL is enforced by `tests/test_version_drift.py`. |
+| Version | Pinned in `agent_context/cli.py` (`__version__`), `pyproject.toml`, `SKILL.md` frontmatter (`metadata.version`), `skills/agent-context/SKILL.md` frontmatter, and `README.md` (`![Version]...badge/version-X.Y.Z-...`). Currently 0.5.0. `RELEASE_NOTES.md` carries the human-facing release log (convention, not test-enforced). |
 
 ## Scope Rule
 
@@ -19,10 +19,10 @@ This pack covers the agent-context toolchain itself: the installable skill, the 
 
 ## Read Order
 
-1. This file (fast facts, scope, stop rules)
-2. `10_SYSTEM_OVERVIEW.md`
-3. `20_CODE_MAP.md` for navigation tasks · `30_BEHAVIORAL_INVARIANTS.md` for impact-analysis tasks
-4. Then open source files as needed
+1. This file and `30_BEHAVIORAL_INVARIANTS.md`.
+2. Select the task in `routes.json`, follow its read order and relevant named patterns.
+3. Load `completeness_contract.json`, `search_scope.json` and `reporting_rules.json`.
+4. Consult `20_CODE_MAP.md` before source inspection and search only inside the scoped directories.
 
 ## Stop Rules
 

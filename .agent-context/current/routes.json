@@ -42,10 +42,10 @@
     "bump_release_version": {
       "description": "Cut a new agent-context release (vX.Y.Z).",
       "steps": [
-        "Read 30_BEHAVIORAL_INVARIANTS.md → 'Bump CLI version' row of the Update Checklist",
-        "Edit agent_context/cli.py (__version__), pyproject.toml ([project] version), SKILL.md (frontmatter metadata.version), skills/agent-context/SKILL.md (frontmatter metadata.version), and README.md (badge URL badge/version-X.Y.Z-...) — all five are test-enforced by tests/test_version_drift.py",
+        "Read 30_BEHAVIORAL_INVARIANTS.md \u2192 'Bump CLI version' row of the Update Checklist",
+        "Edit agent_context/cli.py (__version__), pyproject.toml ([project] version), SKILL.md (frontmatter metadata.version), skills/agent-context/SKILL.md (frontmatter metadata.version), and README.md (badge URL badge/version-X.Y.Z-...) \u2014 all five are test-enforced by tests/test_version_drift.py",
         "Add a RELEASE_NOTES.md entry under the new version heading (convention, not test-enforced)",
-        "Run python3 -m unittest tests.test_version_drift — must pass",
+        "Run python3 -m unittest tests.test_version_drift \u2014 must pass",
         "Tag vX.Y.Z and push (tag triggers .github/workflows/release.yml)"
       ]
     },
@@ -53,8 +53,8 @@
       "description": "Modify a markdown or JSON file under templates/ that ships with the CLI.",
       "steps": [
         "Edit templates/<file>",
-        "Run scripts/sync-from-canonical.sh to mirror the change into skills/agent-context/templates/<file>",
-        "Run python3 -m unittest tests.test_skill_sync tests.test_init_tiers — both must pass",
+        "Copy the file over its mirror: cp templates/<file> skills/agent-context/templates/<file>",
+        "Run python3 -m unittest tests.test_skill_sync tests.test_init_tiers \u2014 both must pass",
         "If the change is structurally significant for the verifier, add coverage in tests/test_verify.py and tests/test_verifier_failures.py"
       ]
     },
@@ -70,9 +70,9 @@
     "add_result_schema_field": {
       "description": "Extend scripts/experiments/result.schema.json with a new field.",
       "steps": [
-        "Edit scripts/experiments/result.schema.json — add the field with type and description",
-        "Edit scripts/experiments/extract-events-from-chorus.py — populate the field from session data",
-        "Edit scripts/experiments/extract-events-from-codex.py — populate the field",
+        "Edit scripts/experiments/result.schema.json \u2014 add the field with type and description",
+        "Edit scripts/experiments/extract-events-from-chorus.py \u2014 populate the field from session data",
+        "Edit scripts/experiments/extract-events-from-codex.py \u2014 populate the field",
         "If the field feeds a metric: add the computation in scripts/experiments/derived-metrics.py",
         "Update tests/test_result_schema.py, tests/test_extract_events.py, tests/test_extract_events_codex.py",
         "Optional: backfill old result JSONs via scripts/experiments/apply-provenance.py"
@@ -99,10 +99,20 @@
     "add_agent_extractor": {
       "description": "Wire a new agent's session JSONL into the schema-v3 pipeline.",
       "steps": [
-        "Create scripts/experiments/extract-events-from-<agent>.py — mirror the chorus/codex shape",
-        "Add tests/test_extract_events_<agent>.py — copy the structure of tests/test_extract_events_codex.py",
+        "Create scripts/experiments/extract-events-from-<agent>.py \u2014 mirror the chorus/codex shape",
+        "Add tests/test_extract_events_<agent>.py \u2014 copy the structure of tests/test_extract_events_codex.py",
         "Run python3 -m unittest tests.test_extract_events_<agent>",
         "Touch scripts/experiments/derived-metrics.py only if the agent introduces a metric variant"
+      ]
+    },
+    "edit_canonical_routing": {
+      "description": "Change shared routing generation, adapters, tier detection or migration safety.",
+      "steps": [
+        "Read the canonical routing invariant and CLI code-map entries.",
+        "Update agent_context/cli.py, tests/test_routing_canonical.py and affected tier/CLI tests.",
+        "Update SKILL.md, onboarding and architecture docs; copy public canonical changes into the bundled skill mirror.",
+        "If verification changes, update tools/verify_agent_context.py and its bundled copy.",
+        "Run the full unit suite, verify examples and this self-pack, then test the installed wheel outside the checkout."
       ]
     }
   }

@@ -1,7 +1,7 @@
 # agent-context
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.4.2-green.svg)
+![Version](https://img.shields.io/badge/version-0.5.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 
 **Portable system context for agents, checked into the repo.**
@@ -85,7 +85,9 @@ The skill and CLI scaffold a tiered pack under `.agent-context/current/`:
 └── pre-push-hook.sh
 ```
 
-It also writes short managed routing blocks to `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, and `.cursorrules` so agents read the pack before opening source files.
+By default it writes one shared route to `AGENTS.md` and a literal `@AGENTS.md` import to `CLAUDE.md`. An existing `.cursorrules`, or a `GEMINI.md` that already carries a managed block, is refreshed to point at `AGENTS.md`; a new `GEMINI.md` is created only with `--include-gemini`. Use `--layout per-agent` only for the legacy provider-specific layout.
+
+To migrate a filled pack you maintain, run `agent-context routing .` and review the diff. This changes only managed routing blocks, preserving pack content, handwritten notes and the file's line endings. It rejects ambiguous linked files or malformed markers before writing. Installing or upgrading the package does not migrate any repository.
 
 | Layer | Files | Job |
 |---|---|---|
@@ -99,7 +101,7 @@ It also writes short managed routing blocks to `CLAUDE.md`, `AGENTS.md`, `GEMINI
 The product experience is skill-first:
 
 1. **Ask the agent** to use the `agent-context` skill.
-2. **The skill inventories the repo**, chooses the right tier, scaffolds files when needed, fills templates, and writes grep-backed acceptance tests.
+2. **The skill inventories the repo**, scaffolds the full pack when needed, fills templates, and writes grep-backed acceptance tests.
 3. **The CLI verifies** structure, JSON schema, real glob matches, template cleanup, and freshness.
 4. **You review the diff** like code and merge it through PR.
 
@@ -107,6 +109,7 @@ The CLI remains intentionally boring:
 
 ```bash
 agent-context init --tier 3 --install-hook .   # scaffold
+agent-context routing --layout canonical .     # one AGENTS.md, CLAUDE.md imports it (@AGENTS.md)
 agent-context verify .                         # validate pack integrity
 agent-context freshness . --base-ref origin/main
 agent-context doctor                           # local setup audit
@@ -154,7 +157,8 @@ The March/April 2026 run set used **78+ reviewer-confirmed grades** across three
 
 ## Agent Architectures
 
-The same `.agent-context/` pack serves two opposite loops:
+The v0.5 canonical layout gives every agent the same task-based entry contract.
+The legacy `--layout per-agent` option preserves the two historical routing loops:
 
 ```text
 Trust-and-follow: Claude, Gemini, OpenCode with Anthropic backend
@@ -185,15 +189,27 @@ The seventh candidate, `org-second-brain`, was skipped because its experiment se
 
 **Non-code corpora are not yet validated.** The design is intentionally broader than repos, but public evidence currently covers code repositories only.
 
-## Tiers
+## Pack shape (tiers)
 
-Start small. Promote only when the repo needs more structure.
+The full pack (tier 3, 11 files) is the only shape new packs should use, and it is the
+default for `init`. A small repo simply fills fewer routes and contracts; the verifier
+still enforces that every reference resolves.
 
-| Tier | Files | Best for | Direct CLI scaffold |
+The smaller tiers are deprecated for new packs as of v0.5.0 and will be removed from
+`init` in v0.6.0. A tier-1 pack (code map + search scope) gives a current agent little
+more than grep, and tier 2 still lacks the routed authority layer that makes a pack
+worth loading. `routing` and `verify` keep supporting existing tier 1-2 packs.
+
+| Tier | Files | Status | Direct CLI scaffold |
 |---|---:|---|---|
-| **1** minimal | 2 | Quick adoption, smaller repos | `init --tier 1 .` |
-| **2** standard | 6 | Most teams starting out | `init --tier 2 .` |
-| **3** full | 11 | Complex repos, production workflows | `init --tier 3 --install-hook .` |
+| **3** full | 11 | **Default.** Routed authority layer, contracts, reporting rules | `init --install-hook .` |
+| **2** standard | 6 | Deprecated for new packs; existing packs stay supported | `init --tier 2 .` (warns) |
+| **1** minimal | 2 | Deprecated for new packs; existing packs stay supported | `init --tier 1 .` (warns) |
+
+To move an existing tier 1-2 pack to the full shape, add the missing templates from
+`templates/` by hand (or ask the skill to "promote this pack"), fill them, then run
+`agent-context routing .` and `agent-context verify .`. Do not use `init --force`: it
+replaces filled content.
 
 ## Examples
 

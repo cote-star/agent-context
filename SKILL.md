@@ -6,7 +6,7 @@ description: >-
   higher-quality decisions. Use when setting up agent context for a new repo,
   updating context after agent work, or catching up context after human work.
 metadata:
-  version: "0.4.2"
+  version: "0.5.0"
 ---
 
 # Agent Context
@@ -22,22 +22,22 @@ AI agents work on a large codebase.
 A `.agent-context/` directory in the repo root with three layers:
 
 - **Content** (5 markdown files) — architecture, code map with risk ratings, change checklists with explicit file paths, silent failure modes, operations. Readable by humans and all agents.
-- **Authority** (3 JSON files, tier 3) — task routing, completeness contracts ("these files MUST be in your answer"), reporting rules. Used by Claude and similar agents that trust structured guidance.
+- **Authority** (3 JSON files) — task routing, completeness contracts ("these files MUST be in your answer"), reporting rules. This layer is what makes the pack worth loading: a task route leads to a contract and a scoped search.
 - **Navigation** (1 JSON file) — search scopes ("search HERE, not THERE"), verification shortcuts with line ranges. Used by Codex, Cursor, and similar agents that verify everything against code.
 
-Plus 2-3 sentence routing blocks in `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules` (~90 tokens each) that tell agents to read the pack before opening any repo files.
+Plus a short managed routing block in `AGENTS.md` (the canonical route) and a literal `@AGENTS.md` import in `CLAUDE.md`, so every agent reads the pack before opening repo files.
 
-### Tiers
+### Pack shape (tiers)
 
-Not every repo needs the full pack. Choose a tier based on complexity:
+Always build the full pack (tier 3, 11 files). It is the default for `init` and the only shape new packs should use. A small repo simply fills fewer routes, contracts and reporting rules; the verifier still checks that every reference resolves.
 
-| Tier | Files | Best for |
-|------|-------|----------|
-| **Tier 1** (minimal) | `20_CODE_MAP.md` + `search_scope.json` | Quick adoption, 50-100 file repos |
-| **Tier 2** (standard) | + `00_START_HERE.md`, `30_BEHAVIORAL_INVARIANTS.md`, `manifest.json`, `acceptance_tests.md` | Most repos, 100-500 files |
-| **Tier 3** (full) | + all 5 markdown + authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) | Complex repos, 500+ files, multi-agent workflows |
+| Tier | Files | Status |
+|------|-------|--------|
+| **Tier 3** (full) | all 5 markdown + `manifest.json` + `acceptance_tests.md` + authority layer (`routes.json`, `completeness_contract.json`, `reporting_rules.json`) + `search_scope.json` | **Default.** Build this. |
+| **Tier 2** (standard) | `00_START_HERE.md`, `20_CODE_MAP.md`, `30_BEHAVIORAL_INVARIANTS.md`, `manifest.json`, `acceptance_tests.md`, `search_scope.json` | Deprecated for new packs (0.5.0 warns, 0.6.0 removes). Existing packs stay supported. |
+| **Tier 1** (minimal) | `20_CODE_MAP.md` + `search_scope.json` | Deprecated for new packs. Little more than grep for a current agent. |
 
-If using the CLI: `agent-context init --tier 1|2|3 . --install-hook` (default: tier 3).
+If using the CLI: `agent-context init --install-hook .` (tier 3). When asked to **promote** an existing tier 1-2 pack, add the missing templates from `templates/` by hand, fill them, then run `agent-context routing .` and `verify .`. Never use `init --force` on a filled pack.
 
 ### First time setup
 
@@ -81,8 +81,8 @@ In practice, most teams have a mix:
 | Repo size | Recommendation |
 |---|---|
 | <50 files, simple structure | **Skip** — agents can scan everything efficiently |
-| 50-200 files, 2-3 subsystems | **Recommended** — tier 1 or 2 gives measurable quality and efficiency gains |
-| 200+ files, complex architecture | **Strongly recommended** — tier 3 prevents silent failures, cuts token cost 50-70% |
+| 50-200 files, 2-3 subsystems | **Recommended** — the full pack with a few routes gives measurable quality and efficiency gains |
+| 200+ files, complex architecture | **Strongly recommended** — routed contracts prevent silent failures, cut token cost 50-70% |
 
 ---
 
@@ -145,40 +145,35 @@ mkdir -p .agent-context/current .agent-context/tools
 ```
 
 Create these files:
-- **Markdown files** in `.agent-context/current/` — start from the starter templates in `templates/` (00_START_HERE.md, 10_SYSTEM_OVERVIEW.md, 20_CODE_MAP.md, 30_BEHAVIORAL_INVARIANTS.md, 40_OPERATIONS_AND_RELEASE.md). For tier 1, only copy `20_CODE_MAP.md`. Remove all `REPLACE:` guidance text after filling.
-- **JSON artifacts** in `.agent-context/current/` — start from the starter templates in `templates/` (routes.json, completeness_contract.json, reporting_rules.json, search_scope.json). For tier 1-2, only copy `search_scope.json`. The templates include inline `_rules` that define the format contract for each file. Remove `_rules` and `_EXAMPLE` entries after filling.
+- **Markdown files** in `.agent-context/current/` — start from the starter templates in `templates/` (00_START_HERE.md, 10_SYSTEM_OVERVIEW.md, 20_CODE_MAP.md, 30_BEHAVIORAL_INVARIANTS.md, 40_OPERATIONS_AND_RELEASE.md). Remove all `REPLACE:` guidance text after filling.
+- **JSON artifacts** in `.agent-context/current/` — start from the starter templates in `templates/` (routes.json, completeness_contract.json, reporting_rules.json, search_scope.json). The templates include inline `_rules` that define the format contract for each file. Remove `_rules` and `_EXAMPLE` entries after filling.
 - **Manifest** in `.agent-context/current/manifest.json` — use the template in `templates/manifest.json`. Fill `repo`, `git_revision` (from `git rev-parse HEAD`), and `generated_at` (ISO 8601 UTC).
 - **Acceptance tests** in `.agent-context/current/acceptance_tests.md` — use the template from `templates/acceptance_tests.md`. Fill during Step 7.
 - **Helper tools** in `.agent-context/tools/` — copy `tools/verify_agent_context.py`, `tools/check_freshness.sh`, and `tools/pre-push-hook.sh`. These are the canonical machine-checkable validator, freshness checker, and advisory local hook used by the reference CI and hook examples.
-- **Routing blocks** in `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursorrules` (~90 tokens each). Use these canonical templates:
+- **Routing files:** use one canonical `AGENTS.md` and a `CLAUDE.md` managed block containing the literal, unfenced `@AGENTS.md` import. Preserve unmanaged instructions and host-specific notes. Shared project rules belong in AGENTS.md; resolving conflicting handwritten rules requires maintainer review.
 
-**CLAUDE.md / GEMINI.md** (trust-and-follow agents — read invariants first, then code map):
-```
-BEFORE starting any task, read these 3 files in order:
-1. .agent-context/current/00_START_HERE.md
-2. .agent-context/current/30_BEHAVIORAL_INVARIANTS.md
-3. .agent-context/current/20_CODE_MAP.md
-Do NOT open repo source files until steps 1-3 are complete.
-Then open only files the pack identifies as relevant to your task.
-```
+The CLI defaults to this canonical layout. For an existing filled pack, use
+`agent-context routing .` to update managed routing without overwriting pack content.
+Do not use `init --force` to migrate a filled pack: it replaces templates.
+Only modify repositories whose maintainers authorized the change.
 
-**AGENTS.md / .cursorrules** (search-and-verify agents — load structured artifacts first, then scope search):
-```
-1. Read .agent-context/current/routes.json → identify task type
-2. Load contracts from .agent-context/current/completeness_contract.json + .agent-context/current/search_scope.json
-3. Search ONLY within scoped directories defined in search_scope.json
-4. Do not open repo source files before step 3
-```
+The shared route for a full pack: start-here and invariants, then the selected `routes.json` read order and named patterns; load completeness/search/reporting contracts and consult the code map before source inspection. Do not eagerly load unrelated routes.
 
-For tier 1-2 packs (no authority layer), use a simplified search-and-verify block:
-```
-1. Read .agent-context/current/20_CODE_MAP.md → identify relevant files
-2. Load search boundaries from .agent-context/current/search_scope.json
-3. Search ONLY within scoped directories defined in search_scope.json
-4. Do not open repo source files before step 2
-```
+For existing legacy packs the route only references files the pack ships (`routing` infers the tier from the files on disk, the same way `verify` does):
+- Tier 2: start-here, invariants, code map and search scope.
+- Tier 1: code map, search scope, then bounded source inspection.
 
-These two patterns optimize for different agent architectures (see `docs/architecture.md`). Do NOT use the same routing for both.
+If scaffolding manually, use these same rules in the canonical managed block and
+keep the CLAUDE adapter to the import. Do not copy whole policy bodies into adapters.
+Existing `.cursorrules` can point to AGENTS.md; the default does not create one.
+In canonical mode a `GEMINI.md` that already carries a managed block is refreshed to
+point at AGENTS.md, so no legacy per-agent policy survives; a handwritten `GEMINI.md`
+without a managed block is left alone, and a new one is created only with
+`--include-gemini`. Provider support is a repository-maintainer choice.
+`--layout per-agent` retains the legacy provider-specific generation for compatibility.
+
+Review symlinks, hard links, malformed managed markers and unknown ownership before
+migration. The CLI refuses ambiguous targets instead of overwriting linked policy.
 
 ### Step 3 — Inventory
 
@@ -219,9 +214,9 @@ Read the repo structure and fill each markdown file. Use the inventory from Step
 
 5. **40_OPERATIONS_AND_RELEASE.md**: Fill validation commands, CI checks, release flow, agent context maintenance.
 
-### Step 5 — Fill authority layer (JSON) — tier 3 only
+### Step 5 — Fill authority layer (JSON)
 
-> Skip this step for tier 1-2 packs.
+> Skip this step only when updating an existing legacy tier 1-2 pack that you have not been asked to promote.
 
 Fill the structured JSON artifacts with repo-specific content:
 
@@ -267,9 +262,11 @@ Validate the pack before committing. Run **all** of these checks:
 - Every `verification_shortcuts` `look_for` string actually appears in the referenced file
 
 **Routing checks:**
-- `CLAUDE.md` / `GEMINI.md` routing block reads 00->30->20 (trust-and-follow pattern)
-- `AGENTS.md` / `.cursorrules` routing block starts with `routes.json` (search-and-verify pattern) for tier 3, or `20_CODE_MAP.md` for tier 1-2
-- The two patterns are NOT identical — they serve different agent architectures
+- AGENTS.md contains the shared tier-appropriate route and only references files the pack ships.
+- CLAUDE.md contains a literal, unfenced `@AGENTS.md` import, not a prose promise to read it.
+- Existing adapters agree with the canonical route; legitimate host-specific notes and unmanaged text survive.
+- Re-running `agent-context routing .` is a no-op and does not change the filled pack.
+- Verify actual instruction loading in supported hosts when adopting a layout; structural verification does not prove runtime loading.
 
 **Coverage check** (against the Step 3 inventory):
 - Every source directory with >3 files in the inventory is referenced in at least one pack file
@@ -374,7 +371,8 @@ If CI enforcement cannot be set up immediately, document it as a follow-up in `4
 ### Step 10 — Commit
 
 ```bash
-git add .agent-context/ CLAUDE.md AGENTS.md GEMINI.md .cursorrules
+git add .agent-context/ AGENTS.md CLAUDE.md
+# Stage optional adapters only when they exist and their changes were reviewed.
 git commit -m "feat: add agent context (.agent-context)"
 ```
 
@@ -428,13 +426,12 @@ Agent context is ready when:
 - Every markdown file has content (no unfilled template markers)
 - Every JSON artifact has at least some repo-specific entries (no all-empty arrays)
 - No template variables (`{name}`, `{domain}`) remain in any JSON artifact
-- Every completeness contract glob matches >=1 real file (tier 3)
+- Every completeness contract glob matches >=1 real file
 - Every invariant with universal language has been verified against counter-examples
 - Acceptance test passes: 4 tests (lookup, impact, cross-cutting, diagnosis) all meet pass criteria, results committed in `acceptance_tests.md`
-- CLAUDE.md / GEMINI.md say **"BEFORE starting any task, read these 3 files"** and route **00->30->20** — not suggestive "follow the read order" (P16: agents interpret suggestive wording as optional)
-- AGENTS.md / `.cursorrules` route search-and-verify agents through structured artifacts (different from CLAUDE.md — P5, P11, P12)
-- 00_START_HERE.md says **"MANDATORY before starting work"** and **"Do NOT open repo source files until steps 1-3"**
-- Routing blocks are under 100 tokens each (~90 tokens measured)
+- AGENTS.md is the shared route; CLAUDE.md imports it literally and all mandatory references exist for the selected tier.
+- 00_START_HERE.md gives a coherent mandatory read order consistent with the generated route.
+- Entry files stay short; detailed context remains in the task-routed pack.
 - Every significant subsystem from the Step 3 inventory is referenced in at least one pack file, or listed in "Not covered in detail" in `00_START_HERE.md`
 - CODE_MAP has at least one path per major subsystem in the inventory
 - CI enforcement is either set up or documented as a follow-up in `40_OPERATIONS_AND_RELEASE.md`
@@ -450,7 +447,7 @@ Agent context is ready when:
 - Do not add the agent context to `.gitignore` — it is meant to be committed and shared
 - Do not use template variables (`{name}`, `{domain}`) in JSON artifacts — use `*` glob wildcards
 - Do not assert universal invariants ("every X does Y") without searching for counter-examples first
-- Do not use the same routing block for CLAUDE.md and AGENTS.md — they serve different agent architectures (P5, P11)
+- Do not recreate separate agent-specific policy bodies when the repository uses canonical routing.
 - Do not claim file counts without verifying against `git ls-files`
 - Do not start writing pack content before completing the subsystem inventory (Step 3) — enumerate first, narrate second
 - Do not concentrate CODE_MAP paths in a few subsystems while leaving others uncovered — breadth matters more than depth for large repos

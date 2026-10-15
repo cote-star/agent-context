@@ -58,8 +58,8 @@ agent-context doctor
 Review the diff like code:
 - No `REPLACE` markers remain
 - Every JSON artifact has repo-specific entries
-- `CLAUDE.md` says **"BEFORE starting any task, read these 3 files"**
-- `AGENTS.md` includes **"Search ONLY within scoped directories"**
+- `CLAUDE.md` imports the canonical file with a literal, unfenced `@AGENTS.md`
+- `AGENTS.md` specifies the shared tier-aware route and bounded source inspection
 - Acceptance tests cite concrete source evidence
 
 ## 4. Test one bare-vs-context task
@@ -92,8 +92,8 @@ If CI enforcement can't be set up yet, document it as a follow-up in `40_OPERATI
 Open a PR. The pack should pass the quality bar:
 - Every markdown file has content (no `REPLACE` markers remaining)
 - Every JSON artifact has repo-specific entries
-- `CLAUDE.md` says **"BEFORE starting any task, read these 3 files"**
-- `AGENTS.md` includes **"Search ONLY within scoped directories"**
+- `CLAUDE.md` imports the canonical file with a literal, unfenced `@AGENTS.md`
+- `AGENTS.md` specifies the shared tier-aware route and bounded source inspection
 - `python3 .agent-context/tools/verify_agent_context.py` passes from the repo root
 - `agent-context install-hook .` has installed, refreshed, or documented the advisory hook follow-up
 - CI verification is either set up or documented as a follow-up with the chosen workflow and `CONTEXT_RELEVANT_PATHS`
@@ -121,7 +121,7 @@ cd /path/to/your-repo
 agent-context init --tier 3 --install-hook .
 ```
 
-Use `--tier 1` for a minimal code-map-only pack, or `--tier 2` for a starter pack without system overview, operations docs, or authority contracts. `--tier 3` (the default) gives you everything.
+`--tier 3` (the default) is the full pack and the only shape new packs should use. `--tier 1` and `--tier 2` still work for compatibility but print a deprecation warning and will be removed in v0.6.0; existing tier 1-2 packs remain supported by `routing` and `verify`.
 
 Direct CLI setup leaves `REPLACE` markers for you or an agent to fill manually before `verify` will pass.
 
@@ -136,3 +136,31 @@ cd /path/to/your-repo
 ```
 
 `bin/agent-context` is a thin shim that imports the same module as the installed entry point, so behavior is identical.
+
+## Upgrading and adopting canonical routing
+
+Version 0.5 defaults to one shared AGENTS.md for new setups. Updating the installed
+CLI does not modify any repository. Upgrade with `uv tool upgrade agent-context-cli`
+(or the equivalent for your installer), then refresh an installed skill deliberately.
+
+For an existing filled pack in a repository you control:
+
+```bash
+agent-context routing .
+agent-context verify .
+git diff -- AGENTS.md CLAUDE.md .cursorrules
+```
+
+`routing` preserves `.agent-context/current/` byte-for-byte and retains text outside
+its managed blocks, including the file's existing line-ending style. It detects the pack tier, including manifest-free tier 1, and
+rejects incomplete packs, invalid metadata, linked destinations and malformed blocks
+before writing. Review substantial handwritten differences yourself; the command does
+not merge policy from one agent's unmanaged notes into another's file.
+
+Keep `--layout per-agent` for explicit legacy compatibility. Canonical mode refreshes a
+`GEMINI.md` that already carries a managed block (so it follows `AGENTS.md` too), leaves a
+handwritten one alone, creates a new one only with `--include-gemini`, and never deletes
+an existing file.
+A literal Claude import is different from a prose pointer. Host discovery, ancestor
+files and overrides still affect loading, so check the intended host's loaded context.
+Personal workstation policy should be configured outside shared repository files.

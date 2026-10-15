@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "agent_context_version": "0.4.2",
-  "generated_at": "2026-06-24T16:50:07Z",
+  "agent_context_version": "0.5.0",
+  "generated_at": "2026-10-15T17:15:09Z",
   "repo": "agent-context",
-  "git_revision": "cf812c27613e8d872ce86a4ace37a368937a293e",
+  "git_revision": "39d21099318542ba8bacc99d8d16020ac4d34c32",
   "files": {
     "content": [
       "00_START_HERE.md",

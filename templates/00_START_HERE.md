@@ -1,6 +1,6 @@
 # REPLACE: Repo Name — Agent Context
 
-**MANDATORY before starting work.** Do NOT open repo source files until steps 1-3 are complete.
+**MANDATORY before starting work.** Complete the applicable read order below before opening repo source files.
 
 ## Fast Facts
 
@@ -19,10 +19,10 @@ This agent context covers REPLACE: the code and operational areas the pack is in
 
 ## Read Order
 
-1. This file (fast facts, scope, stop rules)
-2. `10_SYSTEM_OVERVIEW.md`
-3. `20_CODE_MAP.md` or `30_BEHAVIORAL_INVARIANTS.md` depending on task type
-4. Then open source files as needed for your task
+1. This file (fast facts, scope, stop rules), then `30_BEHAVIORAL_INVARIANTS.md`.
+2. Select the task in `routes.json` and follow its `read_order` and applicable named patterns. Load the completeness, search-scope and reporting contracts. Read only the follow-on files required for that task.
+3. Legacy standard pack only (tier 2, no `routes.json`): read `20_CODE_MAP.md` and `search_scope.json` instead; do not require system-overview or operations files.
+4. Before source inspection, read `20_CODE_MAP.md` if not already loaded, then search only within the scoped directories.
 
 ## Stop Rules
 
@@ -30,8 +30,8 @@ Before opening any source file, check whether your answer is already in the agen
 
 - "Where is X configured?" → `20_CODE_MAP.md`
 - "What files change for Y?" → `30_BEHAVIORAL_INVARIANTS.md`
-- "How do I validate Z?" → `40_OPERATIONS_AND_RELEASE.md`
-- "What is the runtime shape?" → `10_SYSTEM_OVERVIEW.md`
+- "How do I validate Z?" → `40_OPERATIONS_AND_RELEASE.md` when present; otherwise the quality gate above
+- "What is the runtime shape?" → `10_SYSTEM_OVERVIEW.md` when present; otherwise `20_CODE_MAP.md`
 
 If the pack answers your question, do not open additional files. If it does not, use `search_scope.json` to bound your search.
 

@@ -119,3 +119,27 @@ A reference CI job is provided in [`references/ci-example.yml`](references/ci-ex
 | "Update agent context" | Diff + propose patches | Human approves each section |
 | CI check fails | Code changed but pack not updated | Must update pack before merge |
 | Pre-push hook | Freshness warning | Advisory only, never blocks |
+
+## Shared routing contract (v0.5)
+
+The canonical layout separates policy from host adapters. AGENTS.md owns the shared,
+tier-aware route. CLAUDE.md imports it with `@AGENTS.md`; optional adapters point to
+that same contract. The former trust-and-follow/search-and-verify split remains
+available only through `--layout per-agent` for compatibility and historical evidence.
+It is not the default generation model.
+
+Tier 3 uses a common bootstrap and invariants, selects a task route, loads its contracts
+and reads only the relevant follow-on context before scoped source inspection. This is
+the default and, from v0.5.0, the only shape `init` is meant to produce; tiers 1 and 2
+are deprecated for generation (warning now, removal in v0.6.0) because they lack the
+routed authority layer that makes the pack worth loading. For existing packs, tier 2
+routes through the smaller start-here/invariants/code-map/search-scope set and tier 1
+through just the code map and search scope. Required paths must exist for the resolved
+tier, and `routing` infers the tier from the files on disk with the same rule as the
+verifier when the manifest does not record one.
+
+The `routing` command changes managed entry blocks without reinitializing a filled
+pack. All routing destinations are checked before writes so aliases and malformed
+markers cannot silently overwrite another policy file. Handwritten content survives;
+resolving substantive policy conflicts remains a maintainer decision. Package upgrades
+never enumerate or migrate repositories automatically.

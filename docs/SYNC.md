@@ -85,3 +85,18 @@ If the canonical versions of those files change in a way that affects the public
 3. Public-repo-only changes — the Python CLI (`bin/agent-context`), the sync script, the worked example under `examples/`, the README, the CI workflows — live here and do not sync upstream.
 
 If you are unsure which track a change belongs in, ask in the issue before you start.
+
+## Public package mirrors and the v0.5 routing contract
+
+The public CLI, its canonical routing layout and its bundled skill must ship together.
+For a public release, edit this repo's root `SKILL.md`, `templates/` and `tools/`, copy
+changed files into the matching `skills/agent-context/` paths, then run
+`python3 -m unittest tests.test_skill_sync`. Package-data links resolve those public
+sources at build time. No private canonical checkout is needed to build or maintain
+the public package.
+
+`scripts/sync-from-canonical.sh` imports an external source into public files; it is
+not the public-to-bundled mirror command. Review imports against the current shared
+routing contract before adopting them. An older external skill must not silently
+restore divergent default routes. Coordinate upstream synchronization separately,
+without exposing private content or paths in the public distribution.

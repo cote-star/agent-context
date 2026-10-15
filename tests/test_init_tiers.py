@@ -1,9 +1,10 @@
 """Per-tier init coverage.
 
 Confirms `agent-context init --tier {1,2,3}` copies the right templates and
-writes the right routing-block content. The tier flag is the only switch a
-user sets at adoption time, so each tier must produce a coherent pack on
-its own.
+writes the right routing-block content. Tier 3 is the default and the only
+generation target going forward; tiers 1 and 2 are deprecated for `init`
+(warning in 0.5.0, removal in 0.6.0) but must keep producing a coherent pack
+until then, and `routing`/`verify` keep supporting existing packs.
 """
 
 from __future__ import annotations
@@ -58,9 +59,9 @@ class Tier1InitTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             _init(tmpdir, 1)
             claude = (pathlib.Path(tmpdir) / "CLAUDE.md").read_text()
-            # Tier 1 routing points at the code map only; it must not mention
-            # the tier-2+ files because those are absent from the pack.
-            self.assertIn("20_CODE_MAP.md", claude)
+            # Every tier uses the same import adapter; the canonical route
+            # supplies only references available at that tier.
+            self.assertIn("\n@AGENTS.md\n", claude)
             self.assertNotIn("00_START_HERE.md", claude)
             self.assertNotIn("30_BEHAVIORAL_INVARIANTS.md", claude)
 
@@ -84,10 +85,10 @@ class Tier2InitTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             _init(tmpdir, 2)
             claude = (pathlib.Path(tmpdir) / "CLAUDE.md").read_text()
-            # Tier 2+ routing references the 3-file read order.
-            self.assertIn("00_START_HERE.md", claude)
-            self.assertIn("30_BEHAVIORAL_INVARIANTS.md", claude)
-            self.assertIn("20_CODE_MAP.md", claude)
+            self.assertIn("\n@AGENTS.md\n", claude)
+            agents = (pathlib.Path(tmpdir) / "AGENTS.md").read_text()
+            for required in ("00_START_HERE.md", "30_BEHAVIORAL_INVARIANTS.md", "20_CODE_MAP.md"):
+                self.assertIn(required, agents)
 
     def test_does_not_use_authority_routing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -122,6 +123,32 @@ class Tier3InitTests(unittest.TestCase):
                 (pathlib.Path(tmpdir) / ".agent-context" / "current" / "manifest.json").read_text()
             )
             self.assertEqual(manifest.get("tier"), 3)
+
+
+class TierDeprecationTests(unittest.TestCase):
+    """Tiers 1-2 warn on stderr but still succeed; the default (tier 3) stays silent."""
+
+    def test_tier_1_and_2_warn_but_still_scaffold(self) -> None:
+        for tier, expected in ((1, TIER_1_FILES), (2, TIER_2_FILES)):
+            with self.subTest(tier=tier), tempfile.TemporaryDirectory() as tmpdir:
+                result = _init(tmpdir, tier)
+                self.assertEqual(result.returncode, 0, msg=result.stderr)
+                self.assertIn("DEPRECATED", result.stderr)
+                self.assertIn(f"--tier {tier}", result.stderr)
+                self.assertIn("0.6.0", result.stderr)
+                self.assertEqual(_content_files(pathlib.Path(tmpdir)), expected)
+
+    def test_tier_3_and_default_do_not_warn(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = _init(tmpdir, 3)
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertNotIn("DEPRECATED", result.stderr)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = subprocess.run([sys.executable, str(CLI), "init", tmpdir],
+                                    capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertNotIn("DEPRECATED", result.stderr)
+            self.assertEqual(_content_files(pathlib.Path(tmpdir)), TIER_3_FILES)
 
 
 class TierDowngradeTests(unittest.TestCase):

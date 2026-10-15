@@ -198,18 +198,54 @@ def validate_search_scope(root: pathlib.Path, errors: list[str]) -> None:
                 )
 
 
+def _resolve_imports(text: str, agents: str, allow_pointer: bool = False) -> str:
+    """Resolve the canonical adapter, without mistaking examples for imports.
+
+    Prose pointers are accepted only for optional adapters. Claude requires a
+    literal import; this is a structural check, not runtime loading proof.
+    """
+    if not text:
+        return text
+    fence = None
+    in_comment = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if in_comment:
+            if "-->" in stripped:
+                in_comment = False
+            continue
+        if stripped.startswith("<!--") and "-->" not in stripped:
+            in_comment = True
+            continue
+        if stripped.startswith(("```", "~~~")):
+            marker = stripped[0]
+            if fence is None:
+                fence = marker
+            elif fence == marker:
+                fence = None
+            continue
+        if fence is not None:
+            continue
+        # Four or more leading spaces (or a tab) is an indented code block, not an import.
+        if line.startswith("\t") or len(line) - len(line.lstrip(" ")) >= 4:
+            continue
+        if stripped == "@AGENTS.md" or (allow_pointer and stripped.startswith("Follow AGENTS.md")):
+            return text + "\n" + agents
+    return text
+
+
 def validate_routing_files(root: pathlib.Path, tier: int, errors: list[str]) -> None:
+    agents = read_text(root / "AGENTS.md") if (root / "AGENTS.md").exists() else ""
     claude = read_text(root / "CLAUDE.md") if (root / "CLAUDE.md").exists() else ""
     gemini = read_text(root / "GEMINI.md") if (root / "GEMINI.md").exists() else ""
-    agents = read_text(root / "AGENTS.md") if (root / "AGENTS.md").exists() else ""
+    claude = _resolve_imports(claude, agents)
+    gemini = _resolve_imports(gemini, agents, allow_pointer=True)
 
     if claude and ("00_START_HERE.md" not in claude and "20_CODE_MAP.md" not in claude):
         errors.append("CLAUDE.md does not reference any agent-context files")
     if claude and "30_BEHAVIORAL_INVARIANTS.md" not in claude and tier >= 2:
         errors.append("CLAUDE.md does not reference 30_BEHAVIORAL_INVARIANTS.md (tier 2+ pack)")
-    if gemini and (
-        "00_START_HERE.md" not in gemini and "20_CODE_MAP.md" not in gemini
-    ):
+    if gemini and ("00_START_HERE.md" not in gemini and "20_CODE_MAP.md" not in gemini):
         errors.append("GEMINI.md does not reference any agent-context files")
     if tier >= 3 and agents:
         if "routes.json" not in agents or "search_scope.json" not in agents:

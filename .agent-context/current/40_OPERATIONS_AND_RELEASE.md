@@ -5,11 +5,17 @@
 | Command | What it checks | When to run |
 |---|---|---|
 | `python3 -m unittest discover -s tests -v` | Full unittest suite — CLI smoke, tier init, verifier (positive + negative), freshness, extractors, derived metrics, schema, ground-truth parser, run-agent-lane, skill sync, version drift | Every change to `bin/`, `tools/`, `templates/`, `skills/`, `scripts/experiments/` |
-| `bin/agent-context verify examples/hello-service` | Tier-3 verify on the bundled demo pack | After template or verifier edits |
+| `bin/agent-context verify examples/hello-service` | Verify on the bundled demo pack (a legacy eight-file pack that verifies as tier 2) | After template, verifier or routing edits |
 | `bin/agent-context doctor` | Python version, CLI version, bundled package-data status, verifier result, freshness summary, routing blocks, hook status | When debugging an operator issue |
 | `tools/check_freshness.sh --base-ref origin/main` | Advisory freshness on the live working tree; prints changed context-relevant files and changed pack files | Before committing changes that touch CONTEXT_RELEVANT_PATHS |
-| `scripts/sync-from-canonical.sh` | Mirrors `templates/`, `tools/`, `SKILL.md` into `skills/agent-context/` | After any edit to a canonical file |
+| `cp <root file> skills/agent-context/<same path>` then `python3 -m unittest tests.test_skill_sync` | Mirrors a changed public `SKILL.md`, `templates/*` or `tools/*` file into the bundled skill | After any edit to a canonical public file |
 | `cp talk/claude-dev-day-jun-2026.html talk/index.html` | Refresh the GitHub Pages target after editing the current live HTML page | After any current-page typo/link fix in `talk/claude-dev-day-jun-2026.html` |
+
+## Routing migration
+
+`bin/agent-context routing <owned-repo>` updates managed entry blocks only; it never recopies the pack. Review before/after differences and run `verify`. Package installation does not migrate repositories. `init --force` overwrites pack templates and is not the migration command.
+
+Public mirror maintenance: copy changed root `SKILL.md`, `templates/` and `tools/` files to their matching `skills/agent-context/` paths, then run `tests.test_skill_sync`. `scripts/sync-from-canonical.sh` is a separate optional import from an external source; inspect its diff before adopting it.
 
 ## CI / Workflow Integration
 
@@ -26,7 +32,7 @@
 3. Run `bin/agent-context verify examples/hello-service` — must pass.
 4. Commit with a clear release message (e.g., `vX.Y.Z: <one-line summary>`).
 5. Tag: `git tag vX.Y.Z`. Push commit + tag: `git push origin main && git push origin vX.Y.Z`.
-6. The `release.yml` workflow runs on the tag push and produces release artifacts.
+6. The `release.yml` workflow checks tag/version agreement, runs the supported-Python test matrix, builds distributions, smoke-tests an installed wheel, then publishes through PyPI Trusted Publishing and creates the GitHub release.
 7. The `deploy-pages.yml` workflow runs on the commit push and rebuilds the GitHub Pages deck (talk/).
 
 ## Environment / Operational Notes

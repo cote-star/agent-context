@@ -113,12 +113,12 @@ tests/test_result_schema.py
 
 **Pack-only diagnosis plan (from `30_BEHAVIORAL_INVARIANTS.md` invariant 1 + `20_CODE_MAP.md` Quick Lookup Shortcuts + `40_OPERATIONS_AND_RELEASE.md` Validation Commands):**
 
-The pack flags this failure mode by name: "Template drift — `tests/test_skill_sync.py` fails; `init` copies a stale template — Edit to `templates/` not mirrored to `skills/agent-context/templates/` (forgot `scripts/sync-from-canonical.sh`)."
+The pack flags this failure mode by name: "Template drift — `tests/test_skill_sync.py` fails; `init` copies a stale template — Edit to `templates/` not mirrored to `skills/agent-context/templates/` (forgot the mirror `cp`)."
 
 Investigation steps (in this order):
 1. Read what `tests/test_skill_sync.py` compares: byte-equality between `templates/` ↔ `skills/agent-context/templates/`, `tools/` ↔ `skills/agent-context/tools/`, and `SKILL.md` ↔ `skills/agent-context/SKILL.md`.
 2. Run `git diff --stat templates/ skills/agent-context/templates/` to see which file diverged.
-3. Run `scripts/sync-from-canonical.sh` to mirror the canonical onto the skill copy.
+3. Copy the canonical file over the skill copy (`cp templates/<file> skills/agent-context/templates/<file>`).
 4. Re-run: `python3 -m unittest tests.test_skill_sync` — must pass.
 5. Commit the mirror update together with the canonical edit.
 
@@ -126,7 +126,7 @@ Investigation steps (in this order):
 
 | Metric | Value |
 |---|---|
-| Pack pointed to correct subsystem? | yes (`scripts/sync-from-canonical.sh` + `tests/test_skill_sync.py`) |
+| Pack pointed to correct subsystem? | yes (mirror `cp` + `tests/test_skill_sync.py`) |
 | Pack avoided dead ends? | yes (no exploration into `bin/`, `scripts/experiments/`, or the runtime needed) |
 | Files opened to verify | 1 (`tests/test_skill_sync.py`) |
 | Additional files needed beyond pack guidance | 0 |
@@ -159,3 +159,13 @@ Investigation steps (in this order):
    changes include the docs, tools, bundled skill copy, tests, and experiment
    scripts they affect, while private plans, harness drafts, raw runs, and
    reviewer-only ground truth stay local-only.
+
+5. For the 0.5.0 canonical-routing release, corrected the pack's claim that
+   `scripts/sync-from-canonical.sh` mirrors public files into the bundled
+   skill (it imports an external tree; the mirror step is a plain `cp` plus
+   `tests/test_skill_sync.py`), added the `routing` subcommand and the tier
+   policy (tier 3 is the only generation target; tiers 1-2 deprecated for
+   `init`, still supported by `routing`/`verify`), and recorded that
+   `examples/hello-service` is intentionally a legacy eight-file pack used as
+   the routing/verify agreement fixture. Test 4's fix step now names the
+   `cp` instead of the script.

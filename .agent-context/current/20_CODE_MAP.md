@@ -4,7 +4,7 @@
 
 | # | Path | What it does | Why it matters | Risk | Authority |
 |---|---|---|---|---|---|
-| 1 | `agent_context/cli.py` | CLI dispatch (argparse) for `init`, `verify`, `doctor`, `freshness`, `install-hook`, `install-skill`. Holds `__version__`, tier template lists, routing block templates, and package-data lookup. | Every packaged operator command flows through here. Version drift starts here. | HIGH | authoritative |
+| 1 | `agent_context/cli.py` | CLI dispatch (argparse) for `init`, `routing`, `verify`, `doctor`, `freshness`, `install-hook`, `install-skill`. Holds `__version__`, tier template lists, routing block templates, and package-data lookup. | Every packaged operator command flows through here. Version drift starts here. | HIGH | authoritative |
 | 1a | `bin/agent-context` | Thin clone-use shim that prepends the repo root to `sys.path` and delegates to `agent_context.cli:main_cli`. | Keeps clone-based usage working without `pip install .`; not where CLI behavior lives. | LOW | shim |
 | 2 | `tools/verify_agent_context.py` | Structural validator: required-files-per-tier, JSON schema, glob existence, template-marker scan. | The gate that lets a pack into CI. Rules added here propagate to every consumer. | HIGH | authoritative |
 | 3 | `templates/` (11 files) | Canonical pack scaffold: 5 markdown + 5 JSON + `acceptance_tests.md`. | What `init` copies into target repos. The shape of every published pack. | HIGH | authoritative |
@@ -30,7 +30,7 @@
 | Where is the result schema? | `scripts/experiments/result.schema.json` (current: v3) |
 | Which tests cover the verifier? | `tests/test_verify.py` (happy path + tier matrix), `tests/test_verifier_failures.py` (negative cases) |
 | Where is the version pinned? | Five test-enforced surfaces: `agent_context/cli.py` (`__version__`), `pyproject.toml`, `SKILL.md` frontmatter (`metadata.version`), `skills/agent-context/SKILL.md` frontmatter, `README.md` (badge URL `badge/version-X.Y.Z-...`). Drift is enforced by `tests/test_version_drift.py`. `RELEASE_NOTES.md` is convention, not test-enforced. |
-| Where do template edits go first? | `templates/<file>`. Then run `scripts/sync-from-canonical.sh` to mirror to `skills/agent-context/templates/<file>`. |
+| Where do template edits go first? | `templates/<file>`. Then copy the changed public canonical files into `skills/agent-context/templates/<file>`. |
 | Where does the agent fill flow live? | `SKILL.md` (10 steps); the skill copy is at `skills/agent-context/SKILL.md`. |
 | Where are CI workflows? | `.github/workflows/ci.yml`, `release.yml`, `deploy-pages.yml` |
 | What's the ground-truth file format? | Markdown with `### TASK_ID — Title` headers and a `Required citations:` bullet list. Parser: `scripts/experiments/parse-ground-truth.py`. |
@@ -40,7 +40,7 @@
 | Where is the skill-first onboarding story? | `README.md` and `docs/getting-started.md`; deck reinforcement lives in `talk/cursor-meetup-may-2026.html` around the setup/demo/CTA slides. |
 | Where are the public Q2 2026 evidence claims? | `docs/evidence/metrics.md` and `docs/evidence/results.md`; deck/README claims should stay consistent with these summaries. |
 | Where is the live talk page? | `talk/index.html` is the GitHub Pages target and currently mirrors `talk/claude-dev-day-jun-2026.html`. The completed Cursor edition remains at `talk/cursor-meetup-may-2026.html`. |
-| Where is the canonical-vs-skill sync contract? | `scripts/sync-from-canonical.sh` (the script) + `docs/SYNC.md` (the contract) + `tests/test_skill_sync.py` (enforcement). |
+| Where is the canonical-vs-skill mirror contract? | Public root files (`SKILL.md`, `templates/`, `tools/`) are byte-copied into `skills/agent-context/`; `tests/test_skill_sync.py` enforces equality; `docs/SYNC.md` documents the policy. `scripts/sync-from-canonical.sh` imports an *external* private tree and is not the mirror step. |
 | What does each top-level doc cover? | `docs/architecture.md` (toolchain shape), `docs/getting-started.md` (operator quickstart), `docs/ci-adaptation.md` (how to wire this into existing CI, including monorepos/generated paths/advisory mode), `docs/design-principles.md` (the why), `docs/roadmap.md` (next), `docs/SYNC.md` (canonical/skill sync). |
 | Where does the freshness `CONTEXT_RELEVANT_PATHS` get tuned? | Operator-supplied at invocation time. For *this* repo, see `40_OPERATIONS_AND_RELEASE.md`. |
 
@@ -71,9 +71,9 @@
 ### Edit a canonical template
 
 1. Edit `templates/<file>` (markdown or JSON).
-2. Run `scripts/sync-from-canonical.sh` — mirrors the change to `skills/agent-context/templates/<file>`.
+2. Copy it over the mirror: `cp templates/<file> skills/agent-context/templates/<file>`.
 3. Run `python3 -m unittest tests.test_skill_sync` — must pass.
-4. Run `python3 -m unittest tests.test_init_tiers` — exercises tier-1/2/3 init flows against the new templates.
+4. Run `python3 -m unittest tests.test_init_tiers` — exercises the tier-3 default plus the deprecated tier-1/2 compatibility flows against the new templates.
 5. If the change affects what the verifier accepts, add coverage in `tests/test_verify.py` and `tests/test_verifier_failures.py`.
 
 ### Add a new agent extractor
