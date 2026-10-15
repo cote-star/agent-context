@@ -19,7 +19,9 @@ RERUN_ROOT layout in a tmpdir.
 
 from __future__ import annotations
 
+import os
 import pathlib
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -52,7 +54,28 @@ def _stage_rerun_root(root: pathlib.Path, agent: str, condition: str,
     results.mkdir(parents=True, exist_ok=True)
 
 
+AGENT_BINARIES = ("claude", "codex", "cursor-agent")
+
+
+def _stub_agent_bin(root: pathlib.Path) -> pathlib.Path:
+    """Put no-op agent executables on PATH so the script's presence check passes.
+
+    The script refuses to start when the selected agent CLI is missing, even in
+    --dry-run. CI runners have none of them installed, so the test must not
+    depend on the host; dry-run never invokes the stubs.
+    """
+    stub_bin = root / ".stub-bin"
+    stub_bin.mkdir(exist_ok=True)
+    for name in AGENT_BINARIES:
+        stub = stub_bin / name
+        stub.write_text("#!/bin/sh\nexit 0\n")
+        stub.chmod(stub.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    return stub_bin
+
+
 def _run(root: pathlib.Path, *args: str) -> subprocess.CompletedProcess:
+    env = dict(os.environ)
+    env["PATH"] = f"{_stub_agent_bin(root)}{os.pathsep}{env.get('PATH', '')}"
     return subprocess.run(
         ["bash", str(SCRIPT),
          "--rerun-root", str(root),
@@ -62,6 +85,7 @@ def _run(root: pathlib.Path, *args: str) -> subprocess.CompletedProcess:
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
 
 
