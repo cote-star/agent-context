@@ -30,7 +30,7 @@ Ask:
 The skill drives scaffold → subsystem inventory → filled templates → grep-backed acceptance tests → verification → freshness hook guidance. It may invoke the CLI scaffold:
 
 ```bash
-agent-context init --tier 3 --install-hook .
+agent-context init --install-hook .
 ```
 
 That scaffold creates `.agent-context/current/` with the full pack: 5 markdown docs, 3 authority JSON files, `search_scope.json`, `manifest.json`, and `acceptance_tests.md`. It also copies helper tools into `.agent-context/tools/` and writes managed routing blocks to agent rule files. `init` is the bootstrap step; the skill is the authoring workflow.
@@ -118,7 +118,7 @@ Once installed via `uv tool install` or `pipx install`, the CLI works from anywh
 
 ```bash
 cd /path/to/your-repo
-agent-context init --tier 3 --install-hook .
+agent-context init --install-hook .
 ```
 
 `--tier 3` (the default) is the full pack and the only shape new packs should use. `--tier 1` and `--tier 2` still work for compatibility but print a deprecation warning and will be removed in v0.6.0; existing tier 1-2 packs remain supported by `routing` and `verify`.
@@ -132,7 +132,7 @@ If you are working on `agent-context` itself or want to avoid publishing/install
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 3 --install-hook .
+~/agent-context/bin/agent-context init --install-hook .
 ```
 
 `bin/agent-context` is a thin shim that imports the same module as the installed entry point, so behavior is identical.

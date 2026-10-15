@@ -21,7 +21,7 @@ uv tool install agent-context-cli       # or: pipx install agent-context-cli
 agent-context install-skill --agent claude
 ```
 
-(For Codex, register `skills/agent-context/agents/openai.yaml` with your Codex skill registry. For Cursor, open the target repo; Cursor reads `.cursorrules` after the pack exists.)
+(For Codex, register `skills/agent-context/agents/openai.yaml` with your Codex skill registry. Codex and Cursor read the generated `AGENTS.md` directly; an existing `.cursorrules` is refreshed to point at it.)
 
 In the repo you want to improve, ask:
 
@@ -44,10 +44,10 @@ Use the CLI from a clone when no agent is in the loop, or when bootstrapping rep
 ```bash
 git clone https://github.com/cote-star/agent-context.git ~/agent-context
 cd /path/to/your-repo
-~/agent-context/bin/agent-context init --tier 3 --install-hook .
+~/agent-context/bin/agent-context init --install-hook .
 ```
 
-`init` scaffolds the files and routing blocks. It does not replace the authoring workflow; the pack still needs repo-specific content before `verify` will pass.
+`init` scaffolds the full pack and the routing blocks. It does not replace the authoring workflow; the pack still needs repo-specific content before `verify` will pass.
 </details>
 
 ## Why This Exists
@@ -63,7 +63,7 @@ cd /path/to/your-repo
 
 ## What Gets Created
 
-The skill and CLI scaffold a tiered pack under `.agent-context/current/`:
+The skill and CLI scaffold the full pack under `.agent-context/current/`:
 
 ```text
 .agent-context/current/
@@ -108,8 +108,8 @@ The product experience is skill-first:
 The CLI remains intentionally boring:
 
 ```bash
-agent-context init --tier 3 --install-hook .   # scaffold
-agent-context routing --layout canonical .     # one AGENTS.md, CLAUDE.md imports it (@AGENTS.md)
+agent-context init --install-hook .            # scaffold the full pack (tier 3 is the default)
+agent-context routing .                        # one AGENTS.md, CLAUDE.md imports it (@AGENTS.md)
 agent-context verify .                         # validate pack integrity
 agent-context freshness . --base-ref origin/main
 agent-context doctor                           # local setup audit
@@ -215,7 +215,7 @@ replaces filled content.
 
 | Example | Size | Why look at it |
 |---|---:|---|
-| [`examples/hello-service/`](https://github.com/cote-star/agent-context/tree/main/examples/hello-service/) | 6 files | Read the whole pack in five minutes |
+| [`examples/hello-service/`](https://github.com/cote-star/agent-context/tree/main/examples/hello-service/) | 8 files | Read a whole filled pack in five minutes (a legacy tier-2 shape, kept as the compatibility fixture) |
 | [`examples/agent-chorus-reference/`](https://github.com/cote-star/agent-context/tree/main/examples/agent-chorus-reference/) | 155 files | Real dual Rust/Node CLI pack |
 
 ## Comparison

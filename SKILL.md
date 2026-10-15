@@ -135,7 +135,7 @@ ls .agent-context/current/ 2>/dev/null
 Prefer the CLI because it copies helper tools, writes routing blocks, and can install the advisory freshness hook:
 
 ```bash
-agent-context init --tier 3 --install-hook .
+agent-context init --install-hook .
 ```
 
 If the CLI is unavailable, create the directory structure manually:
