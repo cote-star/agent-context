@@ -11,7 +11,7 @@
 | Package manager | None (Python stdlib + Bash). The public `talk/` surface is hand-authored HTML served by GitHub Pages; completed-talk PDFs, render scripts, runbooks, and recordings live only in ignored `talk/_archive-local/`. |
 | Quality gate | `python3 -m unittest discover -s tests -v`; `bin/agent-context verify <repo>` against the bundled examples; `tools/check_freshness.sh` (advisory) |
 | Core risk | Drift between canonical `templates/` + `tools` + `SKILL.md` and their bundled/package copies — copying public root files into `skills/agent-context/` keeps mirrors aligned, `tests/test_skill_sync.py` enforces. Version drift across `agent_context/cli.py` `__version__`, `pyproject.toml`, `SKILL.md` frontmatter, `skills/agent-context/SKILL.md` frontmatter, and the `README.md` version badge URL is enforced by `tests/test_version_drift.py`. |
-| Version | Pinned in `agent_context/cli.py` (`__version__`), `pyproject.toml`, `SKILL.md` frontmatter (`metadata.version`), `skills/agent-context/SKILL.md` frontmatter, and `README.md` (`![Version]...badge/version-X.Y.Z-...`). Currently 0.5.0. `RELEASE_NOTES.md` carries the human-facing release log (convention, not test-enforced). |
+| Version | Pinned in `agent_context/cli.py` (`__version__`), `pyproject.toml`, `SKILL.md` frontmatter (`metadata.version`), `skills/agent-context/SKILL.md` frontmatter, and `README.md` (`![Version]...badge/version-X.Y.Z-...`). Currently 0.5.1. `RELEASE_NOTES.md` carries the human-facing release log (convention, not test-enforced). |
 
 ## Scope Rule
 

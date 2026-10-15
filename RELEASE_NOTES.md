@@ -1,6 +1,13 @@
 # Release Notes
 
-## v0.5.0 — 2026-10-15
+## v0.5.1 — 2026-10-15
+
+Release-engineering fix; this is the first published build of the 0.5 line and contains everything listed under v0.5.0 below.
+
+- `tests/test_run_agent_lane_model.py` now stubs the agent CLIs on `PATH`, so the experiments-lane dry-run test no longer depends on `claude`, `codex` or `cursor-agent` being installed on the host. The test had passed only on the maintainer's machine and failed on every CI runner since it was added; the new release gate introduced in 0.5.0 caught it, so the `v0.5.0` tag was never published.
+- No CLI, pack-format or skill changes relative to 0.5.0.
+
+## v0.5.0 — 2026-10-15 (tagged, not published; superseded by v0.5.1)
 
 One canonical instruction contract across agents, with safe adoption for existing packs.
 
